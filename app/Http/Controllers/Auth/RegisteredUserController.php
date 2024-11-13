@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace DaluPay\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
+use DaluPay\Http\Controllers\Controller;
+use DaluPay\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

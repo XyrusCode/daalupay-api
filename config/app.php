@@ -13,7 +13,8 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'DaluuPay'),
+    'version' => env('APP_VERSION', '0.0.1'),
 
     /*
     |--------------------------------------------------------------------------

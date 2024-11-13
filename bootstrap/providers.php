@@ -1,5 +1,5 @@
 <?php
 
 return [
-    App\Providers\AppServiceProvider::class,
+    DaluPay\Providers\AppServiceProvider::class,
 ];
