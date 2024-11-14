@@ -3,9 +3,10 @@
 namespace DaluPay\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use DaluPay\Models\Traits\UuidTrait;
-
-class Payment {
+use DaluPay\Models\User;
+class Payment extends BaseModel {
 	use HasFactory;
 	use UuidTrait;
 
@@ -28,7 +29,8 @@ class Payment {
      *
      * @return BelongsTo
      */
-    public function user() {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 }

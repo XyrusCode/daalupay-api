@@ -28,6 +28,8 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+    	// Check if FRONTEND_URL is not equal to production for setting test mode
+	'test_mode' => env('FRONTEND_URL') !== 'daluupay.com',
 
     /*
     |--------------------------------------------------------------------------
@@ -53,7 +55,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('FRONTEND_URL', 'http://daluupay.internal:5173'),
 
     /*
     |--------------------------------------------------------------------------
@@ -66,7 +68,7 @@ return [
     |
     */
 
-    'timezone' => env('APP_TIMEZONE', 'UTC'),
+    'timezone' => env('APP_TIMEZONE', 'WAT'),
 
     /*
     |--------------------------------------------------------------------------

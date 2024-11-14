@@ -19,4 +19,53 @@ class BaseModel extends Model
 		}
 		return $data;
 	}
+
+    public function getFillable(): array
+    {
+        return $this->fillable;
+    }
+
+    public function getHidden(): array
+    {
+        return $this->hidden;
+    }
+
+    public function getTable(): string
+    {
+        return $this->table;
+    }
+
+    public function getRelations(): array
+    {
+        return $this->relations;
+    }
+
+    public function getCasts(): array
+    {
+        return $this->casts;
+    }
+
+
+    public function getKey(): string
+    {
+        return $this->getKey();
+    }
+
+    public function getKeyType(): string
+    {
+        return $this->keyType;
+    }
+
+
+    public function getIncrementing(): bool
+    {
+        return $this->incrementing;
+    }
+
+    public function getKeyName(): string
+    {
+        return $this->keyName;
+    }
+
+    
 }

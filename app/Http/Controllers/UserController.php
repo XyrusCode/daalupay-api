@@ -12,7 +12,7 @@ class UserController extends BaseController
 {
 	// use AdminTrait;
 
-	public function create_user(Request $request) {
+	public function store(Request $request) {
 		try {
 			$request->validate([
 				'email' => 'required|email|unique:users',
@@ -40,18 +40,18 @@ class UserController extends BaseController
 		return $this->getResponse('success', $user, 201, $message);
 	}
 
-	public function get_all_users(Request $request) {
+	public function getAll(Request $request) {
 		$this->is_admin($request);
 		$users = User::all();
 		return $this->getResponse('success', $users, 200);
 	}
 
-	public function get_user(Request $request) {
+	public function get(Request $request) {
 		$user = $request->user();
 		return $this->getResponse('success', $user, 200);
 	}
 
-	public function update_user(Request $request) {
+	public function update(Request $request) {
 
 		$user = $request->user();
 
@@ -79,12 +79,11 @@ class UserController extends BaseController
 
 		// Update the user's password
 		$user->password = Hash::make($request->new_password);
-		$user->save();
 
 		return $this->getResponse('success', null, 200, 'Password updated successfully');
 	}
 
-	public function get_user_details(Request $request, $user_id) {
+	public function getDetails(Request $request, $user_id) {
 		$this->is_admin($request);
 
 		$user = User::find($user_id);
@@ -118,7 +117,7 @@ class UserController extends BaseController
 		return $this->getResponse('success', null, 200, $message);
 	}
 
-	public function delete_user(Request $request, $user_id) {
+	public function delete(Request $request, $user_id) {
 		$this->is_admin($request);
 
 		$user = User::find($user_id);

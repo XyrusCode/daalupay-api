@@ -3,7 +3,7 @@
 namespace DaluPay\Exceptions;
 
 use Exception;
-use DaluPay\Http\Controllers\Constants\Messages;
+use DaluPay\Constants\Messages;
 
 class NotFoundException extends Exception
 {

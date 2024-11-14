@@ -10,7 +10,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-
+use Illuminate\Support\Facades\Mail;
+use DaluPay\Mail\NewUser;
 class RegisteredUserController extends Controller
 {
     /**
@@ -31,6 +32,8 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->string('password')),
         ]);
+
+        Mail::to($user->email)->send(new NewUser($user));
 
         event(new Registered($user));
 

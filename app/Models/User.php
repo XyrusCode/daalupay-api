@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
+use DaluPay\Models\Address;
 
 class User extends Authenticatable
 {
@@ -20,8 +23,11 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
+        'gender',
         'email',
+        'phone',
         'password',
     ];
 
@@ -46,5 +52,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function address(): HasOne
+    {
+        return $this->hasOne(Address::class);
     }
 }
