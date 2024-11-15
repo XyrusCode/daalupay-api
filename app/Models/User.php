@@ -11,9 +11,11 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 use DaluPay\Models\Address;
+use DaluPay\Models\Traits\UuidTrait;
 
 class User extends Authenticatable
 {
+    use UuidTrait;
     /** @use HasFactory<\Database\Factories\UserFactory> */
    use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
 
@@ -29,6 +31,7 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
+        'status',
     ];
 
     /**

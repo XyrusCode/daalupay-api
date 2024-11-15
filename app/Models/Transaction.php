@@ -5,6 +5,9 @@ namespace DaluPay\Models;
 use DaluPay\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use DaluPay\Models\Traits\UuidTrait;
+use DaluPay\Models\Payment;
+use DaluPay\Models\Employee;
+use DaluPay\Models\User;
 
 class Transaction extends BaseModel
 {
@@ -13,7 +16,6 @@ class Transaction extends BaseModel
 
 	protected $hidden = [
 		'id',
-		'created_at',
 		'updated_at'
 	];
 
@@ -22,13 +24,23 @@ class Transaction extends BaseModel
 		'reference_number',
 		'channel',
 		'amount',
-		'description',
+        'send_currency',
+        'receive_currency',
+        'rate',
+        'fee',
 		'transaction_date',
 		'status',
         'user_id',
         'admin_id',
 		'payment_id',
 	];
+
+    /**
+     * Get the payment associated with the transaction.
+     */
+    public function payment() {
+        return $this->belongsTo(Payment::class, 'payment_id', 'id');
+    }
 
 	/**
 	 * Get the user associated with the transaction.

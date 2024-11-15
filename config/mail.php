@@ -66,6 +66,7 @@ return [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@daluupay.com'),
         'name' => env('MAIL_FROM_NAME', 'DaluPay'),
         'reply_to' => env('MAIL_REPLY_TO_ADDRESS', 'hello@daluupay.com'),
+        'support' => env('MAIL_SUPPORT_ADDRESS', 'support@daluupay.com'),
     ],
 
 ];

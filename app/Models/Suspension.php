@@ -4,7 +4,8 @@ namespace DaluPay\Models;
 
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-class Suspension {
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+class Suspension extends BaseModel {
     use HasFactory;
 
     protected $table = 'suspensions';
@@ -16,7 +17,7 @@ class Suspension {
         'end_date',
     ];
 
-    public function user() {
+    public function user(): BelongsTo {
         return $this->belongsTo(User::class);
     }
 }

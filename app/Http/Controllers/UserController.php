@@ -10,47 +10,22 @@ use DaluPay\Models\User;
 
 class UserController extends BaseController
 {
-	// use AdminTrait;
-
-	public function store(Request $request) {
-		try {
-			$request->validate([
-				'email' => 'required|email|unique:users',
-				'phone_number' => 'required|unique:users',
-				'first_name' => 'required',
-				'last_name' => 'required',
-				'password' => 'required',
-			]);
-		} catch (\Illuminate\Validation\ValidationException $e) {
-			$errors = $e->errors();
-			return $this->getResponse('success', ['errors' => $errors], 400);
-		}
-
-
-
-		$user = User::create([
-			'first_name' => $request->first_name,
-			'last_name' => $request->last_name,
-			'email' => $request->email,
-			'phone_number' => $request->phone_number,
-			'password' => Hash::make($request->password),
-			'role' => $request->role ?? 'vendor'
-		]);
-		$message = 'User created successfully';
-		return $this->getResponse('success', $user, 201, $message);
-	}
-
-	public function getAll(Request $request) {
-		$this->is_admin($request);
-		$users = User::all();
-		return $this->getResponse('success', $users, 200);
-	}
-
+    /**
+     * Get the authenticated user's details
+     * @param Request $request
+     * @return JsonResponse
+     */
 	public function get(Request $request) {
 		$user = $request->user();
+		$user->load('wallet');
 		return $this->getResponse('success', $user, 200);
 	}
 
+    /**
+     * Update the authenticated user's details
+     * @param Request $request
+     * @return JsonResponse
+     */
 	public function update(Request $request) {
 
 		$user = $request->user();
@@ -64,6 +39,11 @@ class UserController extends BaseController
 		return $this->getResponse('success', null, 200, $message);
 	}
 
+    /**
+     * Update the authenticated user's password
+     * @param Request $request
+     * @return JsonResponse
+     */
 	public function updatePassword(Request $request) {
 		$request->validate([
 			'old_password' => ['required', 'string'],
@@ -83,6 +63,12 @@ class UserController extends BaseController
 		return $this->getResponse('success', null, 200, 'Password updated successfully');
 	}
 
+    /**
+     * Get a user's details
+     * @param Request $request
+     * @param int $user_id
+     * @return JsonResponse
+     */
 	public function getDetails(Request $request, $user_id) {
 		$this->is_admin($request);
 
@@ -96,7 +82,13 @@ class UserController extends BaseController
 		return $this->getResponse('success', $user, 200);
 	}
 
-	public function update_user_details(Request $request, $user_id) {
+    /**
+     * Update a user's details
+     * @param Request $request
+     * @param int $user_id
+     * @return JsonResponse
+     */
+	public function updateDetails(Request $request, $user_id) {
 		$this->is_admin($request);
 
 		$user = User::find($user_id);
@@ -117,6 +109,12 @@ class UserController extends BaseController
 		return $this->getResponse('success', null, 200, $message);
 	}
 
+    /**
+     * Delete a user
+     * @param Request $request
+     * @param int $user_id
+     * @return JsonResponse
+     */
 	public function delete(Request $request, $user_id) {
 		$this->is_admin($request);
 

@@ -17,10 +17,11 @@ class Payment extends BaseModel {
     ];
 
     protected $fillable = [
-    		'name',
+    	'name',
 		'amount',
 		'method',
 		'type',
+        'channel',
 		'status',
     ];
 

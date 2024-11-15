@@ -117,7 +117,7 @@
         </div>
     </div>
     <script>
-        const correctPassword = "daalu";
+        const correctPassword = "1234";
         function checkPassword() {
             const enteredPassword = document.getElementById('passwordInput').value;
             if (enteredPassword === correctPassword) {

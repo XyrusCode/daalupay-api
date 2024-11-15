@@ -1,0 +1,35 @@
+<?php
+
+namespace DaluPay\Models;
+
+use DaluPay\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use DaluPay\Models\Traits\UuidTrait;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+class Deposit extends BaseModel {
+    use HasFactory;
+    use UuidTrait;
+
+    protected $hidden = [
+        'id',
+        'created_at',
+        'updated_at',
+    ];
+
+    protected $fillable = [
+        'uuid',
+        'amount',
+        'status',
+        'user_id',
+        'payment_id',
+        'channel',
+    ];
+
+    public function user(): BelongsTo {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function payment(): BelongsTo {
+        return $this->belongsTo(Payment::class, 'payment_id', 'id');
+    }
+}
