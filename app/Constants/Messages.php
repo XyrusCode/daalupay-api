@@ -1,6 +1,6 @@
 <?php
 
-namespace DaluPay\Constants;
+namespace DaaluPay\Constants;
 
 class Messages
 {

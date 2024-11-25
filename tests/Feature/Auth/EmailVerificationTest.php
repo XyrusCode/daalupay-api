@@ -1,6 +1,6 @@
 <?php
 
-use DaluPay\Models\User;
+use DaaluPay\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;

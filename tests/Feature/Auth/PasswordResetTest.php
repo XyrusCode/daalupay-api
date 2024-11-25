@@ -1,6 +1,6 @@
 <?php
 
-use DaluPay\Models\User;
+use DaaluPay\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Notification;
 

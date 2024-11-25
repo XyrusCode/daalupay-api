@@ -1,13 +1,13 @@
 <?php
 
-namespace DaluPay\Providers;
+namespace DaaluPay\Providers;
 
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-// use DaluPay\Providers\EmployeeProvider;
-// use DaluPay\Models\User;
+// use DaaluPay\Providers\EmployeeProvider;
+// use DaaluPay\Models\User;
 class AppServiceProvider extends ServiceProvider
 {
     /**

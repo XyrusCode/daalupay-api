@@ -1,9 +1,9 @@
 <?php
 
-namespace DaluPay\Http\Controllers\Auth;
+namespace DaaluPay\Http\Controllers\Auth;
 
-use DaluPay\Http\Controllers\Controller;
-use DaluPay\Models\User;
+use DaaluPay\Http\Controllers\Controller;
+use DaaluPay\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Mail;
-use DaluPay\Mail\NewUser;
+use DaaluPay\Mail\NewUser;
 class RegisteredUserController extends Controller
 {
     /**

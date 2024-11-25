@@ -1,6 +1,6 @@
 <?php
 
-use DaluPay\Models\User;
+use DaaluPay\Models\User;
 
 test('users can authenticate using the login screen', function () {
     $user = User::factory()->create();

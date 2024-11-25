@@ -1,6 +1,6 @@
 <?php
 
-namespace DaluPay\Http\Helpers;
+namespace DaaluPay\Http\Helpers;
 
 abstract class StatusCodeHelper
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace DaluPay\Exceptions;
+namespace DaaluPay\Exceptions;
 
 use Exception;
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace DaluPay\Models;
+namespace DaaluPay\Models;
 
-use DaluPay\Models\BaseModel;
+use DaaluPay\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use DaluPay\Models\Traits\UuidTrait;
-use DaluPay\Models\Payment;
-use DaluPay\Models\Employee;
-use DaluPay\Models\User;
+use DaaluPay\Models\Traits\UuidTrait;
+use DaaluPay\Models\Payment;
+use DaaluPay\Models\Employee;
+use DaaluPay\Models\User;
 
 class Transaction extends BaseModel
 {

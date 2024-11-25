@@ -1,6 +1,6 @@
 <?php
 
-namespace DaluPay\Exceptions;
+namespace DaaluPay\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;

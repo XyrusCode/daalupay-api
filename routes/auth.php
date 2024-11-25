@@ -1,11 +1,11 @@
 <?php
 
-use DaluPay\Http\Controllers\Auth\AuthenticatedSessionController;
-use DaluPay\Http\Controllers\Auth\EmailVerificationNotificationController;
-use DaluPay\Http\Controllers\Auth\NewPasswordController;
-use DaluPay\Http\Controllers\Auth\PasswordResetLinkController;
-use DaluPay\Http\Controllers\Auth\RegisteredUserController;
-use DaluPay\Http\Controllers\Auth\VerifyEmailController;
+use DaaluPay\Http\Controllers\Auth\AuthenticatedSessionController;
+use DaaluPay\Http\Controllers\Auth\EmailVerificationNotificationController;
+use DaaluPay\Http\Controllers\Auth\NewPasswordController;
+use DaaluPay\Http\Controllers\Auth\PasswordResetLinkController;
+use DaaluPay\Http\Controllers\Auth\RegisteredUserController;
+use DaaluPay\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [RegisteredUserController::class, 'store'])

@@ -1,9 +1,9 @@
 <?php
 
-// use DaluPay\Providers\EmployeeProvider;
+// use DaaluPay\Providers\EmployeeProvider;
 
 return [
-    DaluPay\Providers\AppServiceProvider::class,
+    DaaluPay\Providers\AppServiceProvider::class,
     // EmployeeProvider::class,
     Unicodeveloper\Paystack\PaystackServiceProvider::class,
 ];

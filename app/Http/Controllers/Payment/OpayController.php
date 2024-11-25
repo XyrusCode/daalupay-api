@@ -1,10 +1,10 @@
 <?php
 
-namespace DaluPay\Http\Controllers\Payment;
+namespace DaaluPay\Http\Controllers\Payment;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use DaluPay\Http\Controllers\BaseController;
+use DaaluPay\Http\Controllers\BaseController;
 
 class OpayController extends BaseController
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace DaluPay\Http\Controllers\Auth;
+namespace DaaluPay\Http\Controllers\Auth;
 
-use DaluPay\Http\Controllers\Controller;
-use DaluPay\Http\Requests\Auth\LoginRequest;
+use DaaluPay\Http\Controllers\Controller;
+use DaaluPay\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;

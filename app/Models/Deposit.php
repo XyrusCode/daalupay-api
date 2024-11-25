@@ -1,10 +1,10 @@
 <?php
 
-namespace DaluPay\Models;
+namespace DaaluPay\Models;
 
-use DaluPay\Models\BaseModel;
+use DaaluPay\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use DaluPay\Models\Traits\UuidTrait;
+use DaaluPay\Models\Traits\UuidTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Deposit extends BaseModel {
     use HasFactory;

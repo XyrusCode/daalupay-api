@@ -1,6 +1,6 @@
 <?php
 
-namespace DaluPay\Models;
+namespace DaaluPay\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

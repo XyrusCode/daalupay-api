@@ -1,6 +1,6 @@
 <?php
 
-namespace DaluPay\Http\Requests\Auth;
+namespace DaaluPay\Http\Requests\Auth;
 
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;

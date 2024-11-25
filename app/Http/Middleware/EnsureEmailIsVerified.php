@@ -1,6 +1,6 @@
 <?php
 
-namespace DaluPay\Http\Middleware;
+namespace DaaluPay\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\MustVerifyEmail;

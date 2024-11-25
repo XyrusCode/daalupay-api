@@ -1,11 +1,11 @@
 <?php
 
-namespace DaluPay\Providers;
+namespace DaaluPay\Providers;
 
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Contracts\Auth\Authenticatable;
-use DaluPay\Models\Employee;
+use DaaluPay\Models\Employee;
 
 class EmployeeProvider 
 {

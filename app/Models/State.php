@@ -1,6 +1,6 @@
 <?php
 
-namespace DaluPay\Models;
+namespace DaaluPay\Models;
 
 class State extends BaseModel {
 	protected $table = 'states';

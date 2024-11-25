@@ -2,15 +2,15 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use DaluPay\Http\Controllers\AuthController;
-use DaluPay\Http\Controllers\UserController;
-use DaluPay\Http\Controllers\ModuleController;
-use DaluPay\Http\Controllers\TransactionController;
-use DaluPay\Http\Controllers\AccountController;
-use DaluPay\Http\Controllers\MigrationController;
-use DaluPay\Http\Controllers\MiscController;
-use DaluPay\Http\Controllers\PaymentController;
-use DaluPay\Http\Controllers\Auth\TokenController;
+use DaaluPay\Http\Controllers\AuthController;
+use DaaluPay\Http\Controllers\UserController;
+use DaaluPay\Http\Controllers\ModuleController;
+use DaaluPay\Http\Controllers\TransactionController;
+use DaaluPay\Http\Controllers\AccountController;
+use DaaluPay\Http\Controllers\MigrationController;
+use DaaluPay\Http\Controllers\MiscController;
+use DaaluPay\Http\Controllers\PaymentController;
+use DaaluPay\Http\Controllers\Auth\TokenController;
 
 
 Route::get('/', [MiscController::class, 'getAppInfo']);

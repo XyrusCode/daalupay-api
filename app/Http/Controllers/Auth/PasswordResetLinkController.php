@@ -1,8 +1,8 @@
 <?php
 
-namespace DaluPay\Http\Controllers\Auth;
+namespace DaaluPay\Http\Controllers\Auth;
 
-use DaluPay\Http\Controllers\Controller;
+use DaaluPay\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;

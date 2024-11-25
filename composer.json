@@ -1,7 +1,7 @@
 {
     "name": "dalupay/api",
     "type": "project",
-    "description": "The API for the DaluPay Project.",
+    "description": "The API for the DaaluPay Project.",
     "version": "0.0.1",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
@@ -26,7 +26,7 @@
     },
     "autoload": {
         "psr-4": {
-            "DaluPay\\": "app/",
+            "DaaluPay\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }

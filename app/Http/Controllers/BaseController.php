@@ -1,6 +1,6 @@
 <?php
 
-namespace DaluPay\Http\Controllers;
+namespace DaaluPay\Http\Controllers;
 
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -9,8 +9,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use DaluPay\Exceptions\CustomException;
-use DaluPay\Http\Helpers\StatusCodeHelper;
+use DaaluPay\Exceptions\CustomException;
+use DaaluPay\Http\Helpers\StatusCodeHelper;
 
 use function Sentry\captureException;
 

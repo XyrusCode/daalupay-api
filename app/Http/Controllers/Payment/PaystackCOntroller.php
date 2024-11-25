@@ -1,6 +1,6 @@
 <?php
 
-namespace DaluPay\Http\Controllers\Payment;
+namespace DaaluPay\Http\Controllers\Payment;
 
 use Illuminate\Http\Request;
 use App\Http\Requests;
@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redirect;
 use Paystack;
 
-use DaluPay\Http\Controllers\BaseController;
+use DaaluPay\Http\Controllers\BaseController;
 
 class PaystackController extends BaseController
 {

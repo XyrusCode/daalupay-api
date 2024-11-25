@@ -66,7 +66,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', DaluPay\Models\User::class),
+            'model' => env('AUTH_MODEL', DaaluPay\Models\User::class),
         ],
 
         // 'users' => [

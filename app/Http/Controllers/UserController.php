@@ -1,12 +1,12 @@
 <?php
 
-namespace DaluPay\Http\Controllers;
+namespace DaaluPay\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-// use DaluPay\Http\Traits\AdminTrait;
-use DaluPay\Models\User;
+// use DaaluPay\Http\Traits\AdminTrait;
+use DaaluPay\Models\User;
 
 class UserController extends BaseController
 {

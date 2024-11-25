@@ -1,9 +1,9 @@
 <?php
 
-namespace DaluPay\Exceptions;
+namespace DaaluPay\Exceptions;
 
 use Exception;
-use DaluPay\Constants\Messages;
+use DaaluPay\Constants\Messages;
 
 class NotFoundException extends Exception
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace DaluPay\Models;
+namespace DaaluPay\Models;
 
-use DaluPay\Models\Traits\UuidTrait;
+use DaaluPay\Models\Traits\UuidTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Employee {
     use UuidTrait;

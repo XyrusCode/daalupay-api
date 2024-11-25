@@ -1,10 +1,10 @@
 <?php
 
-namespace DaluPay\Http\Controllers;
+namespace DaaluPay\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use DaluPay\Models\Transaction;
+use DaaluPay\Models\Transaction;
 class TransactionController extends BaseController
 {
 

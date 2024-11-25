@@ -1,6 +1,6 @@
 <?php
 
-namespace DaluPay\Models\Traits;
+namespace DaaluPay\Models\Traits;
 
 use Illuminate\Support\Str;
 

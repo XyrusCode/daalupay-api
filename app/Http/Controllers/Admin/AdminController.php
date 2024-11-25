@@ -1,11 +1,11 @@
 <?php
 
-namespace DaluPay\Http\Controllers\Admin;
+namespace DaaluPay\Http\Controllers\Admin;
 
-use DaluPay\Http\Controllers\BaseController;
+use DaaluPay\Http\Controllers\BaseController;
 use Illuminate\Http\Request;
-use DaluPay\Models\User;
-use DaluPay\Models\Suspension;
+use DaaluPay\Models\User;
+use DaaluPay\Models\Suspension;
 
 class AdminController extends BaseController
 {

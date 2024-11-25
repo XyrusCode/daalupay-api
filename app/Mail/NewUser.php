@@ -1,6 +1,6 @@
 <?php
 
-namespace DaluPay\Mail;
+namespace DaaluPay\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaluPay\Models\User;
+use DaaluPay\Models\User;
 
 class NewUser extends Mailable
 {

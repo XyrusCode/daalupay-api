@@ -1,12 +1,12 @@
 <?php
 
-namespace DaluPay\Http\Controllers\Auth;
+namespace DaaluPay\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use DaluPay\Http\Controllers\Controller;
-use DaluPay\Models\User;
+use DaaluPay\Http\Controllers\Controller;
+use DaaluPay\Models\User;
 
 class TokenController extends Controller
 {

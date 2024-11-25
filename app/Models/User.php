@@ -1,6 +1,6 @@
 <?php
 
-namespace DaluPay\Models;
+namespace DaaluPay\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,8 +10,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-use DaluPay\Models\Address;
-use DaluPay\Models\Traits\UuidTrait;
+use DaaluPay\Models\Address;
+use DaaluPay\Models\Traits\UuidTrait;
 
 class User extends Authenticatable
 {

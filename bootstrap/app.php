@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'verified' => \DaluPay\Http\Middleware\EnsureEmailIsVerified::class,
+            'verified' => \DaaluPay\Http\Middleware\EnsureEmailIsVerified::class,
         ]);
 
         //

@@ -1,6 +1,6 @@
 <?php
 
-namespace DaluPay\Http\Controllers;
+namespace DaaluPay\Http\Controllers;
 
 abstract class Controller
 {

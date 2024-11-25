@@ -1,6 +1,6 @@
 <?php
 
-namespace DaluPay\Models;
+namespace DaaluPay\Models;
 
 // use Jenssegers\Mongodb\Eloquent\Model;
 
