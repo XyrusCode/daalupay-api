@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 
 class MiscController extends Controller {
 
-
     public function getAppInfo() {
         return response()->json([
             'app' => config('app.name'),
