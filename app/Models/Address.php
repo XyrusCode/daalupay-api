@@ -21,6 +21,11 @@ class Address extends BaseModel
         'country',
     ];
 
+    /**
+     * Get the user that owns the address.
+     *
+     * @return BelongsTo
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

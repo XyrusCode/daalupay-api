@@ -17,10 +17,12 @@ return new class extends Migration
             $table->string('name');
             $table->string('channel');
             $table->enum('type', ['deposit', 'withdrawal']);
-            $table->decimal('fee', 10, 2);
+            $table->decimal('amount', 10, 2); // Ensure 'amount' is of type DECIMAL
             $table->enum('status', ['pending', 'approved', 'rejected']);
+            $table->string('method'); // Add method as a string if it's missing
         });
     }
+
 
     /**
      * Reverse the migrations.

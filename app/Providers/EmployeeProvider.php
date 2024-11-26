@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Contracts\Auth\Authenticatable;
 use DaaluPay\Models\Employee;
 
-class EmployeeProvider 
+class EmployeeProvider
 {
     // public function retrieveById($identifier)
     // {

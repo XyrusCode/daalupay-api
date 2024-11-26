@@ -2,10 +2,11 @@
 
 namespace DaaluPay\Models;
 
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-class Suspension extends BaseModel {
+
+class Suspension extends BaseModel
+{
     use HasFactory;
 
     protected $table = 'suspensions';
@@ -17,7 +18,13 @@ class Suspension extends BaseModel {
         'end_date',
     ];
 
-    public function user(): BelongsTo {
+    /**
+     * Get the user that owns the suspension.
+     *
+     * @return BelongsTo
+     */
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 }

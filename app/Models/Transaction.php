@@ -11,48 +11,54 @@ use DaaluPay\Models\User;
 
 class Transaction extends BaseModel
 {
-	use HasFactory;
-    use UuidTrait;
+    use HasFactory;
 
-	protected $hidden = [
-		'id',
-		'updated_at'
-	];
+    // use UuidTrait;
 
-	protected $fillable = [
-		'uuid',
-		'reference_number',
-		'channel',
-		'amount',
+    protected $table = 'transactions';
+
+    protected $hidden = [
+        'id',
+        'updated_at'
+    ];
+
+    protected $fillable = [
+        'uuid',
+        'reference_number',
+        'channel',
+        'amount',
         'send_currency',
         'receive_currency',
         'rate',
         'fee',
-		'transaction_date',
-		'status',
+        'transaction_date',
+        'status',
         'user_id',
         'admin_id',
-		'payment_id',
-	];
+        'payment_id',
+    ];
 
     /**
      * Get the payment associated with the transaction.
      */
-    public function payment() {
+    public function payment()
+    {
         return $this->belongsTo(Payment::class, 'payment_id', 'id');
     }
 
-	/**
-	 * Get the user associated with the transaction.
-	 */
-	public function user() {
-		return $this->belongsTo(User::class, 'user_id', 'id');
-	}
+    /**
+     * Get the user associated with the transaction.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 
     /**
      * Get the admin who approved the transaction.
      */
-    public function admin() {
+    public function admin()
+    {
         return $this->belongsTo(Employee::class, 'admin_id', 'id');
     }
 }

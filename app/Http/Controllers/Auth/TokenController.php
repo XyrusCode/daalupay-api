@@ -10,14 +10,14 @@ use DaaluPay\Models\User;
 
 class TokenController extends Controller
 {
-
         /**
      * Get a token for a user.
      *
      * @param Request $request
      * @return JsonResponse
      */
-    public function getToken(Request $request, string $type) {
+    public function getToken(Request $request, string $type)
+    {
         $validationRules = [
             'email' => 'required|email',
         ];
@@ -40,5 +40,4 @@ class TokenController extends Controller
 
         return response()->json(['message' => 'Token generated successfully']);
     }
-
 }

@@ -44,6 +44,21 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+            'user' => [
+        'driver' => 'sanctum',
+        'provider' => 'users',
+        ],
+
+        'admin' => [
+        'driver' => 'sanctum',
+        'provider' => 'admins',
+        ],
+
+        'super_admin' => [
+        'driver' => 'sanctum',
+            'provider' => 'super_admins',
+        ],
     ],
 
     /*
@@ -66,13 +81,18 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', DaaluPay\Models\User::class),
+            'model' => DaaluPay\Models\User::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => DaaluPay\Models\Admin::class,
+        ],
+
+        'super_admins' => [
+            'driver' => 'eloquent',
+            'model' => DaaluPay\Models\SuperAdmin::class,
+        ],
     ],
 
     /*

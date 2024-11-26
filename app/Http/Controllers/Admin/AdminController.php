@@ -9,13 +9,13 @@ use DaaluPay\Models\Suspension;
 
 class AdminController extends BaseController
 {
-
     /**
      * Get all users
      * @return JsonResponse
      */
-    public function getAllUsers() {
-        return $this->process(function() {
+    public function getAllUsers()
+    {
+        return $this->process(function () {
             $users = User::all();
 
             return $this->getResponse('success', $users, 200);
@@ -27,8 +27,9 @@ class AdminController extends BaseController
      * @param int $user_id
      * @return JsonResponse
      */
-    public function getUser($user_id) {
-        return $this->process(function() use ($user_id) {
+    public function getUser($user_id)
+    {
+        return $this->process(function () use ($user_id) {
             $user = User::find($user_id);
 
             return $this->getResponse('success', $user, 200);
@@ -41,8 +42,9 @@ class AdminController extends BaseController
      * @param int $user_id
      * @return JsonResponse
      */
-    public function updateUser(Request $request, $user_id) {
-        return $this->process(function() use ($request, $user_id) {
+    public function updateUser(Request $request, $user_id)
+    {
+        return $this->process(function () use ($request, $user_id) {
             $user = User::find($user_id);
 
             return $this->getResponse('success', $user, 200);
@@ -54,8 +56,9 @@ class AdminController extends BaseController
      * @param Request $request
      * @return JsonResponse
      */
-    public function createSuspension(Request $request) {
-        return $this->process(function() use ($request) {
+    public function createSuspension(Request $request)
+    {
+        return $this->process(function () use ($request) {
             $user = User::find($request->user_id);
 
             $user->status = 'suspended';

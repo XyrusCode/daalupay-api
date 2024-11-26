@@ -27,21 +27,28 @@ use OpenApi\Annotations as OA;
  * @property string $calling_code
  * @property State[] $states
  */
-class Country extends BaseModel {
-	protected $table = 'countries';
-	public $timestamps = false;
+class Country extends BaseModel
+{
+    protected $table = 'countries';
+    public $timestamps = false;
 
-	protected $fillable = [
-		'name',
-		'calling_code'
-	];
+    protected $fillable = [
+        'name',
+        'calling_code'
+    ];
 
-	protected $hidden = [
-		'created_at',
-		'updated_at'
-	];
+    protected $hidden = [
+        'created_at',
+        'updated_at'
+    ];
 
-	function states() {
-		return $this->hasMany(State::class);
-	}
+    /**
+     * Get the states for the country.
+     *
+     * @return HasMany
+     */
+    function states()
+    {
+        return $this->hasMany(State::class);
+    }
 }

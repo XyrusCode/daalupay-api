@@ -18,10 +18,10 @@ namespace DaaluPay\Models;
 
 class Hook extends BaseModel
 {
-	protected $connection = 'mongodb';
-	protected $collection = 'hooks';
+    protected $connection = 'mongodb';
+    protected $collection = 'hooks';
 
-	protected $fillable = [
-		'data',
-	];
+    protected $fillable = [
+        'data',
+    ];
 }

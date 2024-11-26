@@ -6,6 +6,7 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+
 // use DaaluPay\Providers\EmployeeProvider;
 // use DaaluPay\Models\User;
 class AppServiceProvider extends ServiceProvider
@@ -16,10 +17,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
            // Add new user provider with employee model
-    Auth::provider('employees', function ($app, array $config) {
-        return new EmployeeProvider($app['hash'], $config['model']);
-    });
-}
+        Auth::provider('employees', function ($app, array $config) {
+            return new EmployeeProvider($app['hash'], $config['model']);
+        });
+    }
 
 
     /**
@@ -28,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
-            return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
+            return config('app.frontend_url') . "/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
         });
 
 

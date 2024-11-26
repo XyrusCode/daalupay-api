@@ -11,7 +11,7 @@ class OpayController extends BaseController
     /**
      * @var string
      */
-  private $merchantId;
+    private $merchantId;
     private $publickey;
     private $queryMerchantId;
     private $secretkey;
@@ -21,7 +21,8 @@ class OpayController extends BaseController
     /**
      * Constructor
      */
-    public function __construct() {
+    public function __construct()
+    {
          // For create cashier
         $this->merchantId = config('services.opay.merchant_id');
         $this->publickey = config('services.opay.public_key');
@@ -37,7 +38,8 @@ class OpayController extends BaseController
      * Create cashier
      * @return json
      */
-    public function createCashier() {
+    public function createCashier()
+    {
         $data = [
             'country' => 'EG',
             'reference' => '9835413542121', // This could be dynamically generated
@@ -88,7 +90,8 @@ class OpayController extends BaseController
      * Query payment status
      * @return json
      */
-  public function queryPaymentStatus(Request $request) {
+    public function queryPaymentStatus(Request $request)
+    {
         $data = [
             'country' => 'EG',
             'reference' => $request->input('reference'), // Get reference from request
@@ -114,7 +117,8 @@ class OpayController extends BaseController
     }
 
     // Helper method for HMAC authentication
-    private function generateAuth($data) {
+    private function generateAuth($data)
+    {
         return hash_hmac('sha512', $data, $this->secretkey);
     }
 }

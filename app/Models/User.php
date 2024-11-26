@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use DaaluPay\Models\Address;
 use DaaluPay\Models\Traits\UuidTrait;
 
@@ -17,7 +17,10 @@ class User extends Authenticatable
 {
     use UuidTrait;
     /** @use HasFactory<\Database\Factories\UserFactory> */
-   use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
+    use HasFactory;
+    use Notifiable;
+    use HasApiTokens;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -57,8 +60,43 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Get the address associated with the user.
+     *
+     * @return HasOne
+     */
     public function address(): HasOne
     {
         return $this->hasOne(Address::class);
+    }
+
+    /**
+     * Get the wallet associated with the user.
+     *
+     * @return HasOne
+     */
+    public function wallet(): HasOne
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    /**
+     * Get the transactions for the user.
+     *
+     * @return HasMany
+     */
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    /**
+     * Get the deposits for the user.
+     *
+     * @return HasMany
+     */
+    public function deposits(): HasMany
+    {
+        return $this->hasMany(Deposit::class);
     }
 }

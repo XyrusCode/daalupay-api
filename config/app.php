@@ -28,8 +28,8 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
-    	// Check if FRONTEND_URL is not equal to production for setting test mode
-	'test_mode' => env('FRONTEND_URL') !== 'daluupay.com',
+        // Check if FRONTEND_URL is not equal to production for setting test mode
+    'test_mode' => env('FRONTEND_URL') !== 'daluupay.com',
 
     /*
     |--------------------------------------------------------------------------

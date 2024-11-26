@@ -18,18 +18,34 @@ use DaaluPay\Http\Controllers\Auth\PasswordResetLinkController;
 use DaaluPay\Http\Controllers\Auth\RegisteredUserController;
 use DaaluPay\Http\Controllers\Auth\VerifyEmailController;
 
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "api" middleware group. Make something great!
+|
+*/
 
+// App Info
 Route::get('/', [MiscController::class, 'getAppInfo']);
 
-Route::get('/db', [MigrationController::class, 'index']);
+// Database Routes
+Route::prefix('/db')->group(function () {
+    Route::get('/', [MigrationController::class, 'index']);
 
-    Route::get('/db/status', [MigrationController::class, 'getMigrations']);
-    Route::post('/db/migrate', [MigrationController::class, 'runMigrations']);
-    Route::post('/db/rollback', [MigrationController::class, 'rollbackMigrations']);
-    Route::post('/db/seed', [MigrationController::class, 'runSeeds']);
+    Route::get('/status', [MigrationController::class, 'getMigrations']);
+    Route::post('/migrate', [MigrationController::class, 'runMigrations']);
+    Route::post('/rollback', [MigrationController::class, 'rollbackMigrations']);
+    Route::post('/seed', [MigrationController::class, 'runSeeds']);
+});
 
+// Token Routes
 Route::post('/token', [TokenController::class, 'getMobileToken']);
 
+// User Auth Routes
 Route::post('/register', [RegisteredUserController::class, 'store'])
     ->middleware('guest')
     ->name('register');
@@ -58,9 +74,40 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
-
+// User Routes
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
-
 });
 
+Route::group(['middleware' => 'auth:sanctum'], function () {
+
+    Route::prefix('/transactions')->group(function () {
+        Route::get('/{id}', [TransactionController::class, 'show']);
+        Route::put('/{id}', [TransactionController::class, 'update']);
+        Route::delete('/{id}', [TransactionController::class, 'destroy']);
+    });
+});
+
+// SuperAdmin routes
+Route::group(['middleware' => 'auth:sanctum,super_admin'], function () {
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+
+    // Disable currency from exchange
+    // Route::post('/disable-currency', [CurrencyController::class, 'disableCurrency']);
+
+    // Enable currency from exchange
+    // Route::post('/enable-currency', [CurrencyController::class, 'enableCurrency']);
+});
+
+// Admin routes
+Route::group(['middleware' => 'auth:sanctum,admin'], function () {
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+
+    // Suspend user
+    // Route::post('/suspend-user', [UserController::class, 'suspendUser']);
+
+    // Unsuspend user
+    // Route::post('/unsuspend-user', [UserController::class, 'unsuspendUser']);
+});

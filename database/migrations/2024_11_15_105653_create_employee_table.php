@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['admin', 'support', 'accountant', 'developer']);
             $table->enum('status', ['active', 'suspended', 'banned']);
-
         });
     }
 

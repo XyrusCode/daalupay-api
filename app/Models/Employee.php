@@ -4,7 +4,9 @@ namespace DaaluPay\Models;
 
 use DaaluPay\Models\Traits\UuidTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-class Employee {
+
+class Employee
+{
     use UuidTrait;
     use HasFactory;
 

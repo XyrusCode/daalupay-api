@@ -2,34 +2,29 @@
 
 namespace DaaluPay\Models;
 
+use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use DaaluPay\Models\Traits\UuidTrait;
-use DaaluPay\Models\User;
 
-class Payment extends BaseModel
+class Wallet extends Model
 {
+        use UuidTrait;
+    /** @use HasFactory<\Database\Factories\WalletFactory> */
     use HasFactory;
-
-    // use UuidTrait;
-
-    protected $table = 'payments';
-
-    protected $hidden = [
-        'updated_at',
-    ];
+    use HasApiTokens;
+    use SoftDeletes;
 
     protected $fillable = [
-        'name',
-        'amount',
-        'method',
-        'type',
-        'channel',
-        'status',
+        'balance',
+        'currency',
+        'user_id',
     ];
 
     /**
-     * Get the user that made the payment.
+     * Get the user that owns the wallet.
      *
      * @return BelongsTo
      */

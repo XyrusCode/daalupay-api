@@ -8,17 +8,18 @@ namespace DaaluPay\Models;
 
 class Activity extends BaseModel
 {
-	protected $connection = 'mongodb';
-	protected $collection = 'activities';
-	protected $primaryKey = 'user_id';
+    protected $connection = 'mongodb';
+    protected $collection = 'activities';
+    protected $primaryKey = 'user_id';
 
-	protected $guarded = [];
+    protected $guarded = [];
 
-	protected $hidden = [
-		'user_id',
-		'updated_at',
-		'created_at',
-		'id',
-		'_id'
-	];
+    // Hide sensitive fields
+    protected $hidden = [
+        'user_id',
+        'updated_at',
+        'created_at',
+        'id',
+        '_id'
+    ];
 }

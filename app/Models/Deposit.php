@@ -6,7 +6,9 @@ use DaaluPay\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use DaaluPay\Models\Traits\UuidTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-class Deposit extends BaseModel {
+
+class Deposit extends BaseModel
+{
     use HasFactory;
     use UuidTrait;
 
@@ -25,11 +27,23 @@ class Deposit extends BaseModel {
         'channel',
     ];
 
-    public function user(): BelongsTo {
+    /**
+     * Get the user that owns the deposit.
+     *
+     * @return BelongsTo
+     */
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function payment(): BelongsTo {
+    /**
+     * Get the payment that owns the deposit.
+     *
+     * @return BelongsTo
+     */
+    public function payment(): BelongsTo
+    {
         return $this->belongsTo(Payment::class, 'payment_id', 'id');
     }
 }

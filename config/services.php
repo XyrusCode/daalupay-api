@@ -35,14 +35,14 @@ return [
         ],
     ],
 
-'opay' => [
+    'opay' => [
     'merchant_id' => env('OPAY_MERCHANT_ID'),
     'public_key' => env('OPAY_PUBLIC_KEY'),
     'url' => env('OPAY_URL'),
     'query_merchant_id' => env('OPAY_QUERY_MERCHANT_ID'),
     'secret_key' => env('OPAY_QUERY_SECRET_KEY'),
     'query_url' => env('OPAY_QUERY_URL'),
-],
+    ],
 
 
 
