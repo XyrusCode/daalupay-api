@@ -2,7 +2,7 @@
 
 namespace DaaluPay\Http\Controllers\Auth;
 
-use DaaluPay\Http\Controllers\Controller;
+use DaaluPay\Http\Controllers\BaseController;
 use DaaluPay\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use DaaluPay\Models\User;
 
-class AuthenticatedSessionController extends Controller
+class AuthenticatedSessionController extends BaseController
 {
     /**
      * Handle an incoming authentication request.

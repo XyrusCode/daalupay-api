@@ -13,19 +13,41 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // CSRF token validation, except for the /transactions route
         $middleware->validateCsrfTokens(except: [
-        '/transactions',
-    ]);
+            '/transactions',
+        ]);
+
+        //  $middleware->trustHosts(at: ['daalupay.internal']);
+
+        // Ensure frontend requests are stateful (Sanctum middleware)
         $middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
 
+        // // Force HTTPS for all routes (HSTS)
+        // $middleware->prepend(\Illuminate\Http\Middleware\TrustProxies::class);
+
+        // Rate limiting: apply to API routes globally
+        $middleware->throttle('api')->prepend();
+
+        // Content Security Policy (CSP) headers
+        $middleware->after(function ($request, $response) {
+            $response->headers->set('Content-Security-Policy', 'default-src https://yourdomain.com;');
+        });
+
+        // Enforce HTTPS with Strict-Transport-Security (HSTS)
+        $middleware->after(function ($request, $response) {
+            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        });
+
+        // Aliases for verified email middleware
         $middleware->alias([
             'verified' => \DaaluPay\Http\Middleware\EnsureEmailIsVerified::class,
         ]);
-
-        //
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        // Integrating Sentry for error handling
         Integration::handles($exceptions);
-    })->create();
+    })
+    ->create();

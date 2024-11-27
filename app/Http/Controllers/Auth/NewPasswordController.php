@@ -2,7 +2,7 @@
 
 namespace DaaluPay\Http\Controllers\Auth;
 
-use DaaluPay\Http\Controllers\Controller;
+use DaaluPay\Http\Controllers\BaseController;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 
-class NewPasswordController extends Controller
+class NewPasswordController extends BaseController
 {
     /**
      * Handle an incoming new password request.

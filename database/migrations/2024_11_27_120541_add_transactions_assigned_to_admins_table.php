@@ -11,15 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('payments', function (Blueprint $table) {
-            $table->decimal('amount', 10, 2)->after('channel');
+        Schema::table('admins', function (Blueprint $table) {
+            $table->unsignedInteger('transactions_assigned')->default(0); // Tracks the workload
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::table('payments', function (Blueprint $table) {
-            $table->dropColumn('amount');
+        Schema::table('admins', function (Blueprint $table) {
+            $table->dropColumn('transactions_assigned');
         });
     }
 };

@@ -12,4 +12,22 @@ class Admin extends Authenticatable
     use Notifiable;
 
     protected $fillable = ['name', 'email', 'password'];
+
+    public function getAvailableAdmin()
+    {
+    // Define a threshold for what qualifies as "free" (optional)
+        $freeThreshold = 5;
+
+    // Find the free admin
+        $freeAdmin = Admin::where('transactions_assigned', '<', $freeThreshold)
+        ->orderBy('transactions_assigned', 'asc')
+        ->first();
+
+        if ($freeAdmin) {
+            return $freeAdmin;
+        }
+
+    // If no free admins, find the admin with the least number of transactions
+        return Admin::orderBy('transactions_assigned', 'asc')->first();
+    }
 }

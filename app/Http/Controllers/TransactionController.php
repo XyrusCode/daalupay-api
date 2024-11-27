@@ -66,6 +66,9 @@ class TransactionController extends BaseController
             'status' => 'required|string|in:pending,completed,canceled',
             ]);
 
+                    // Get the available admin
+            $admin = $this->getAvailableAdmin();
+
             // Create the payment record
             $payment = Payment::create([
             'name' => $validated['name'],
@@ -88,8 +91,12 @@ class TransactionController extends BaseController
             'transaction_date' => $validated['transaction_date'],
             'status' => $validated['status'],
             'user_id' => $user->id,
+            'admin_id' => $admin->id, // Assign admin
             'payment_id' => $payment->id, // Link the transaction to the created payment
             ]);
+
+                    // Increment the admin's workload
+            $admin->increment('transactions_assigned');
 
             // Update the user's wallet balance
             if ($transaction->type === 'withdrawal') {

@@ -31,6 +31,7 @@ use DaaluPay\Http\Controllers\Auth\VerifyEmailController;
 
 // App Info
 Route::get('/', [MiscController::class, 'getAppInfo']);
+Route::get('/docs', [MiscController::class, 'getApiDocs']);
 
 // Database Routes
 Route::prefix('/db')->group(function () {
@@ -74,16 +75,24 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
-// User Routes
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
 
+    Route::prefix('/user')->group(function () {
+        Route::get(
+            '/',
+            function (Request $request) {
+                return $request->user();
+            }
+        );
+        Route::get('/{id}', [TransactionController::class, 'show']);
+        Route::post('/', [TransactionController::class, 'store']);
+        Route::delete('/{id}', [TransactionController::class, 'destroy']);
+    });
+
     Route::prefix('/transactions')->group(function () {
         Route::get('/{id}', [TransactionController::class, 'show']);
-        Route::put('/{id}', [TransactionController::class, 'update']);
+        Route::post('/', [TransactionController::class, 'store']);
         Route::delete('/{id}', [TransactionController::class, 'destroy']);
     });
 });

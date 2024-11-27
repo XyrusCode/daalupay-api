@@ -5,10 +5,10 @@ namespace DaaluPay\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use DaaluPay\Http\Controllers\Controller;
+use DaaluPay\Http\Controllers\BaseController;
 use DaaluPay\Models\User;
 
-class TokenController extends Controller
+class TokenController extends BaseController
 {
         /**
      * Get a token for a user.

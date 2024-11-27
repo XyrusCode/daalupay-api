@@ -2,13 +2,13 @@
 
 namespace DaaluPay\Http\Controllers\Auth;
 
-use DaaluPay\Http\Controllers\Controller;
+use DaaluPay\Http\Controllers\BaseController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 
-class PasswordResetLinkController extends Controller
+class PasswordResetLinkController extends BaseController
 {
     /**
      * Handle an incoming password reset link request.

@@ -1,9 +1,13 @@
+<?php
+
+namespace DaaluPay\Http\Controllers;
+
 use Illuminate\Http\Request;
 use DaaluPay\Models\Payment;
 use DaaluPay\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 
-class PaymentController extends Controller
+class PaymentController extends BaseController
 {
     /**
      * Create a payment and assign it to a transaction.

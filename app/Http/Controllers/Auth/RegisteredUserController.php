@@ -2,7 +2,7 @@
 
 namespace DaaluPay\Http\Controllers\Auth;
 
-use DaaluPay\Http\Controllers\Controller;
+use DaaluPay\Http\Controllers\BaseController;
 use DaaluPay\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -13,7 +13,7 @@ use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Mail;
 use DaaluPay\Mail\NewUser;
 
-class RegisteredUserController extends Controller
+class RegisteredUserController extends BaseController
 {
     /**
      * Handle an incoming registration request.
