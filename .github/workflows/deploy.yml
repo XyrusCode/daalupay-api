@@ -1,0 +1,62 @@
+name: API Deployment
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  deploy-laravel:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Set up PHP
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, bcmath, openssl
+
+    # Check out the repository
+    - uses: actions/checkout@v4
+
+    # Copy the .env file or fallback to .env.example
+    - name: Copy .env
+      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+    # Update the environment to production
+    - name: Set APP_ENV to production
+      run: sed -i 's/APP_ENV=local/APP_ENV=production/' .env
+
+    # Install dependencies
+    - name: Install Composer Dependencies
+      run: composer install --no-dev --optimize-autoloader
+
+    # Optimize the application
+    - name: Optimize the Laravel Application
+      run: |
+        php artisan config:cache
+        php artisan route:cache
+        php artisan view:cache
+
+    # Set proper permissions for storage and cache
+    - name: Set Directory Permissions
+      run: chmod -R 775 storage bootstrap/cache
+
+    # Generate application key
+    - name: Generate Application Key
+      run: php artisan key:generate --force
+
+    # Run autoload dump
+    - name: Composer Autoload Dump
+      run: composer dump-autoload --optimize
+
+    # Create a zip folder for the entire application
+    - name: Package Application into Zip
+      run: |
+        zip -r daalupay-api.zip . -x '*.git*' 'vendor/*' 'node_modules/*' 'tests/*'
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: daalupay-api-zip
+        path: daalupay-api.zip
