@@ -29,17 +29,17 @@ return Application::configure(basePath: dirname(__DIR__))
         // $middleware->prepend(\Illuminate\Http\Middleware\TrustProxies::class);
 
         // Rate limiting: apply to API routes globally
-        $middleware->throttle('api')->prepend();
+        // $middleware->throttle('api')->prepend();
 
-        // Content Security Policy (CSP) headers
-        $middleware->after(function ($request, $response) {
-            $response->headers->set('Content-Security-Policy', 'default-src https://yourdomain.com;');
-        });
+        // // Content Security Policy (CSP) headers
+        // $middleware->after(function ($request, $response) {
+        //     $response->headers->set('Content-Security-Policy', 'default-src https://yourdomain.com;');
+        // });
 
-        // Enforce HTTPS with Strict-Transport-Security (HSTS)
-        $middleware->after(function ($request, $response) {
-            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-        });
+        // // Enforce HTTPS with Strict-Transport-Security (HSTS)
+        // $middleware->after(function ($request, $response) {
+        //     $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        // });
 
         // Aliases for verified email middleware
         $middleware->alias([
