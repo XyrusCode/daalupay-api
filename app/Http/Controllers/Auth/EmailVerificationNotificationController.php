@@ -22,4 +22,26 @@ class EmailVerificationNotificationController extends BaseController
 
         return response()->json(['status' => 'verification-link-sent']);
     }
+
+    /**
+     * Resend a new verificcation code
+     */
+    public function resendCode(Request $request){
+         return $this->process(function () use ($request) {
+
+            // Generate a new code for the user
+            $code = $request->user()->createVerificationCode();
+
+            // Send the new verification code to the user's email
+            $request->user()->sendVerificationCode($code);
+
+            return $this->getResponse(
+                status: 'success',
+                message: 'Verification code has been sent to your email',
+                status_code: 200
+            );
+        });
+    }
+
+
 }

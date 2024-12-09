@@ -9,6 +9,59 @@ use DaaluPay\Models\PaymentMethod;
 
 class SuperAdminController extends AdminController
 {
+        /**
+     * Get all admins.
+     */
+    public function getAllAdmins(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $admins = Admin::query();
+
+            // Optionally filter admins by search or status
+            if ($request->filled('search')) {
+                $search = $request->input('search');
+                $admins->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                });
+            }
+
+            if ($request->filled('status')) {
+                $admins->where('status', $request->input('status'));
+            }
+
+            $admins = $admins->paginate(15); // Paginate results
+
+            return $this->getResponse(
+                data: $admins,
+                message: 'Admins retrieved successfully'
+            );
+        });
+    }
+
+    /**
+     * Get a single admin by ID.
+     */
+    public function getAdmin(Request $request, $id)
+    {
+        return $this->process(function () use ($id) {
+            $admin = Admin::find($id);
+
+            if (!$admin) {
+                return $this->getResponse(
+                    status: 'error',
+                    message: 'Admin not found',
+                    status_code: 404
+                );
+            }
+
+            return $this->getResponse(
+                data: $admin,
+                message: 'Admin retrieved successfully'
+            );
+        });
+    }
+
     /**
      * Suspend an admin.
      */
@@ -77,6 +130,25 @@ class SuperAdminController extends AdminController
             return $this->getResponse(
                 data: $admin,
                 message: 'Admin created successfully'
+            );
+        });
+    }
+
+    /**
+     * Get all currencies.
+     */
+    public function getAllCurrencies(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $currencies = Currency::query();
+
+            if ($request->filled('status')) {
+                    $currencies->where('status', $request->input('status'));
+            }
+
+            return $this->getResponse(
+                data: $currencies,
+                message: 'Currencies retrieved successfully'
             );
         });
     }

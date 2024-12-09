@@ -10,12 +10,14 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__.'/../routes/api.php',
         // api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
+        channels: __DIR__.'/../routes/channels.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
         // CSRF token validation, except for the /transactions route
         $middleware->validateCsrfTokens(except: [
-            '/transactions',
+            '/login',
+            '/user/*'
         ]);
 
         //  $middleware->trustHosts(at: ['daalupay.internal']);
@@ -23,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Ensure frontend requests are stateful (Sanctum middleware)
         $middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            //  \DaaluPay\Http\Middleware\LogUserActivity::class,
         ]);
 
         // // Force HTTPS for all routes (HSTS)
@@ -43,7 +46,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Aliases for verified email middleware
         $middleware->alias([
+
             'verified' => \DaaluPay\Http\Middleware\EnsureEmailIsVerified::class,
+            // 'logActivity' => \DaaluPay\Http\Middleware\LogUserActivity::class,
+             'verify.browser' => \DaaluPay\Http\Middleware\VerifyBrowserId::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

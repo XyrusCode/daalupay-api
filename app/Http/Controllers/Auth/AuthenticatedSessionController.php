@@ -6,6 +6,7 @@ use DaaluPay\Http\Controllers\BaseController;
 use DaaluPay\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -16,13 +17,20 @@ class AuthenticatedSessionController extends BaseController
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): Response
+    public function store(LoginRequest $request): JsonResponse
     {
+        return $this->process(function () use ($request){
         $request->authenticate();
 
         $request->session()->regenerate();
 
-        return response()->noContent();
+        $user = $request->user();
+
+            return $this->getResponse(
+                data: $user,
+                message: 'Login Success'
+            );
+        });
     }
 
     /**
@@ -40,7 +48,7 @@ class AuthenticatedSessionController extends BaseController
     }
 
     public function iosToken(Request $request): Response
-    {
+    {   return $this->process(function () use ($request){
         $request->validate([
         'email' => 'required|email',
         'password' => 'required',
@@ -55,6 +63,12 @@ class AuthenticatedSessionController extends BaseController
             ]);
         }
 
-        return $user->createToken($request->device_name)->plainTextToken;
+            return $this->getResponse(
+                data: $user->createToken($request->device_name)->plainTextToken,
+                message: 'Login Success'
+            );
+            $request->session()->regenerate();
+
+        });
     }
 }

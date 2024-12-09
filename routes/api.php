@@ -2,14 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use DaaluPay\Http\Controllers\AuthController;
 use DaaluPay\Http\Controllers\UserController;
-use DaaluPay\Http\Controllers\ModuleController;
 use DaaluPay\Http\Controllers\TransactionController;
-use DaaluPay\Http\Controllers\AccountController;
 use DaaluPay\Http\Controllers\MigrationController;
 use DaaluPay\Http\Controllers\MiscController;
-use DaaluPay\Http\Controllers\PaymentController;
+use DaaluPay\Http\Controllers\SuperAdminController;
 use DaaluPay\Http\Controllers\Auth\TokenController;
 use DaaluPay\Http\Controllers\Auth\AuthenticatedSessionController;
 use DaaluPay\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -52,7 +49,6 @@ Route::post('/register', [RegisteredUserController::class, 'store'])
     ->name('register');
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-    ->middleware('guest')
     ->name('login');
 
 Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
@@ -85,28 +81,20 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
                 return $request->user();
             }
         );
-        Route::get('/{id}', [TransactionController::class, 'show']);
-        Route::post('/', [TransactionController::class, 'store']);
-        Route::delete('/{id}', [TransactionController::class, 'destroy']);
+        Route::put('/{id}', [RegisteredUserController::class, 'update']);
+
+        Route::get('/{id}', [RegisteredUserController::class, 'show']);
+        // Route::post('/', [RegisteredUserController::class, 'store']);
+        Route::put('/{id}', [RegisteredUserController::class, 'update']);
+        // Route::delete('/{id}', [RegisteredUserController::class, 'destroy']);
     });
 
     Route::prefix('/transactions')->group(function () {
-        Route::get('/{id}', [TransactionController::class, 'show']);
+        Route::get('/', [TransactionController::class, 'index']);
+          Route::get('/{id}', [TransactionController::class, 'show']);
         Route::post('/', [TransactionController::class, 'store']);
         Route::delete('/{id}', [TransactionController::class, 'destroy']);
     });
-});
-
-// SuperAdmin routes
-Route::group(['middleware' => 'auth:sanctum,super_admin'], function () {
-    Route::get('/users', [UserController::class, 'index']);
-    Route::post('/users', [UserController::class, 'store']);
-
-    // Disable currency from exchange
-    // Route::post('/disable-currency', [CurrencyController::class, 'disableCurrency']);
-
-    // Enable currency from exchange
-    // Route::post('/enable-currency', [CurrencyController::class, 'enableCurrency']);
 });
 
 // Admin routes
@@ -115,8 +103,19 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
     Route::post('/users', [UserController::class, 'store']);
 
     // Suspend user
-    // Route::post('/suspend-user', [UserController::class, 'suspendUser']);
+    Route::post('/suspend-user', [UserController::class, 'suspendUser']);
 
     // Unsuspend user
-    // Route::post('/unsuspend-user', [UserController::class, 'unsuspendUser']);
+    Route::post('/unsuspend-user', [UserController::class, 'unsuspendUser']);
+});
+
+Route::middleware(['auth:sanctum,super_admin, verify.browser'])->group(function () {
+    Route::get('/admins', [SuperAdminController::class, 'getAllAdmins']);
+    Route::get('/admins/{id}', [SuperAdminController::class, 'getAdmin']);
+
+        // Disable currency from exchange
+    Route::post('/disable-currency', [SuperAdminController::class, 'disableCurrency']);
+
+    // Enable currency from exchange
+    Route::post('/enable-currency', [SuperAdminController::class, 'enableCurrency']);
 });

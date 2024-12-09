@@ -73,11 +73,11 @@ class User extends Authenticatable
     /**
      * Get the wallet associated with the user.
      *
-     * @return HasOne
+     * @return HasMany
      */
-    public function wallet(): HasOne
+    public function wallet(): HasMany
     {
-        return $this->hasOne(Wallet::class);
+        return $this->hasMany(Wallet::class);
     }
 
     /**
