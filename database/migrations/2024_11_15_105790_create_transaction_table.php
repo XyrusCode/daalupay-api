@@ -24,7 +24,7 @@ return new class extends Migration
             $table->date('transaction_date');
             $table->enum('status', ['pending', 'completed', 'failed']);
             $table->foreignId('payment_id')->constrained('payments');
-            $table->foreignId('admin_id')->constrained('employees');
+            $table->foreignId('admin_id')->constrained('admins');
             $table->timestamps();
         });
     }

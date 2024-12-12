@@ -5,6 +5,7 @@ namespace DaaluPay\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class VerifyBrowserId
@@ -36,12 +37,17 @@ class VerifyBrowserId
 
     private function getSession($user, $browserId):?object {
         // Implement your database query here
-        // Example: return Session::where('user_id', $user->id)->where('browser_id', $browserId)->first();
-        return null;
+        return DB::table('sessions')
+            ->where('user_id', $user->id)
+            ->where('browser_id', $browserId)
+            ->first();
     }
 
     private function updateSession($user, $browserId, $newSessionId): void {
         // Implement your database update here
-        // Example: Session::where('user_id', $user->id)->where('browser_id', $browserId)->update(['id' => $newSessionId]);
+        DB::insert(
+            'INSERT INTO sessions (user_id, browser_id, id) VALUES (?, ?,?)',
+            [$user->id, $browserId, $newSessionId]
+        );
     }
 }

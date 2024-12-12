@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 // use DaaluPay\Http\Traits\AdminTrait;
 use DaaluPay\Models\User;
-
+use DaaluPay\Models\Wallet;
 class UserController extends BaseController
 {
     /**
@@ -17,10 +17,13 @@ class UserController extends BaseController
      */
     public function get(Request $request)
     {
-        $user = $request->user();
-        $user->load('wallet');
+        $this->process(function() use ($request) {
+            // Load wallets and transactions
+            $user = $request->user();
+            $user->load('wallets', 'transactions');
 
-        return $this->getResponse('success', $user, 200);
+            return $this->getResponse('success', $user, 200);
+        }, true);
     }
 
     /**
@@ -30,16 +33,13 @@ class UserController extends BaseController
      */
     public function update(Request $request)
     {
-
-        $user = $request->user();
-
-        $user->first_name = $request->first_name ?? $user->first_name;
-        $user->last_name = $request->last_name ?? $user->last_name;
-        $user->phone_number = $request->phone_number ?? $user->phone_number;
+        $this->process(function() use ($request) {
+            $user = $request->user();
 
         $user->save();
         $message = 'User updated successfully';
-        return $this->getResponse('success', null, 200, $message);
+            return $this->getResponse('success', null, 200, $message);
+        }, true);
     }
 
     /**
@@ -49,6 +49,7 @@ class UserController extends BaseController
      */
     public function updatePassword(Request $request)
     {
+        $this->process(function() use ($request) {
         $request->validate([
             'old_password' => ['required', 'string'],
             'new_password' => ['required', 'string', 'min:8'], // TODO: Add more validation rules
@@ -65,84 +66,63 @@ class UserController extends BaseController
         $user->password = Hash::make($request->new_password);
 
         return $this->getResponse('success', null, 200, 'Password updated successfully');
+
+    }, true);
+}
+
+
+
+    /**
+     * Create a wallet for a user in a currency
+     */
+    public function createWallet(Request $request)
+    {
+       $this->process(function() use ($request) {
+        $user = $request    ->user();
+        $currency = $request->currency;
+        $balance = 0;
+
+        Wallet::create([
+            'user_id' => $user->id,
+            'currency' => $currency,
+            'balance' => $balance,
+        ]);
+       }, true);
     }
 
     /**
-     * Get a user's details
-     * @param Request $request
-     * @param int $user_id
-     * @return JsonResponse
+     * Get a user's wallets
      */
-    public function getDetails(Request $request, $user_id)
+    public function getWallets(Request $request)
     {
-        $this->is_admin($request);
-
-        $user = User::find($user_id);
-
-        if (!$user) {
-            $message = 'User does not exist';
-            return $this->getResponse('failure', null, 404, $message);
-        }
-
-        return $this->getResponse('success', $user, 200);
+        $this->process(function() use ($request) {
+            $user = $request->user();
+            $wallets = $user->wallets;
+            return $this->getResponse('success', $wallets, 200);
+        }, true);
     }
 
     /**
-     * Update a user's details
-     * @param Request $request
-     * @param int $user_id
-     * @return JsonResponse
+     * Get a user's transactions
      */
-    public function updateDetails(Request $request, $user_id)
+    public function getTransactions(Request $request)
     {
-        $this->is_admin($request);
-
-        $user = User::find($user_id);
-
-        if (!$user) {
-            $message = 'User does not exist';
-            return $this->getResponse('failure', null, 404, $message);
-        }
-
-        $user->first_name = $request->first_name ?? $user->first_name;
-        $user->last_name = $request->last_name ?? $user->last_name;
-        $user->phone_number = $request->phone_number ?? $user->phone_number;
-        $user->role = $request->role ?? $user->role;
-
-        $user->save();
-
-        $message = 'User updated successfully';
-        return $this->getResponse('success', null, 200, $message);
+        $this->process(function() use ($request) {
+            $user = $request->user();
+            $transactions = $user->transactions;
+            return $this->getResponse('success', $transactions, 200);
+        }, true);
     }
 
     /**
-     * Delete a user
-     * @param Request $request
-     * @param int $user_id
-     * @return JsonResponse
+     * Get a user's swaps
      */
-    public function delete(Request $request, $user_id)
+    public function getSwaps(Request $request)
     {
-        $this->is_admin($request);
-
-        $user = User::find($user_id);
-
-        if (!$user) {
-            $message = 'User does not exist';
-            return $this->getResponse('failure', null, 404, $message);
-        }
-
-        $user->delete();
-
-        $message = 'User deleted successfully';
-        return $this->getResponse('failure', null, 200, $message);
-    }
-
-    /**
-     * Suspend a user
-     */
-    public function suspendUser(Request $request, $user_id)
-    {
-        $this->is_admin($request);
+        $this->process(function() use ($request) {
+            $user = $request->user();
+            $swaps = $user->swaps;
+            return $this->getResponse('success', $swaps, 200);
+        }, true);
     }
 }

@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use DaaluPay\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-
+use Database\Seeders\WalletSeeder;
+use Database\Seeders\TransactionSeeder;
+use Database\Seeders\PaymentMethodSeeder;
+use Database\Seeders\CountryCurrencySeeder;
+use Database\Seeders\PaymentSeeder;
+use Database\Seeders\SwapSeeder;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -16,16 +16,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('users')->insert([
-            'first_name' => 'Test',
-            'last_name' => 'User',
-            'email' => 'test@example.com',
-            'phone' => '1234567890',
-            'email_verified_at' => now(),
-            'password' => Hash::make('password'),
-            'remember_token' => Str::random(10),
-            'created_at' => now(),
-            'updated_at' => now(),
+        $this->call([
+            // PaymentMethodSeeder::class,
+            // CountryCurrencySeeder::class,
+            WalletSeeder::class,
+            // UserSeeder::class,
+            // AdminSeeder::class,
+            //  PaymentSeeder::class,
+            // TransactionSeeder::class,
+            // SwapSeeder::class
+
         ]);
     }
 }

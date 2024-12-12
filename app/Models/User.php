@@ -16,11 +16,25 @@ use DaaluPay\Models\Traits\UuidTrait;
 class User extends Authenticatable
 {
     use UuidTrait;
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<\Database\Factories\AdminFactory> */
     use HasFactory;
     use Notifiable;
     use HasApiTokens;
     use SoftDeletes;
+
+    /**
+     * Indicates if the model's ID is auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
+     * The data type of the auto-incrementing ID.
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
 
     /**
      * The attributes that are mass assignable.
@@ -75,7 +89,7 @@ class User extends Authenticatable
      *
      * @return HasMany
      */
-    public function wallet(): HasMany
+    public function wallets(): HasMany
     {
         return $this->hasMany(Wallet::class);
     }
@@ -98,5 +112,15 @@ class User extends Authenticatable
     public function deposits(): HasMany
     {
         return $this->hasMany(Deposit::class);
+    }
+
+    /**
+     * Get the swaps for the user.
+     *
+     * @return HasMany
+     */
+    public function swaps(): HasMany
+    {
+        return $this->hasMany(Swap::class);
     }
 }

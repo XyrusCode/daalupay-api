@@ -24,7 +24,7 @@ class AuthenticatedSessionController extends BaseController
 
         $request->session()->regenerate();
 
-        $user = $request->user();
+        $user = $request->user()->load('wallets', 'transactions');
 
             return $this->getResponse(
                 data: $user,

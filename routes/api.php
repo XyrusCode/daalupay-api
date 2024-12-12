@@ -6,7 +6,6 @@ use DaaluPay\Http\Controllers\UserController;
 use DaaluPay\Http\Controllers\TransactionController;
 use DaaluPay\Http\Controllers\MigrationController;
 use DaaluPay\Http\Controllers\MiscController;
-use DaaluPay\Http\Controllers\SuperAdminController;
 use DaaluPay\Http\Controllers\Auth\TokenController;
 use DaaluPay\Http\Controllers\Auth\AuthenticatedSessionController;
 use DaaluPay\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -14,7 +13,9 @@ use DaaluPay\Http\Controllers\Auth\NewPasswordController;
 use DaaluPay\Http\Controllers\Auth\PasswordResetLinkController;
 use DaaluPay\Http\Controllers\Auth\RegisteredUserController;
 use DaaluPay\Http\Controllers\Auth\VerifyEmailController;
-
+use DaaluPay\Http\Controllers\SwapController;
+use DaaluPay\Http\Controllers\SuperAdminController;
+use DaaluPay\Http\Controllers\AdminController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -74,39 +75,35 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
 
-    Route::prefix('/user')->group(function () {
-        Route::get(
-            '/',
-            function (Request $request) {
-                return $request->user();
-            }
-        );
-        Route::put('/{id}', [RegisteredUserController::class, 'update']);
-
-        Route::get('/{id}', [RegisteredUserController::class, 'show']);
-        // Route::post('/', [RegisteredUserController::class, 'store']);
-        Route::put('/{id}', [RegisteredUserController::class, 'update']);
-        // Route::delete('/{id}', [RegisteredUserController::class, 'destroy']);
+Route::prefix('/user')->group(function () {
+        Route::get('/',[UserController::class, 'get']);
+        Route::post('/', [UserController::class, 'update']);
+        Route::post('/', [UserController::class, 'updatePassword']);
+        Route::post('/wallets', [UserController::class, 'createWallet']);
+        Route::get('/wallets', [UserController::class, 'getWallets']);
+        Route::get('/transactions', [UserController::class, 'getTransactions']);
+        Route::get('/swaps', [UserController::class, 'getSwaps']);
+        Route::post('/swaps', [SwapController::class, 'create']);
+        Route::get('/swaps/{id}', [SwapController::class, 'get']);
     });
 
     Route::prefix('/transactions')->group(function () {
         Route::get('/', [TransactionController::class, 'index']);
           Route::get('/{id}', [TransactionController::class, 'show']);
         Route::post('/', [TransactionController::class, 'store']);
-        Route::delete('/{id}', [TransactionController::class, 'destroy']);
     });
 });
 
 // Admin routes
 Route::group(['middleware' => 'auth:sanctum,admin'], function () {
-    Route::get('/users', [UserController::class, 'index']);
-    Route::post('/users', [UserController::class, 'store']);
+    Route::get('/users', [AdminController::class, 'index']);
+    Route::post('/users', [AdminController::class, 'store']);
 
     // Suspend user
-    Route::post('/suspend-user', [UserController::class, 'suspendUser']);
+    Route::post('/suspend-user', [AdminController::class, 'suspendUser']);
 
     // Unsuspend user
-    Route::post('/unsuspend-user', [UserController::class, 'unsuspendUser']);
+    Route::post('/unsuspend-user', [AdminController::class, 'unsuspendUser']);
 });
 
 Route::middleware(['auth:sanctum,super_admin, verify.browser'])->group(function () {

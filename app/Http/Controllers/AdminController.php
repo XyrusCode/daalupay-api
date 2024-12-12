@@ -131,4 +131,59 @@ class AdminController extends BaseController
             );
         });
     }
+
+        /**
+     * Delete a user
+     * @param Request $request
+     * @param int $user_id
+     * @return JsonResponse
+     */
+    public function delete(Request $request, $user_id)
+    {
+        $this->process(function() use ($request, $user_id) {
+        $this->is_admin($request);
+
+        $user = User::find($user_id);
+
+        if (!$user) {
+            $message = 'User does not exist';
+            return $this->getResponse('failure', null, 404, $message);
+        }
+
+        $user->delete();
+
+        $message = 'User deleted successfully';
+        return $this->getResponse('failure', null, 200, $message);
+    }, true);
+    }
+
+        /**
+     * Update a user's details
+     * @param Request $request
+     * @param int $user_id
+     * @return JsonResponse
+     */
+    public function updateDetails(Request $request, $user_id)
+    {
+        $this->process(function() use ($request, $user_id) {
+        $this->is_admin($request);
+
+        $user = User::find($user_id);
+
+        if (!$user) {
+            $message = 'User does not exist';
+            return $this->getResponse('failure', null, 404, $message);
+        }
+
+        $user->first_name = $request->first_name ?? $user->first_name;
+        $user->last_name = $request->last_name ?? $user->last_name;
+        $user->phone_number = $request->phone_number ?? $user->phone_number;
+        $user->role = $request->role ?? $user->role;
+
+        $user->save();
+
+        $message = 'User updated successfully';
+        return $this->getResponse('success', null, 200, $message);
+    }, true);
+    }
 }

@@ -11,11 +11,13 @@ use DaaluPay\Models\Traits\UuidTrait;
 
 class Wallet extends Model
 {
-        use UuidTrait;
+        // use UuidTrait;
     /** @use HasFactory<\Database\Factories\WalletFactory> */
     use HasFactory;
     use HasApiTokens;
     use SoftDeletes;
+
+    protected $table = 'wallets';
 
     protected $fillable = [
         'balance',

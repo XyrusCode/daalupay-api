@@ -9,13 +9,11 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('countries', function (Blueprint $table) {
-            $table->id();
-            $table->string('name'); // Country name
-            $table->string('code', 3)->unique(); // ISO 3166-1 alpha-3 code
-            $table->timestamps();
+        // currency_code should not be unique
+        Schema::table('currencies', function (Blueprint $table) {
+            $table->dropUnique(['code']);
         });
     }
 
@@ -24,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('countries');
+        //
     }
 };

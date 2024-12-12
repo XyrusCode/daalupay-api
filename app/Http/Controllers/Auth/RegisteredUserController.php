@@ -4,6 +4,7 @@ namespace DaaluPay\Http\Controllers\Auth;
 
 use DaaluPay\Http\Controllers\BaseController;
 use DaaluPay\Models\User;
+use DaaluPay\Models\Wallet;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -32,6 +33,13 @@ class RegisteredUserController extends BaseController
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->string('password')),
+        ]);
+
+        //Create a naira wallet for the user
+        Wallet::create([
+            'user_id' => $user->id,
+            'currency' => 'NGN',
+            'balance' => 0,
         ]);
 
         Mail::to($user->email)->send(new NewUser($user));
