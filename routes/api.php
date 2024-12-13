@@ -29,7 +29,6 @@ use DaaluPay\Http\Controllers\AdminController;
 
 // App Info
 Route::get('/', [MiscController::class, 'getAppInfo']);
-Route::get('/docs', [MiscController::class, 'getApiDocs']);
 
 // Database Routes
 Route::prefix('/db')->group(function () {

@@ -15,6 +15,25 @@ use DaaluPay\Helpers\StatusCodeHelper;
 
 use function Sentry\captureException;
 
+use OpenApi\Annotations as OA;
+
+/**
+ * @OA\Info(
+ *     title="DaaluPay API",
+ *     version="1.0.0",
+ *     description="DaaluPay API Documentation",
+ *     @OA\Contact(
+ *         email="info@daalupay.com",
+ *         name="DaaluPay Support"
+ *     )
+ * )
+ *
+ */
+
+/**
+ * @OA\PathItem(path="/api")
+ */
+
 class BaseController extends Controller
 {
     use AuthorizesRequests;

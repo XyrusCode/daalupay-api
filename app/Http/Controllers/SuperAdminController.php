@@ -9,9 +9,7 @@ use DaaluPay\Models\PaymentMethod;
 
 class SuperAdminController extends AdminController
 {
-        /**
-     * Get all admins.
-     */
+
     public function getAllAdmins(Request $request)
     {
         return $this->process(function () use ($request) {
@@ -39,9 +37,7 @@ class SuperAdminController extends AdminController
         });
     }
 
-    /**
-     * Get a single admin by ID.
-     */
+
     public function getAdmin(Request $request, $id)
     {
         return $this->process(function () use ($id) {
@@ -62,9 +58,7 @@ class SuperAdminController extends AdminController
         });
     }
 
-    /**
-     * Suspend an admin.
-     */
+
     public function suspendAdmin(Request $request, Admin $admin)
     {
         return $this->process(function () use ($admin) {
@@ -85,9 +79,6 @@ class SuperAdminController extends AdminController
         });
     }
 
-    /**
-     * Reactivate an admin.
-     */
     public function reactivateAdmin(Request $request, Admin $admin)
     {
         return $this->process(function () use ($admin) {
@@ -108,9 +99,7 @@ class SuperAdminController extends AdminController
         });
     }
 
-    /**
-     * Add a new admin.
-     */
+
     public function addAdmin(Request $request)
     {
         return $this->process(function () use ($request) {
@@ -134,9 +123,7 @@ class SuperAdminController extends AdminController
         });
     }
 
-    /**
-     * Get all currencies.
-     */
+
     public function getAllCurrencies(Request $request)
     {
         return $this->process(function () use ($request) {
@@ -153,9 +140,7 @@ class SuperAdminController extends AdminController
         });
     }
 
-    /**
-     * Enable a currency for exchange.
-     */
+
     public function enableCurrency(Request $request, Currency $currency)
     {
         return $this->process(function () use ($currency) {
@@ -176,9 +161,7 @@ class SuperAdminController extends AdminController
         });
     }
 
-    /**
-     * Disable a currency for exchange.
-     */
+
     public function disableCurrency(Request $request, Currency $currency)
     {
         return $this->process(function () use ($currency) {
@@ -199,9 +182,7 @@ class SuperAdminController extends AdminController
         });
     }
 
-    /**
-     * Enable a payment method.
-     */
+
     public function enablePaymentMethod(Request $request, PaymentMethod $paymentMethod)
     {
         return $this->process(function () use ($paymentMethod) {
@@ -222,9 +203,7 @@ class SuperAdminController extends AdminController
         });
     }
 
-    /**
-     * Disable a payment method.
-     */
+
     public function disablePaymentMethod(Request $request, PaymentMethod $paymentMethod)
     {
         return $this->process(function () use ($paymentMethod) {

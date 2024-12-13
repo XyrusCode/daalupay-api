@@ -5,11 +5,14 @@ namespace DaaluPay\Http\Controllers;
 use Illuminate\Support\Facades\Artisan;
 
 class MigrationController extends BaseController
-{
+    {
+
+
     public function index()
     {
         return view('migration'); // Keep existing view logic
     }
+
 
     public function getMigrations()
     {
@@ -22,6 +25,7 @@ class MigrationController extends BaseController
 
         return response()->json($output);
     }
+
 
     public function runMigrations()
     {
@@ -50,6 +54,7 @@ class MigrationController extends BaseController
     }
 
 
+
     public function rollbackMigrations()
     {
         try {
@@ -59,6 +64,7 @@ class MigrationController extends BaseController
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
+
 
     public function runSeeds()
     {

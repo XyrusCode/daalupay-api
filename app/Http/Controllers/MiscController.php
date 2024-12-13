@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 class MiscController extends BaseController
 {
+
     public function getAppInfo()
     {
         return response()->json([
@@ -15,10 +16,11 @@ class MiscController extends BaseController
         ]);
     }
 
+
     public function getApiDocs()
-{
-    // Get all routes
-    $routes = collect(Route::getRoutes())
+    {
+        // Get all routes
+        $routes = collect(Route::getRoutes())
         ->filter(function ($route) {
             // Include routes with 'web' middleware
             return in_array('web', $route->middleware());

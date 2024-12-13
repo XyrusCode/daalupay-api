@@ -4,26 +4,26 @@ return [
     'default' => 'default',
     'documentations' => [
         'default' => [
-'api' => [
-    'title' => 'Daalupay API Documentation',
-    'description' => 'API documentation for Daalupay application.',
-    'version' => '1.0.0',
-    'termsOfService' => '',
-    'contact' => [
-        'email' => 'support@daalupay.com',
-    ],
-    'license' => [
-        'name' => 'Apache 2.0',
-        'url' => 'http://www.apache.org/licenses/LICENSE-2.0.html',
-    ],
-],
+            'api' => [
+                'title' => 'Daalupay API Documentation',
+                'description' => 'API documentation for Daalupay application.',
+                'version' => '1.0.0',
+                'termsOfService' => '',
+                'contact' => [
+                    'email' => 'support@daalupay.com',
+                ],
+                'license' => [
+                    'name' => 'Apache 2.0',
+                    'url' => 'http://www.apache.org/licenses/LICENSE-2.0.html',
+                ],
+            ],
 
 
             'routes' => [
                 /*
                  * Route for accessing api documentation interface
                  */
-                'api' => 'api/documentation',
+                'api' => 'docs',
             ],
             'paths' => [
                 /*
@@ -56,7 +56,7 @@ return [
                  */
                 'annotations' => [
                     base_path('app'),
-                    base_path('app/Swagger'),
+                    base_path('app/Http/Controllers'),
                 ],
             ],
         ],
@@ -120,8 +120,8 @@ return [
              * @link https://zircote.github.io/swagger-php/reference/processors.html
              */
             'default_processors_configuration' => [
-            /** Example */
-            /**
+                /** Example */
+                /**
              * 'operationId.hash' => true,
              * 'pathFilter' => [
              * 'tags' => [
@@ -226,8 +226,7 @@ return [
                     'name' => 'Authorization', // The name of the header or query parameter to be used.
                     'in' => 'header', // The location of the API key. Valid values are "query" or "header".
                 ],
-                */
-            ],
+                */],
             'security' => [
                 /*
                  * Examples of Securities
@@ -240,8 +239,7 @@ return [
                     ],
 
                     'passport' => []
-                    */
-                ],
+                    */],
             ],
         ],
 

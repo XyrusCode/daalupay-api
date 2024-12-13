@@ -9,12 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends BaseController
 {
-    /**
-     * Create a payment and assign it to a transaction.
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
+
     public function createAndAssignPayment(Request $request)
     {
         return $this->process(function () use ($request) {

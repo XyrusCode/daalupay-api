@@ -8,9 +8,7 @@ use DaaluPay\Models\Swap;
 class SwapController extends BaseController
 {
 
-    /**
-     * Create a swap
-     */
+
     public function create(Request $request)
     {
         return $this->process(function() use ($request) {
@@ -30,9 +28,7 @@ class SwapController extends BaseController
         }, true);
     }
 
-    /**
-     * Get a swap
-     */
+
     public function get(Request $request, $swap_id)
     {
         return $this->process(function() use ($request, $swap_id) {
@@ -41,7 +37,7 @@ class SwapController extends BaseController
             if (!$swap) {
                 return $this->getResponse('failure', null, 404, 'Swap not found');
             }
-            
+
             return $this->getResponse('success', $swap, 200);
         }, true);
     }

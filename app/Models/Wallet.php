@@ -9,6 +9,31 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use DaaluPay\Models\Traits\UuidTrait;
 
+/**
+ * @OA\Schema(
+ *  type="object",
+ *  @OA\Property(
+ *    type="string",
+ *    property="id",
+ *  ),
+ *  @OA\Property(
+ *    type="number",
+ *    property="balance",
+ *  ),
+ *  @OA\Property(
+ *    type="string",
+ *    property="currency",
+ *  ),
+ *  @OA\Property(
+ *    type="string",
+ *    property="user_id",
+ *  ),
+ * )
+ * @property string $id
+ * @property number $balance
+ * @property string $currency
+ * @property string $user_id
+ */
 class Wallet extends Model
 {
         // use UuidTrait;

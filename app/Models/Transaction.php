@@ -9,6 +9,76 @@ use DaaluPay\Models\Payment;
 use DaaluPay\Models\Employee;
 use DaaluPay\Models\User;
 
+/**
+ * @OA\Schema(
+ *  type="object",
+ *  @OA\Property(
+ *    type="string",
+ *    property="id",
+ *  ),
+ *  @OA\Property(
+ *    type="string",
+ *    property="reference_number",
+ *  ),
+ *  @OA\Property(
+ *    type="string",
+ *    property="channel",
+ *  ),
+ *  @OA\Property(
+ *    type="number",
+ *    property="amount",
+ *  ),
+ *  @OA\Property(
+ *    type="string",
+ *    property="send_currency",
+ *  ),
+ *  @OA\Property(
+ *    type="string",
+ *    property="receive_currency",
+ *  ),
+ *  @OA\Property(
+ *    type="number",
+ *    property="rate",
+ *  ),
+ *  @OA\Property(
+ *    type="number",
+ *    property="fee",
+ *  ),
+ *  @OA\Property(
+ *    type="string",
+ *    property="transaction_date",
+ *  ),
+ *  @OA\Property(
+ *    type="string",
+ *    property="status",
+ *  ),
+ *  @OA\Property(
+ *    type="string",
+ *    property="user_id",
+ *  ),
+ *  @OA\Property(
+ *    type="string",
+ *    property="admin_id",
+ *  ),
+ *  @OA\Property(
+ *    type="string",
+ *    property="payment_id",
+ *  )
+ * )
+ * @property string $id
+ * @property string $reference_number
+ * @property string $channel
+ * @property number $amount
+ * @property string $send_currency
+ * @property string $receive_currency
+ * @property number $rate
+ * @property number $fee
+ * @property string $transaction_date
+ * @property string $status
+ * @property string $user_id
+ * @property string $admin_id
+ * @property string $payment_id
+ */
 class Transaction extends BaseModel
 {
     use HasFactory;
@@ -19,7 +89,8 @@ class Transaction extends BaseModel
 
     protected $hidden = [
         'id',
-        'updated_at'
+        'updated_at',
+        
     ];
 
     protected $fillable = [

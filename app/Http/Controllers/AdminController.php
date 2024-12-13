@@ -8,9 +8,7 @@ use DaaluPay\Models\User;
 
 class AdminController extends BaseController
 {
-    /**
-     * Approve a transaction.
-     */
+
     public function approveTransaction(Request $request, Transaction $transaction)
     {
         return $this->process(function () use ($request, $transaction) {
@@ -31,12 +29,9 @@ class AdminController extends BaseController
                 data: $transaction,
                 message: 'Transaction approved successfully'
             );
-        });
+        }, true);
     }
 
-    /**
-     * Deny a transaction.
-     */
     public function denyTransaction(Request $request, Transaction $transaction)
     {
         return $this->process(function () use ($request, $transaction) {
@@ -60,9 +55,7 @@ class AdminController extends BaseController
         });
     }
 
-    /**
-     * Approve user verification.
-     */
+
     public function approveUserVerification(Request $request, User $user)
     {
         return $this->process(function () use ($user, $request) {
@@ -86,9 +79,7 @@ class AdminController extends BaseController
         });
     }
 
-    /**
-     * Suspend a user.
-     */
+
     public function suspendUser(Request $request, User $user)
     {
         return $this->process(function () use ($user) {
@@ -109,9 +100,7 @@ class AdminController extends BaseController
         });
     }
 
-    /**
-     * Reactivate a user.
-     */
+
     public function reactivateUser(Request $request, User $user)
     {
         return $this->process(function () use ($user) {
@@ -132,12 +121,6 @@ class AdminController extends BaseController
         });
     }
 
-        /**
-     * Delete a user
-     * @param Request $request
-     * @param int $user_id
-     * @return JsonResponse
-     */
     public function delete(Request $request, $user_id)
     {
         $this->process(function() use ($request, $user_id) {
@@ -157,12 +140,7 @@ class AdminController extends BaseController
     }, true);
     }
 
-        /**
-     * Update a user's details
-     * @param Request $request
-     * @param int $user_id
-     * @return JsonResponse
-     */
+
     public function updateDetails(Request $request, $user_id)
     {
         $this->process(function() use ($request, $user_id) {

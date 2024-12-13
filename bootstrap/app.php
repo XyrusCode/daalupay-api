@@ -20,13 +20,16 @@ return Application::configure(basePath: dirname(__DIR__))
             '/user/*'
         ]);
 
-        //  $middleware->trustHosts(at: ['daalupay.internal']);
+         $middleware->trustHosts(at: ['daalupay.internal']);
 
         // Ensure frontend requests are stateful (Sanctum middleware)
         $middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            //  \DaaluPay\Http\Middleware\LogUserActivity::class,
         ]);
+
+                // $middleware->api(prepend: [
+            //  \DaaluPay\Http\Middleware\LogUserActivity::class,
+        // ]);
 
         // // Force HTTPS for all routes (HSTS)
         // $middleware->prepend(\Illuminate\Http\Middleware\TrustProxies::class);
@@ -52,7 +55,7 @@ return Application::configure(basePath: dirname(__DIR__))
              'verify.browser' => \DaaluPay\Http\Middleware\VerifyBrowserId::class,
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions) {
         // Integrating Sentry for error handling
         Integration::handles($exceptions);
     })

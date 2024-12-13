@@ -2,127 +2,116 @@
 
 namespace DaaluPay\Http\Controllers;
 
+use DaaluPay\Models\Swap;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 // use DaaluPay\Http\Traits\AdminTrait;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Wallet;
+
 class UserController extends BaseController
 {
     /**
-     * Get the authenticated user's details
-     * @param Request $request
-     * @return JsonResponse
+     * @OA\Get(
+     *     path="/users",
+     *     summary="Get Current User",
+     *     description="Get the current authenticated user along with their wallets and transactions.",
+     *     tags={"User"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(response=200, description="Successful response", @OA\JsonContent(ref="#/components/schemas/User"))
+     * )
      */
     public function get(Request $request)
     {
-        $this->process(function() use ($request) {
-            // Load wallets and transactions
+        $this->process(function () use ($request) {
             $user = $request->user();
             $user->load('wallets', 'transactions');
-
             return $this->getResponse('success', $user, 200);
         }, true);
     }
 
-    /**
-     * Update the authenticated user's details
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function update(Request $request)
     {
-        $this->process(function() use ($request) {
+        $this->process(function () use ($request) {
             $user = $request->user();
 
-        $user->save();
-        $message = 'User updated successfully';
+            $user->save();
+            $message = 'User updated successfully';
             return $this->getResponse('success', null, 200, $message);
         }, true);
     }
 
-    /**
-     * Update the authenticated user's password
-     * @param Request $request
-     * @return JsonResponse
-     */
+
     public function updatePassword(Request $request)
     {
-        $this->process(function() use ($request) {
-        $request->validate([
-            'old_password' => ['required', 'string'],
-            'new_password' => ['required', 'string', 'min:8'], // TODO: Add more validation rules
-        ]);
+        $this->process(function () use ($request) {
+            $request->validate([
+                'old_password' => ['required', 'string'],
+                'new_password' => ['required', 'string', 'min:8'], // TODO: Add more validation rules
+            ]);
 
-        $user = Auth::user();
+            $user = Auth::user();
 
-        // Check if the old password is correct
-        if (!Hash::check($request->old_password, $user->password)) {
-            return $this->getResponse('error', null, 400, 'Old password is incorrect');
-        }
+            // Check if the old password is correct
+            if (!Hash::check($request->old_password, $user->password)) {
+                return $this->getResponse('error', null, 400, 'Old password is incorrect');
+            }
 
-        // Update the user's password
-        $user->password = Hash::make($request->new_password);
+            // Update the user's password
+            $user->password = Hash::make($request->new_password);
 
-        return $this->getResponse('success', null, 200, 'Password updated successfully');
-
-    }, true);
-}
-
-
-
-    /**
-     * Create a wallet for a user in a currency
-     */
-    public function createWallet(Request $request)
-    {
-       $this->process(function() use ($request) {
-        $user = $request    ->user();
-        $currency = $request->currency;
-        $balance = 0;
-
-        Wallet::create([
-            'user_id' => $user->id,
-            'currency' => $currency,
-            'balance' => $balance,
-        ]);
-       }, true);
+            return $this->getResponse('success', null, 200, 'Password updated successfully');
+        }, true);
     }
 
-    /**
-     * Get a user's wallets
-     */
+
+
+    public function createWallet(Request $request)
+    {
+        $this->process(function () use ($request) {
+            $user = $request->user();
+            $currency = $request->currency;
+            $balance = 0;
+
+            Wallet::create([
+                'user_id' => $user->id,
+                'currency' => $currency,
+                'balance' => $balance,
+            ]);
+        }, true);
+    }
+
+
     public function getWallets(Request $request)
     {
-        $this->process(function() use ($request) {
+        $this->process(function () use ($request) {
             $user = $request->user();
             $wallets = $user->wallets;
             return $this->getResponse('success', $wallets, 200);
         }, true);
     }
 
-    /**
-     * Get a user's transactions
-     */
+
     public function getTransactions(Request $request)
     {
-        $this->process(function() use ($request) {
+        $this->process(function () use ($request) {
             $user = $request->user();
             $transactions = $user->transactions;
             return $this->getResponse('success', $transactions, 200);
         }, true);
     }
 
-    /**
-     * Get a user's swaps
-     */
+
     public function getSwaps(Request $request)
     {
-        $this->process(function() use ($request) {
+        $this->process(function () use ($request) {
             $user = $request->user();
-            $swaps = $user->swaps;
-            return $this->getResponse('success', $swaps, 200);
+            $swaps = Swap::where('user_id', $user->id)->get();
+
+            return $this->getResponse('success', $swaps, 200,
+                'Swaps fetched successfully'
+            );
         }, true);
     }
 }

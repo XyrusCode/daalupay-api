@@ -9,10 +9,7 @@ use DaaluPay\Models\Transaction;
 
 class TransactionController extends BaseController
 {
-    /**
-     * Get all transactions for the authenticated user
-     * @return JsonResponse
-     */
+
     public function index()
     {
         return $this->process(function () {
@@ -24,11 +21,7 @@ class TransactionController extends BaseController
         }, true);
     }
 
-    /**
-     * Get a transaction by ID
-     * @param int $transaction_id
-     * @return JsonResponse
-     */
+
     public function show($transaction_id)
     {
         return $this->process(function () use ($transaction_id) {
@@ -38,12 +31,7 @@ class TransactionController extends BaseController
         }, true);
     }
 
-/**
- * Create a new transaction along with its payment.
- *
- * @param Request $request
- * @return JsonResponse
- */
+
     public function store(Request $request)
     {
         return $this->process(function () use ($request) {
@@ -114,12 +102,7 @@ class TransactionController extends BaseController
 
 
 
-    /**
-     * Update a transaction
-     * @param Request $request
-     * @param int $transaction_id
-     * @return JsonResponse
-     */
+
     public function update(Request $request, $transaction_id)
     {
         return $this->process(function () use ($request, $transaction_id) {
