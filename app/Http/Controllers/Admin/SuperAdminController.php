@@ -1,13 +1,14 @@
 <?php
 
-namespace DaaluPay\Http\Controllers;
+namespace DaaluPay\Http\Controllers\Admin;
 
+use DaaluPay\Http\Controllers\BaseController;
 use Illuminate\Http\Request;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\Currency;
 use DaaluPay\Models\PaymentMethod;
 
-class SuperAdminController extends AdminController
+class SuperAdminController extends BaseController
 {
 
     public function getAllAdmins(Request $request)

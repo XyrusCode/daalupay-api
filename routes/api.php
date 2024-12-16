@@ -6,16 +6,10 @@ use DaaluPay\Http\Controllers\UserController;
 use DaaluPay\Http\Controllers\TransactionController;
 use DaaluPay\Http\Controllers\MigrationController;
 use DaaluPay\Http\Controllers\MiscController;
-use DaaluPay\Http\Controllers\Auth\TokenController;
-use DaaluPay\Http\Controllers\Auth\AuthenticatedSessionController;
-use DaaluPay\Http\Controllers\Auth\EmailVerificationNotificationController;
-use DaaluPay\Http\Controllers\Auth\NewPasswordController;
-use DaaluPay\Http\Controllers\Auth\PasswordResetLinkController;
-use DaaluPay\Http\Controllers\Auth\RegisteredUserController;
-use DaaluPay\Http\Controllers\Auth\VerifyEmailController;
+use DaaluPay\Http\Controllers\AuthController;
 use DaaluPay\Http\Controllers\SwapController;
-use DaaluPay\Http\Controllers\SuperAdminController;
-use DaaluPay\Http\Controllers\AdminController;
+use DaaluPay\Http\Controllers\Admin\SuperAdminController;
+use DaaluPay\Http\Controllers\Admin\AdminController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -41,33 +35,33 @@ Route::prefix('/db')->group(function () {
 });
 
 // Token Routes
-Route::post('/token', [TokenController::class, 'getMobileToken']);
+Route::post('/token', [AuthController::class, 'getMobileToken']);
 
 // User Auth Routes
-Route::post('/register', [RegisteredUserController::class, 'store'])
+Route::post('/register', [AuthController::class, 'register'])
     ->middleware('guest')
     ->name('register');
 
-Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+Route::post('/login', [AuthController::class, 'login'])
     ->name('login');
 
-Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
+Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])
     ->middleware('guest')
     ->name('password.email');
 
-Route::post('/reset-password', [NewPasswordController::class, 'store'])
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])
     ->middleware('guest')
     ->name('password.store');
 
-Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)
+Route::get('/verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])
     ->middleware(['auth', 'signed', 'throttle:6,1'])
     ->name('verification.verify');
 
-Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
+Route::post('/email/verification-notification', [AuthController::class, 'sendVerificationEmail'])
     ->middleware(['auth', 'throttle:6,1'])
     ->name('verification.send');
 
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
