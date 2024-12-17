@@ -3,11 +3,11 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use DaaluPay\Http\Controllers\UserController;
-use DaaluPay\Http\Controllers\TransactionController;
+use DaaluPay\Http\Controllers\Payment\TransactionController;
 use DaaluPay\Http\Controllers\MigrationController;
 use DaaluPay\Http\Controllers\MiscController;
 use DaaluPay\Http\Controllers\AuthController;
-use DaaluPay\Http\Controllers\SwapController;
+use DaaluPay\Http\Controllers\Payment\SwapController;
 use DaaluPay\Http\Controllers\Admin\SuperAdminController;
 use DaaluPay\Http\Controllers\Admin\AdminController;
 /*
@@ -74,17 +74,21 @@ Route::prefix('/user')->group(function () {
         Route::post('/', [UserController::class, 'updatePassword']);
         Route::post('/wallets', [UserController::class, 'createWallet']);
         Route::get('/wallets', [UserController::class, 'getWallets']);
-        Route::get('/transactions', [UserController::class, 'getTransactions']);
-        Route::get('/swaps', [UserController::class, 'getSwaps']);
-        Route::post('/swaps', [SwapController::class, 'create']);
-        Route::get('/swaps/{id}', [SwapController::class, 'get']);
+
+        Route::prefix('/transactions')->group(function () {
+            Route::get('/', [TransactionController::class, 'index']);
+            Route::get('/{id}', [TransactionController::class, 'show']);
+            Route::post('/', [TransactionController::class, 'store']);
+        });
+
+        Route::prefix('/swaps')->group(function () {
+            Route::get('/', [SwapController::class, 'index']);
+            Route::get('/{id}', [SwapController::class, 'show']);
+            Route::post('/', [SwapController::class, 'store']);
+        });
     });
 
-    Route::prefix('/transactions')->group(function () {
-        Route::get('/', [TransactionController::class, 'index']);
-          Route::get('/{id}', [TransactionController::class, 'show']);
-        Route::post('/', [TransactionController::class, 'store']);
-    });
+
 });
 
 // Admin routes

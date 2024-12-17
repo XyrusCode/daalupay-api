@@ -1,7 +1,8 @@
 <?php
 
-namespace DaaluPay\Http\Controllers;
+namespace DaaluPay\Http\Controllers\Payment;
 
+use DaaluPay\Http\Controllers\BaseController;
 use Illuminate\Http\Request;
 use DaaluPay\Models\Payment;
 use DaaluPay\Models\Transaction;

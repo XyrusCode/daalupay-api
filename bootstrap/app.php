@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         // CSRF token validation, except for the /transactions route
         $middleware->validateCsrfTokens(except: [
+            '/transactions/*',
             '/login',
             '/user/*'
         ]);

@@ -1,15 +1,24 @@
 <?php
 
-namespace DaaluPay\Http\Controllers;
+namespace DaaluPay\Http\Controllers\Payment;
 
+use DaaluPay\Http\Controllers\BaseController;
 use Illuminate\Http\Request;
 use DaaluPay\Models\Swap;
 
 class SwapController extends BaseController
 {
 
+    public function index(Request $request)
+    {
+        return $this->process(function() use ($request) {
+            $user = $request->user();
+            $swaps = Swap::where('user_id', $user->id)->get();
+            return $this->getResponse('success', $swaps, 200);
+        }, true);
+    }
 
-    public function create(Request $request)
+    public function store(Request $request)
     {
         return $this->process(function() use ($request) {
             $user = $request->user();
@@ -29,7 +38,7 @@ class SwapController extends BaseController
     }
 
 
-    public function get(Request $request, $swap_id)
+    public function show(Request $request, $swap_id)
     {
         return $this->process(function() use ($request, $swap_id) {
             $swap = Swap::find($swap_id);

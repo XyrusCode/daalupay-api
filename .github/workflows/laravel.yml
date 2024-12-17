@@ -1,0 +1,48 @@
+parameters:
+    - name: enabled
+      type: boolean
+      default: false
+    - name: environment
+      type: string
+      default: Dev
+    - name: dependsOn
+      type: object
+      default: []
+    - name: condition
+      type: string
+      default: succeeded()
+    - name: USER_HOME
+      type: string
+
+jobs:
+- job: LaravelAppOptimization
+  dependsOn: ${{ parameters.dependsOn }}
+  condition: ${{ parameters.condition }}
+  variables:
+      - template: '../variables/${{ lower(parameters.environment) }}.yml'
+      - name: USER_HOME
+        value: ${{ parameters.USER_HOME }}
+
+  steps:
+      - task: SSH@0
+        displayName: "Laravel App Optimization"
+        enabled: ${{ parameters.enabled }}
+        inputs:
+          sshEndpoint: ${{ variables.SSH_ENDPOINT }}
+          runOptions: "inline"
+          inline: |
+
+            # enter target directory
+            echo "enter target directory"
+            cd $(USER_HOME)/$(PUBLIC_FOLDER)
+
+            # change env to prod
+            echo "change env to prod"
+            sed -i 's/APP_ENV=local/APP_ENV=production/' .env
+            sed -i 's/APP_DEBUG=true/APP_DEBUG=false/' .env
+
+            # cache the config, routes and views and generate a new key
+            echo "cache the config, routes and views and generate a new key"
+            php artisan config:cache || echo "Failed to cache config"
+            php artisan route:cache || echo "Failed to cache routes"
+            php artisan view:cache || echo "Failed to cache views"
