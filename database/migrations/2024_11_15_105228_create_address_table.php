@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('address', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users');
+            $table->uuid('uuid')->primary();
+            $table->foreignUuid('user_id')->constrained('users', 'uuid');
             $table->string('town');
             $table->string('state');
             $table->string('country');

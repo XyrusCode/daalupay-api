@@ -7,9 +7,17 @@ use Illuminate\Http\Request;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\Currency;
 use DaaluPay\Models\PaymentMethod;
-
+use DaaluPay\Models\ExchangeRate;
 class SuperAdminController extends BaseController
 {
+
+    public function index()
+    {
+        $this->process(function () {
+            $admin = Admin::find(auth('admin')->user()->id);
+            return $this->getResponse(true, 'Super admin dashboard fetched successfully', $admin);
+        }, true);
+    }
 
     public function getAllAdmins(Request $request)
     {
@@ -223,5 +231,13 @@ class SuperAdminController extends BaseController
                 message: 'Payment method disabled successfully'
             );
         });
+    }
+
+    public function setExchangeRate(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $exchangeRate = ExchangeRate::create($request->all());
+            return $this->getResponse(true, 'Exchange rate created successfully', $exchangeRate);
+        }, true);
     }
 }

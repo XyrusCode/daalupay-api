@@ -2,16 +2,11 @@
 
 namespace DaaluPay\Models;
 
-// use Jenssegers\Mongodb\Eloquent\Model as Mongo;
+use DaaluPay\Models\BaseModel;
 
-
-// class ActivityLog extends Mongo
-class ActivityLog
+class ActivityLog extends BaseModel
 {
-    protected $connection = 'mongodb'; // Use the MongoDB connection
-    protected $collection = 'activity_logs'; // Specify collection name
-
-    protected $primaryKey = 'user_id';
+    protected $table = 'activity_logs';
 
       protected $fillable = [
         'user_id',
@@ -24,10 +19,7 @@ class ActivityLog
 
     // Hide sensitive fields
     protected $hidden = [
-        'user_id',
         'updated_at',
         'created_at',
-        'id',
-        '_id'
     ];
 }

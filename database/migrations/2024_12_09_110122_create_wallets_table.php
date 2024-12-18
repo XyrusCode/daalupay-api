@@ -12,16 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('wallets', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('uuid')->unique();
-            $table->timestamps();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->uuid('uuid')->primary();
+            $table->foreignUuid('user_id')->constrained('users', 'uuid')->onDelete('cascade');
             $table->unsignedBigInteger('currency_id');
             $table->unsignedBigInteger('balance');
             // A user can have more than one wallet but only one per currency
             $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('restrict');
             $table->unique(['user_id', 'currency_id']);
-             $table->softDeletes();
+            $table->softDeletes();
+            $table->timestamps();
         });
     }
 

@@ -2,27 +2,26 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use DaaluPay\Models\Transaction;
+use DaaluPay\Models\Deposit;
 use DaaluPay\Models\User;
-use DaaluPay\Models\Payment;
-USE DaaluPay\Models\Admin;
+use DaaluPay\Models\Transaction;
+use DaaluPay\Models\Admin;
 use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 
-class TransactionSeeder extends Seeder
+class DepositSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        // Create 5 transactions for each user
+        // Create 5 deposits for each user
         $users = User::all();
         $admins = Admin::all();
         foreach ($users as $user) {
-            Transaction::create([
+           $transaction = Transaction::create([
                 'uuid' => Uuid::uuid4(),
                 'user_id' => $user->uuid,
                 'amount' => rand(1000000, 10000000),
@@ -30,6 +29,16 @@ class TransactionSeeder extends Seeder
                 'reference_number' => Str::random(10),
                 'channel' => 'paystack',
                 'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+                Deposit::create([
+                    'uuid' => Uuid::uuid4(),
+                    'user_id' => $user->uuid,
+                    'transaction_id' => $transaction->uuid,
+                    'amount' => rand(1000000, 10000000),
+                    'status' => 'approved',
+                    'created_at' => now(),
                 'updated_at' => now(),
             ]);
         }

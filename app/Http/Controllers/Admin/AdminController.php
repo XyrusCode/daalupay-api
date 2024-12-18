@@ -7,9 +7,31 @@ use Illuminate\Http\Request;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Transaction;
 use DaaluPay\Models\Suspension;
+use DaaluPay\Models\Swap;
 
 class AdminController extends BaseController
 {
+
+    public function stats()
+    {
+        return $this->process(function () {
+            // last 5 transactions assigned to admin
+            $transactions = Transaction::where('assigned_to', auth('admin')->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
+            // last 5 swaps assigned to admin
+            $swaps = Swap::where('assigned_to', auth('admin')->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
+            // last 5 users assigned to admin
+            $users = User::where('assigned_to', auth('admin')->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
+
+            $stats = [
+                'transactions' => $transactions,
+                'swaps' => $swaps,
+                'users' => $users,
+            ];
+
+            return $this->getResponse(true, 'Admin dashboard fetched successfully', $stats);
+        }, true);
+    }
+
     /**
      * Get all users
      * @return JsonResponse

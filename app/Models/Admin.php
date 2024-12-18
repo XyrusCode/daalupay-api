@@ -5,17 +5,16 @@ namespace DaaluPay\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
-use DaaluPay\Models\Traits\UuidTrait;
+
 
 class Admin extends Authenticatable
 {
     use HasFactory;
     use Notifiable;
-    // use UuidTrait;
 
     protected $fillable = [
         'first_name',
-     'last_name',
+        'last_name',
         'email',
         'password',
         'status',

@@ -12,19 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users');
+            $table->uuid('uuid')->primary();
+            $table->foreignUuid('user_id')->constrained('users', 'uuid')->onDelete('cascade');
             $table->string('reference_number');
-            $table->string('channel');
+            $table->enum('channel', ['paystack', 'flutterwave', 'alipay', 'paypal']);
             $table->decimal('amount', 10, 2);
-            $table->string('send_currency');
-            $table->string('receive_currency');
-            $table->decimal('rate', 10, 2);
-            $table->decimal('fee', 10, 2);
-            $table->date('transaction_date');
             $table->enum('status', ['pending', 'completed', 'failed']);
-            $table->foreignId('payment_id')->constrained('payments');
-            $table->foreignId('admin_id')->constrained('admins');
             $table->timestamps();
         });
     }

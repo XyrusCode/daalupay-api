@@ -10,6 +10,7 @@ use DaaluPay\Http\Controllers\AuthController;
 use DaaluPay\Http\Controllers\Payment\SwapController;
 use DaaluPay\Http\Controllers\Admin\SuperAdminController;
 use DaaluPay\Http\Controllers\Admin\AdminController;
+use DaaluPay\Http\Controllers\ExchangeRateController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -67,6 +68,14 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
+
+Route::prefix('/exchange-rate')->group(function () {
+    Route::get('/', [ExchangeRateController::class, 'index']);
+    Route::get('/{uuid}', [ExchangeRateController::class, 'show']);
+    Route::post('/', [ExchangeRateController::class, 'store']);
+    Route::put('/{uuid}', [ExchangeRateController::class, 'update']);
+    Route::delete('/{uuid}', [ExchangeRateController::class, 'destroy']);
+}); 
 
 Route::prefix('/user')->group(function () {
         Route::get('/',[UserController::class, 'get']);

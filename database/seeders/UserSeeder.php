@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 use DaaluPay\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Faker\Factory as Faker;
-
+use Ramsey\Uuid\Uuid;
 class UserSeeder extends Seeder
 {
     /**
@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
         for ($i = 2; $i <= 6; $i++) {
             if (User::where('email', 'test' . $i . '@example.com')->first() === null) {
                 User::create([
+                    'uuid' => Uuid::uuid4(),
                     'first_name' => 'Test',
                     'last_name' => 'User ' . $i,
                     'email' => 'test' . $i . '@example.com',

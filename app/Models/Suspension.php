@@ -12,6 +12,7 @@ class Suspension extends BaseModel
     protected $table = 'suspensions';
 
     protected $fillable = [
+        'uuid',
         'user_id',
         'reason',
         'start_date',

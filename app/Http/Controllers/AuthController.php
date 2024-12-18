@@ -22,6 +22,8 @@ use Illuminate\Support\Str;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Wallet;
 use DaaluPay\Mail\NewUser;
+use DaaluPay\Models\KYC;
+use DaaluPay\Models\Address;
 
 class AuthController extends BaseController
 {
@@ -199,6 +201,24 @@ class AuthController extends BaseController
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->string('password')),
+        ]);
+
+        KYC::create([
+            'user_id' => $user->id,
+            'status' => 'pending',
+            'type' => 'individual',
+            'document_type' => 'passport',
+            'document_number' => $request->document_number,
+            'document_image' => $request->document_image,
+        ]);
+
+        Address::create([
+            'user_id' => $user->id,
+            'address' => $request->address,
+            'city' => $request->city,
+            'state' => $request->state,
+            'country' => $request->country,
+            'zip_code' => $request->zip_code,
         ]);
 
         //Create a naira wallet for the user

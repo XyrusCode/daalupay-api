@@ -8,6 +8,7 @@ use DaaluPay\Models\Currency;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Wallet;
 use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 class WalletSeeder extends Seeder
 {
     /**
@@ -21,10 +22,10 @@ class WalletSeeder extends Seeder
         $users = User::all();
         foreach ($users as $user) {
             Wallet::create([
-                'uuid' => Str::uuid(),
-                'user_id' => $user->id,
+                'uuid' => Uuid::uuid4(),
+                'user_id' => $user->uuid,
                 'currency_id' => $currencyId,
-                'balance' => Str::random(10),
+                'balance' => rand(1000000, 10000000),
             ]);
         }
 

@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('deposit', function (Blueprint $table) {
-            $table->id();
+        Schema::create('deposits', function (Blueprint $table) {
+            $table->uuid('uuid')->primary();
             $table->timestamps();
-            $table->string('uuid');
             $table->decimal('amount', 10, 2);
             $table->enum('status', ['pending', 'approved', 'rejected']);
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('payment_id')->constrained('payments');
-            $table->enum('channel', ['bank', 'card', 'mobile_money']);
+            $table->foreignUuid('user_id')->constrained('users', 'uuid')->onDelete('cascade');
+            $table->foreignUuid('transaction_id')->constrained('transactions', 'uuid')->onDelete('cascade');
+            $table->enum('channel', ['paystack', 'flutterwave', 'alipay', 'paypal']);
         });
     }
 

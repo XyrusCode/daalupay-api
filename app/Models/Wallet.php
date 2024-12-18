@@ -7,15 +7,11 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use DaaluPay\Models\Traits\UuidTrait;
+
 
 /**
  * @OA\Schema(
  *  type="object",
- *  @OA\Property(
- *    type="string",
- *    property="id",
- *  ),
  *  @OA\Property(
  *    type="number",
  *    property="balance",
@@ -29,14 +25,13 @@ use DaaluPay\Models\Traits\UuidTrait;
  *    property="user_id",
  *  ),
  * )
- * @property string $id
  * @property number $balance
  * @property string $currency
  * @property string $user_id
  */
 class Wallet extends Model
 {
-        // use UuidTrait;
+    //
     /** @use HasFactory<\Database\Factories\WalletFactory> */
     use HasFactory;
     use HasApiTokens;
@@ -45,6 +40,7 @@ class Wallet extends Model
     protected $table = 'wallets';
 
     protected $fillable = [
+        'uuid',
         'balance',
         'currency',
         'user_id',

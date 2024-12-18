@@ -5,14 +5,11 @@ namespace DaaluPay\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserSetting extends Model
+class KYC extends Model
 {
-    protected $fillable = [
-        'uuid',
-        'user_id',
-        'currency_id',
-        'language_id',
-        'timezone_id'];
+    protected $table = 'kyc';
+
+    protected $fillable = ['user_id', 'status', 'type', 'document_type', 'document_number', 'document_image'];
 
     public function user(): BelongsTo
     {

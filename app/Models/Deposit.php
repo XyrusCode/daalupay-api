@@ -4,16 +4,16 @@ namespace DaaluPay\Models;
 
 use DaaluPay\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use DaaluPay\Models\Traits\UuidTrait;
+
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Deposit extends BaseModel
 {
     use HasFactory;
-    use UuidTrait;
+
 
     protected $hidden = [
-        'id',
+        'uuid',
         'created_at',
         'updated_at',
     ];

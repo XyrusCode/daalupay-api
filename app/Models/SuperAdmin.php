@@ -11,5 +11,10 @@ class SuperAdmin extends Authenticatable
     use HasFactory;
     use Notifiable;
 
-    protected $fillable = ['name', 'email', 'password'];
+    protected $fillable = [
+        'uuid',
+        'name',
+        'email',
+        'password'
+    ];
 }

@@ -7,8 +7,9 @@ use Database\Seeders\WalletSeeder;
 use Database\Seeders\TransactionSeeder;
 use Database\Seeders\PaymentMethodSeeder;
 use Database\Seeders\CountryCurrencySeeder;
-use Database\Seeders\PaymentSeeder;
 use Database\Seeders\SwapSeeder;
+use Database\Seeders\DepositSeeder;
+use Database\Seeders\ExchangeRateSeeder;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -17,15 +18,16 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            // PaymentMethodSeeder::class,
-            // CountryCurrencySeeder::class,
+            CountryCurrencySeeder::class,
+            ExchangeRateSeeder::class,
+            PaymentMethodSeeder::class,
+            UserSeeder::class,
             WalletSeeder::class,
-            // UserSeeder::class,
-            // AdminSeeder::class,
-            //  PaymentSeeder::class,
-            // TransactionSeeder::class,
-            // SwapSeeder::class
+            AdminSeeder::class,
 
+            DepositSeeder::class,
+            TransactionSeeder::class,
+            SwapSeeder::class,
         ]);
     }
 }

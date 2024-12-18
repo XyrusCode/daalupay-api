@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('admins', function (Blueprint $table) {
-            $table->id();
-            $table->string('uuid')->unique();
-            $table->timestamps();
+            $table->uuid('uuid')->primary();
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
-            $table->string('password');
-            $table->string('status')->default('active');
-            $table->enum('role', ['blog-writer', 'processor'])->default('processor');
             $table->string('phone')->nullable();
+            $table->string('password');
+            $table->enum('role', ['processor', 'support', 'blogger', 'developer'])->default('processor');
+            $table->enum('status', ['active', 'suspended', 'banned'])->default('active');
+            $table->unsignedInteger('transactions_assigned')->default(0);
+            $table->timestamps();
         });
     }
 

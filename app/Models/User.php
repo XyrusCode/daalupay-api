@@ -11,7 +11,8 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use DaaluPay\Models\Address;
-use DaaluPay\Models\Traits\UuidTrait;
+use DaaluPay\Models\KYC;
+
 use OpenApi\Annotations as OA;
 
 /**
@@ -68,19 +69,12 @@ use OpenApi\Annotations as OA;
  */
 class User extends Authenticatable
 {
-    use UuidTrait;
+
     /** @use HasFactory<\Database\Factories\AdminFactory> */
     use HasFactory;
     use Notifiable;
     use HasApiTokens;
     use SoftDeletes;
-
-    /**
-     * Indicates if the model's ID is auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
 
     /**
      * The data type of the auto-incrementing ID.
@@ -95,6 +89,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'uuid',
         'first_name',
         'last_name',
         'gender',
@@ -175,5 +170,16 @@ class User extends Authenticatable
     public function swaps(): HasMany
     {
         return $this->hasMany(Swap::class);
+    }
+
+
+    /**
+     * Get the KYC associated with the user.
+     *
+     * @return HasOne
+     */
+    public function kyc(): HasOne
+    {
+        return $this->hasOne(KYC::class);
     }
 }

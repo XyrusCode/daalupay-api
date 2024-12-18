@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('admins', function (Blueprint $table) {
-            $table->unsignedInteger('transactions_assigned')->default(0); // Tracks the workload
+        Schema::create('exchange_rate', function (Blueprint $table) {
+            $table->uuid('uuid')->primary();
+            $table->string('from_currency');
+            $table->string('to_currency');
+            $table->decimal('rate', 15, 8);
+            $table->timestamps();
         });
     }
 
@@ -21,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('admins', function (Blueprint $table) {
-            $table->dropColumn('transactions_assigned');
-        });
+        Schema::dropIfExists('exchange_rate');
     }
 };

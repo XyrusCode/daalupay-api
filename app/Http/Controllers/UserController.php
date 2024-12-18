@@ -12,22 +12,31 @@ use DaaluPay\Models\Wallet;
 
 class UserController extends BaseController
 {
-    /**
-     * @OA\Get(
-     *     path="/users",
-     *     summary="Get Current User",
-     *     description="Get the current authenticated user along with their wallets and transactions.",
-     *     tags={"User"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Response(response=200, description="Successful response", @OA\JsonContent(ref="#/components/schemas/User"))
-     * )
-     */
+
     public function get(Request $request)
     {
         $this->process(function () use ($request) {
             $user = $request->user();
             $user->load('wallets', 'transactions');
             return $this->getResponse('success', $user, 200);
+        }, true);
+    }
+
+    public function stats(Request $request)
+    {
+        $this->process(function () use ($request) {
+            $user = $request->user();
+            $wallets = $user->wallets;
+            // last 5 transactions
+            $transactions = $user->transactions->take(5);
+            $swaps = $user->swaps->take(5);
+
+            $stats = [
+                'wallets' => $wallets,
+                'transactions' => $transactions,
+                'swaps' => $swaps,
+            ];
+            return $this->getResponse('success', $stats, 200);
         }, true);
     }
 
@@ -64,7 +73,6 @@ class UserController extends BaseController
             return $this->getResponse('success', null, 200, 'Password updated successfully');
         }, true);
     }
-
 
 
     public function createWallet(Request $request)

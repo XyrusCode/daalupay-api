@@ -4,7 +4,7 @@ namespace DaaluPay\Models;
 
 use DaaluPay\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use DaaluPay\Models\Traits\UuidTrait;
+
 use DaaluPay\Models\Payment;
 use DaaluPay\Models\Employee;
 use DaaluPay\Models\User;
@@ -12,10 +12,6 @@ use DaaluPay\Models\User;
 /**
  * @OA\Schema(
  *  type="object",
- *  @OA\Property(
- *    type="string",
- *    property="id",
- *  ),
  *  @OA\Property(
  *    type="string",
  *    property="reference_number",
@@ -65,7 +61,6 @@ use DaaluPay\Models\User;
  *    property="payment_id",
  *  )
  * )
- * @property string $id
  * @property string $reference_number
  * @property string $channel
  * @property number $amount
@@ -77,20 +72,17 @@ use DaaluPay\Models\User;
  * @property string $status
  * @property string $user_id
  * @property string $admin_id
- * @property string $payment_id
  */
 class Transaction extends BaseModel
 {
     use HasFactory;
-
-    // use UuidTrait;
 
     protected $table = 'transactions';
 
     protected $hidden = [
         'id',
         'updated_at',
-        
+
     ];
 
     protected $fillable = [
@@ -101,21 +93,12 @@ class Transaction extends BaseModel
         'send_currency',
         'receive_currency',
         'rate',
-        'fee',
-        'transaction_date',
         'status',
         'user_id',
         'admin_id',
-        'payment_id',
+        'created_at',
+        'updated_at'
     ];
-
-    /**
-     * Get the payment associated with the transaction.
-     */
-    public function payment()
-    {
-        return $this->belongsTo(Payment::class, 'payment_id', 'id');
-    }
 
     /**
      * Get the user associated with the transaction.
@@ -130,6 +113,6 @@ class Transaction extends BaseModel
      */
     public function admin()
     {
-        return $this->belongsTo(Employee::class, 'admin_id', 'id');
+        return $this->belongsTo(Admin::class, 'admin_id', 'id');
     }
 }

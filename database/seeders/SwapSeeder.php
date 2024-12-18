@@ -6,8 +6,9 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Swap;
+use DaaluPay\Models\Admin;
 use DaaluPay\Models\Transaction;
-
+use Ramsey\Uuid\Uuid;
 class SwapSeeder extends Seeder
 {
     /**
@@ -17,13 +18,15 @@ class SwapSeeder extends Seeder
     {
         // Create 5 swap operations for each user
         $users = User::all();
+        $admins = Admin::all();
         $transactions = Transaction::all();
         foreach ($users as $user) {
             foreach ($transactions as $transaction) {
                 Swap::create([
-                    'user_id' => $user->id,
-                    'admin_id' => 1,
-                    'transaction_id' => $transaction->id,
+                    'uuid' => Uuid::uuid4(),
+                    'user_id' => $user->uuid,
+                    'admin_id' => $admins->random()->uuid,
+                    'transaction_id' => $transaction->uuid,
                     'from_currency' => 'USD',
                     'to_currency' => 'EUR',
                     'from_amount' => 100,
