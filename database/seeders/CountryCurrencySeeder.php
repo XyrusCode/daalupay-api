@@ -4,8 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use GuzzleHttp\Client;
 
 class CountryCurrencySeeder extends Seeder
 {
@@ -17,10 +15,8 @@ class CountryCurrencySeeder extends Seeder
         try {
 
 
-                $countries = $this->getLocalCountriesData();
-                $exchangeRates = $this->getLocalExchangeRates();
-
-
+            $countries = $this->getLocalCountriesData();
+            $exchangeRates = $this->getLocalExchangeRates();
 
             if (empty($countries) || !is_array($countries) || empty($exchangeRates) || !is_array($exchangeRates)) {
                 throw new \Exception("Failed to retrieve valid data for countries or exchange rates. Countries: " .
@@ -70,44 +66,44 @@ class CountryCurrencySeeder extends Seeder
     }
 
     private function getLocalCountriesData(): array
-{
-    $path = database_path('seeders/data/countries.json');
-    $this->command->info("Looking for file at: " . $path);
+    {
+        $path = database_path('seeders/data/countries.json');
+        $this->command->info("Looking for file at: " . $path);
 
-    if (!file_exists($path)) {
-        // Try alternative path
-        throw new \Exception("Countries data file not found at: $path");
+        if (!file_exists($path)) {
+            // Try alternative path
+            throw new \Exception("Countries data file not found at: $path");
+        }
+
+        $data = json_decode(file_get_contents($path), true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \Exception("JSON decode error: " . json_last_error_msg());
+        }
+
+        // Ensure we have an array
+        if (!is_array($data)) {
+            $data = [$data];
+        }
+
+        $this->command->info("Found " . count($data) . " countries in JSON file");
+        return $data;
     }
 
-    $data = json_decode(file_get_contents($path), true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        throw new \Exception("JSON decode error: " . json_last_error_msg());
-    }
+    private function getLocalExchangeRates(): array
+    {
+        $countries = $this->getLocalCountriesData();
+        $rates = ['USD' => 1.0]; // Base currency
 
-    // Ensure we have an array
-    if (!is_array($data)) {
-        $data = [$data];
-    }
-
-    $this->command->info("Found " . count($data) . " countries in JSON file");
-    return $data;
-}
-
-private function getLocalExchangeRates(): array
-{
-    $countries = $this->getLocalCountriesData();
-    $rates = ['USD' => 1.0]; // Base currency
-
-    foreach ($countries as $country) {
-        if (isset($country['currencies'])) {
-            foreach ($country['currencies'] as $code => $details) {
-                $rates[$code] = 1.0; // Set 1:1 exchange rate
+        foreach ($countries as $country) {
+            if (isset($country['currencies'])) {
+                foreach ($country['currencies'] as $code => $details) {
+                    $rates[$code] = 1.0; // Set 1:1 exchange rate
+                }
             }
         }
-    }
 
-    // Debug output
-    $this->command->info("Exchange rates count: " . count($rates));
-    return $rates;
-}
+        // Debug output
+        $this->command->info("Exchange rates count: " . count($rates));
+        return $rates;
+    }
 }
