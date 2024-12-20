@@ -58,16 +58,6 @@ class TransactionController extends BaseController
                     // Get the available admin
             $admin = $this->getAvailableAdmin();
 
-            // Create the payment record
-            $payment = Payment::create([
-            'name' => $validated['name'],
-            'amount' => $validated['amount'],
-            'method' => $validated['method'],
-            'type' => $validated['type'],
-            'channel' => $validated['channel'],
-            'status' => $validated['status']
-            ]);
-
             // Create the transaction record and link it to the payment
             $transaction = Transaction::create([
             'reference_number' => $validated['reference_number'],
@@ -81,8 +71,7 @@ class TransactionController extends BaseController
             'status' => $validated['status'],
             'user_id' => $user->id,
             'admin_id' => $admin->id, // Assign admin
-            'payment_id' => $payment->id, // Link the transaction to the created payment
-            ]);
+             ]);
 
                     // Increment the admin's workload
             $admin->increment('transactions_assigned');
@@ -95,7 +84,6 @@ class TransactionController extends BaseController
 
             return response()->json([
             'message' => 'Transaction and payment created successfully',
-            'payment' => $payment,
             'transaction' => $transaction,
             ], 201);
         }, true);

@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use DaaluPay\Http\Controllers\UserController;
 use DaaluPay\Http\Controllers\Payment\TransactionController;
 use DaaluPay\Http\Controllers\MigrationController;
 use DaaluPay\Http\Controllers\MiscController;
@@ -11,6 +10,7 @@ use DaaluPay\Http\Controllers\Payment\SwapController;
 use DaaluPay\Http\Controllers\Admin\SuperAdminController;
 use DaaluPay\Http\Controllers\Admin\AdminController;
 use DaaluPay\Http\Controllers\ExchangeRateController;
+use DaaluPay\Http\Controllers\User\AuthenticatedUserController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -68,22 +68,16 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::prefix('/user')->group(function () {
 
-Route::prefix('/exchange-rate')->group(function () {
-    Route::get('/', [ExchangeRateController::class, 'index']);
-    Route::get('/{uuid}', [ExchangeRateController::class, 'show']);
-    Route::post('/', [ExchangeRateController::class, 'store']);
-    Route::put('/{uuid}', [ExchangeRateController::class, 'update']);
-    Route::delete('/{uuid}', [ExchangeRateController::class, 'destroy']);
-});
-
-Route::prefix('/user')->group(function () {
-        Route::get('/',[UserController::class, 'get']);
-        Route::post('/', [UserController::class, 'update']);
-        Route::get('/stats', [UserController::class, 'stats']);
-        Route::post('/', [UserController::class, 'updatePassword']);
-        Route::post('/wallets', [UserController::class, 'createWallet']);
-        Route::get('/wallets', [UserController::class, 'getWallets']);
+        // Route::group(function () {
+            Route::get('/', [AuthenticatedUserController::class, 'show']);
+            Route::post('/', [AuthenticatedUserController::class, 'update']);
+            Route::get('/stats', [AuthenticatedUserController::class, 'stats']);
+            Route::post('/', [AuthenticatedUserController::class, 'updatePassword']);
+            Route::post('/wallets', [AuthenticatedUserController::class, 'createWallet']);
+            Route::get('/wallets', [AuthenticatedUserController::class, 'getWallets']);
+        // });
 
         Route::prefix('/transactions')->group(function () {
             Route::get('/', [TransactionController::class, 'index']);
@@ -97,9 +91,16 @@ Route::prefix('/user')->group(function () {
             Route::post('/', [SwapController::class, 'store']);
         });
     });
-
-
 });
+
+Route::prefix('/exchange-rate')->group(function () {
+    Route::get('/', [ExchangeRateController::class, 'index']);
+    Route::get('/{uuid}', [ExchangeRateController::class, 'show']);
+    Route::post('/', [ExchangeRateController::class, 'store']);
+    Route::put('/{uuid}', [ExchangeRateController::class, 'update']);
+    Route::delete('/{uuid}', [ExchangeRateController::class, 'destroy']);
+});
+
 
 // Admin routes
 Route::group(['middleware' => 'auth:sanctum,admin'], function () {
