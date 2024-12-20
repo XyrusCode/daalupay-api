@@ -6,6 +6,7 @@ use DaaluPay\Models\Swap;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 // use DaaluPay\Http\Traits\AdminTrait;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Wallet;
@@ -17,7 +18,9 @@ class UserController extends BaseController
     {
         $this->process(function () use ($request) {
             $user = $request->user();
-            $user->load('wallets', 'transactions');
+            // $user->load('wallets', 'transactions');
+            // $wallets = Wallet::where('user_id', $user->id);
+            Log::info('User fetched successfully', ['user' => $user]);
             return $this->getResponse('success', $user, 200);
         }, true);
     }

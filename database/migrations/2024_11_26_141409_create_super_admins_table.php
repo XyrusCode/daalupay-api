@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('super_admins', function (Blueprint $table) {
-            $table->uuid('uuid')->primary();
+             $table->id()->primary();
+            $table->unique('id'); // Ensure only one super admin can exist
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();

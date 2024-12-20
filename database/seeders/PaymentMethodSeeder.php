@@ -16,7 +16,6 @@ class PaymentMethodSeeder extends Seeder
         // If payment method already exists, skip for all payment methods
         if (!PaymentMethod::where('name', 'PayPal')->first()) {
             PaymentMethod::create([
-                'uuid' => Uuid::uuid4(),
                 'name' => 'PayPal',
                 'description' => 'PayPal payment method'
             ]);
@@ -24,7 +23,6 @@ class PaymentMethodSeeder extends Seeder
 
         if (!PaymentMethod::where('name', 'Alipay')->first()) {
             PaymentMethod::create([
-                'uuid' => Uuid::uuid4(),
                 'name' => 'Alipay',
                 'description' => 'Alipay payment method'
             ]);
@@ -32,7 +30,6 @@ class PaymentMethodSeeder extends Seeder
 
         if (!PaymentMethod::where('name', 'Bank Transfer')->first()) {
             PaymentMethod::create([
-                'uuid' => Uuid::uuid4(),
                 'name' => 'Bank Transfer',
                 'description' => 'Direct Bank Transfer'
             ]);
@@ -40,7 +37,6 @@ class PaymentMethodSeeder extends Seeder
 
         if (!PaymentMethod::where('name', 'Paystack')->first()) {
             PaymentMethod::create([
-                'uuid' => Uuid::uuid4(),
                 'name' => 'Paystack',
                 'description' => 'Paystack payment method'
             ]);
@@ -48,7 +44,6 @@ class PaymentMethodSeeder extends Seeder
 
         if (!PaymentMethod::where('name', 'Flutterwave')->first()) {
             PaymentMethod::create([
-                'uuid' => Uuid::uuid4(),
                 'name' => 'Flutterwave',
                 'description' => 'Flutterwave payment method'
             ]);

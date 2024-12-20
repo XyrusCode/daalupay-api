@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('wallets', function (Blueprint $table) {
-            $table->uuid('uuid')->primary();
-            $table->foreignUuid('user_id')->constrained('users', 'uuid')->onDelete('cascade');
+             $table->id()->primary();
+            $table->uuid('uuid')->unique();
+            $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             $table->unsignedBigInteger('currency_id');
             $table->unsignedBigInteger('balance');
             // A user can have more than one wallet but only one per currency

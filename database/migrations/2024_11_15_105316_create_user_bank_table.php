@@ -12,9 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_bank', function (Blueprint $table) {
-            $table->uuid('uuid')->primary();
-            $table->foreignUuid('user_id')->constrained('users', 'uuid');
-
+             $table->id()->primary();
+            $table->foreignId('user_id')->constrained('users');
             $table->string('account_number');
             $table->string('name');
             $table->timestamps();

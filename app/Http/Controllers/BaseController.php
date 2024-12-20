@@ -183,19 +183,16 @@ class BaseController extends Controller
         return $str;
     }
 
-    /**
-     * Check if the user is an admin
-     */
-    protected function isAdmin(Request $request)
-    {
-        return $request->user()->is_admin;
-    }
 
-    /**
-     * Check if the user is a super admin
-     */
-    protected function isSuperAdmin(Request $request)
-    {
-        return $request->user()->is_super_admin;
-    }
+    function getRequestAttributes(Request $request) {
+            return $request->getParsedBody() ?? [];
+        }
+
+    	function getQueryParams(Request $request) {
+		return $request->getQueryParams();
+	}
+
+    	function getQueryParam(Request $request, string $key, $default = null) {
+		return $request->getQueryParam($key, $default);
+	}
 }

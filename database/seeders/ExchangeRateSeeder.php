@@ -18,7 +18,6 @@ class ExchangeRateSeeder extends Seeder
         $currencies = Currency::all();
         foreach ($currencies as $currency) {
             ExchangeRate::create([
-                'uuid' => Uuid::uuid4(),
                 'from_currency' => $currency->code,
                 'to_currency' => 'USD',
                 'rate' => 1,

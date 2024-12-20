@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('kyc', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('uuid')->unique();
-            $table->foreignUuid('user_id')->constrained('users', 'uuid')->onDelete('cascade');
+            $table->id()->primary();
+            $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->enum('type', ['individual', 'company'])->default('individual');
             $table->enum('document_type', ['passport', 'national_id', 'driver_license', 'voter_id', 'other'])->default('passport');
             $table->string('document_number');
             $table->binary('document_image');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

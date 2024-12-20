@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('swap_operations', function (Blueprint $table) {
-            $table->uuid('uuid')->primary();
-            $table->foreignUuid('user_id')->constrained('users', 'uuid')->onDelete('cascade');
-            $table->foreignUuid('admin_id')->constrained('admins', 'uuid')->onDelete('cascade');
-            $table->foreignUuid('transaction_id')->constrained('transactions', 'uuid')->onDelete('cascade');
+             $table->id()->primary();
+             $table->uuid('uuid')->unique();
+            $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
+            $table->foreignId('admin_id')->constrained('admins', 'id')->onDelete('cascade');
+            $table->foreignId('transaction_id')->constrained('transactions', 'id')->onDelete('cascade');
             $table->string('from_currency');
             $table->string('to_currency');
             $table->decimal('from_amount', 15, 8);
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->string('status');
             $table->text('notes')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

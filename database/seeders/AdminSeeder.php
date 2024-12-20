@@ -21,6 +21,7 @@ class AdminSeeder extends Seeder
             $firstName = Faker::create()->firstName;
             $lastName = Faker::create()->lastName;
             Admin::create([
+                'id' => $i,
                 'uuid' => Uuid::uuid4(),
                 'first_name' => $firstName,
                 'last_name' => $lastName,

@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->uuid('uuid')->primary();
+             $table->id()->primary();
+            $table->uuid('uuid')->unique();
             $table->string('first_name');
             $table->string('last_name');
             $table->enum('gender', ['male', 'female'])->nullable();
@@ -33,7 +34,7 @@ return new class extends Migration
         });
 
         Schema::create('sessions', function (Blueprint $table) {
-            $table->uuid('uuid')->primary();
+            $table->string('id', 255)->primary(); // Use string for session IDs
             $table->foreignId('user_id')->nullable()->index();
             $table->string('browser_id', 45)->nullable();
             $table->string('ip_address', 45)->nullable();
@@ -41,6 +42,7 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
     }
 
     /**

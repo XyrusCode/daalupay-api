@@ -24,7 +24,7 @@ class TransactionSeeder extends Seeder
         foreach ($users as $user) {
             Transaction::create([
                 'uuid' => Uuid::uuid4(),
-                'user_id' => $user->uuid,
+                'user_id' => $user->id,
                 'amount' => rand(1000000, 10000000),
                 'status' => 'completed',
                 'reference_number' => Str::random(10),

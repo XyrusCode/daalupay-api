@@ -6,7 +6,6 @@ use Illuminate\Database\Seeder;
 use DaaluPay\Models\Deposit;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Transaction;
-use DaaluPay\Models\Admin;
 use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 
@@ -19,11 +18,10 @@ class DepositSeeder extends Seeder
     {
         // Create 5 deposits for each user
         $users = User::all();
-        $admins = Admin::all();
         foreach ($users as $user) {
            $transaction = Transaction::create([
                 'uuid' => Uuid::uuid4(),
-                'user_id' => $user->uuid,
+                'user_id' => $user->id,
                 'amount' => rand(1000000, 10000000),
                 'status' => 'completed',
                 'reference_number' => Str::random(10),
@@ -34,8 +32,8 @@ class DepositSeeder extends Seeder
 
                 Deposit::create([
                     'uuid' => Uuid::uuid4(),
-                    'user_id' => $user->uuid,
-                    'transaction_id' => $transaction->uuid,
+                    'user_id' => $user->id,
+                    'transaction_id' => $transaction->id,
                     'amount' => rand(1000000, 10000000),
                     'status' => 'approved',
                     'created_at' => now(),

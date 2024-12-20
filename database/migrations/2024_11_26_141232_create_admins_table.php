@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('admins', function (Blueprint $table) {
-            $table->uuid('uuid')->primary();
+             $table->id()->primary();
+            $table->uuid('uuid')->unique();
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->enum('status', ['active', 'suspended', 'banned'])->default('active');
             $table->unsignedInteger('transactions_assigned')->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -75,11 +75,12 @@ Route::prefix('/exchange-rate')->group(function () {
     Route::post('/', [ExchangeRateController::class, 'store']);
     Route::put('/{uuid}', [ExchangeRateController::class, 'update']);
     Route::delete('/{uuid}', [ExchangeRateController::class, 'destroy']);
-}); 
+});
 
 Route::prefix('/user')->group(function () {
         Route::get('/',[UserController::class, 'get']);
         Route::post('/', [UserController::class, 'update']);
+        Route::get('/stats', [UserController::class, 'stats']);
         Route::post('/', [UserController::class, 'updatePassword']);
         Route::post('/wallets', [UserController::class, 'createWallet']);
         Route::get('/wallets', [UserController::class, 'getWallets']);

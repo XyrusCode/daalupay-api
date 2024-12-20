@@ -24,9 +24,9 @@ class SwapSeeder extends Seeder
             foreach ($transactions as $transaction) {
                 Swap::create([
                     'uuid' => Uuid::uuid4(),
-                    'user_id' => $user->uuid,
-                    'admin_id' => $admins->random()->uuid,
-                    'transaction_id' => $transaction->uuid,
+                    'user_id' => $user->id,
+                    'admin_id' => $admins->random()->id,
+                    'transaction_id' => $transaction->id,
                     'from_currency' => 'USD',
                     'to_currency' => 'EUR',
                     'from_amount' => 100,

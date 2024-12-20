@@ -12,12 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('suspension', function (Blueprint $table) {
-            $table->uuid('uuid')->primary();
-            $table->foreignUuid('user_id')->constrained('users', 'uuid');
+             $table->id()->primary();
+            $table->uuid('uuid')->unique();
+            $table->foreignId('user_id')->constrained('users');
             $table->string('reason');
             $table->date('start_date');
             $table->date('end_date');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
