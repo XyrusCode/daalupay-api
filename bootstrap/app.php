@@ -18,7 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             '/transactions/*',
             '/login',
-            '/user/*'
+            '/user/*',
+            '/register'
         ]);
 
          $middleware->trustHosts(at: ['daalupay.internal']);
