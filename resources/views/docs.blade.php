@@ -4,81 +4,190 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>API Documentation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        function toggleAccordion(id) {
-            const section = document.getElementById(id);
-            section.classList.toggle('hidden');
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
         }
-    </script>
+        h1, h2 {
+            color: #212529;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #dee2e6;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #343a40;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:nth-child(odd) {
+            background-color: #fff;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 dark:text-white transition-colors duration-300">
-    <div class="max-w-7xl mx-auto p-6">
-        <header class="text-center mb-12">
-            <h1 class="text-4xl font-bold mb-2">API Documentation</h1>
-            <p class="text-lg text-gray-600 dark:text-gray-400">Overview of API routes and models.</p>
-        </header>
+<body>
+    <h1>API Documentation</h1>
+    <p>This document outlines the available API routes, their HTTP methods, required authentication, and usage details for the application.</p>
 
-        <!-- Routes Section -->
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-8">
-            <h2 class="text-2xl font-bold mb-4">Routes</h2>
-            @foreach ($groupedRoutes as $groupName => $routes)
-                <div class="mb-6">
-                    <button onclick="toggleAccordion('{{ Str::slug($groupName) }}')" class="w-full text-left bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white p-3 rounded-lg">
-                        {{ $groupName }} Routes
-                    </button>
-                    <div id="{{ Str::slug($groupName) }}" class="hidden mt-4">
-                        <table class="w-full table-auto border-collapse border border-gray-300 dark:border-gray-700">
-                            <thead>
-                                <tr class="bg-gray-100 dark:bg-gray-700 text-left">
-                                    <th class="border border-gray-300 px-4 py-2">Method</th>
-                                    <th class="border border-gray-300 px-4 py-2">URI</th>
-                                    <th class="border border-gray-300 px-4 py-2">Action</th>
-                                    <th class="border border-gray-300 px-4 py-2">Middleware</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($routes as $route)
-                                    <tr class="even:bg-gray-50 dark:even:bg-gray-700">
-                                        <td class="border border-gray-300 px-4 py-2">{{ $route['method'] }}</td>
-                                        <td class="border border-gray-300 px-4 py-2">{{ $route['uri'] }}</td>
-                                        <td class="border border-gray-300 px-4 py-2">{{ $route['action'] }}</td>
-                                        <td class="border border-gray-300 px-4 py-2">
-                                            {{ implode(', ', $route['middleware']) }}
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            @endforeach
-        </div>
+    <h2>Public Routes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Endpoint</th>
+                <th>HTTP Method</th>
+                <th>Description</th>
+                <th>Middleware</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>/</td>
+                <td>GET</td>
+                <td>Fetch application info.</td>
+                <td>None</td>
+            </tr>
+            <tr>
+                <td>/documentation</td>
+                <td>GET</td>
+                <td>Fetch API documentation.</td>
+                <td>None</td>
+            </tr>
+            <tr>
+                <td>/token</td>
+                <td>POST</td>
+                <td>Generate a mobile authentication token.</td>
+                <td>None</td>
+            </tr>
+            <tr>
+                <td>/register</td>
+                <td>POST</td>
+                <td>Register a new user.</td>
+                <td>Guest</td>
+            </tr>
+            <tr>
+                <td>/login</td>
+                <td>POST</td>
+                <td>User login.</td>
+                <td>Guest</td>
+            </tr>
+        </tbody>
+    </table>
 
-        <!-- Models Section -->
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-            <h2 class="text-2xl font-bold mb-4">Available Models</h2>
-            @forelse ($models as $model)
-                <div class="mb-4">
-                    <button onclick="toggleAccordion('{{ Str::slug($model['name']) }}')" class="w-full text-left bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white p-3 rounded-lg">
-                        {{ $model['name'] }}
-                    </button>
-                    <div id="{{ Str::slug($model['name']) }}" class="hidden mt-2">
-                        @if (!empty($model['fillable']))
-                            <ul class="list-disc pl-6">
-                                @foreach ($model['fillable'] as $field)
-                                    <li>{{ $field }}</li>
-                                @endforeach
-                            </ul>
-                        @else
-                            <p class="text-gray-600 dark:text-gray-400">No fillable fields defined for this model.</p>
-                        @endif
-                    </div>
-                </div>
-            @empty
-                <p>No models found.</p>
-            @endforelse
-        </div>
-    </div>
+    <h2>User Authenticated Routes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Endpoint</th>
+                <th>HTTP Method</th>
+                <th>Description</th>
+                <th>Middleware</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>/user</td>
+                <td>GET</td>
+                <td>Fetch user details.</td>
+                <td>auth:sanctum</td>
+            </tr>
+            <tr>
+                <td>/user/stats</td>
+                <td>GET</td>
+                <td>Fetch user statistics.</td>
+                <td>auth:sanctum</td>
+            </tr>
+            <tr>
+                <td>/user/transactions</td>
+                <td>GET</td>
+                <td>List user transactions.</td>
+                <td>auth:sanctum</td>
+            </tr>
+            <tr>
+                <td>/user/wallets</td>
+                <td>GET</td>
+                <td>List user wallets.</td>
+                <td>auth:sanctum</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Admin Routes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Endpoint</th>
+                <th>HTTP Method</th>
+                <th>Description</th>
+                <th>Middleware</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>/users</td>
+                <td>GET</td>
+                <td>List all users.</td>
+                <td>auth:sanctum, admin</td>
+            </tr>
+            <tr>
+                <td>/suspend-user</td>
+                <td>POST</td>
+                <td>Suspend a user account.</td>
+                <td>auth:sanctum, admin</td>
+            </tr>
+            <tr>
+                <td>/unsuspend-user</td>
+                <td>POST</td>
+                <td>Unsuspend a user account.</td>
+                <td>auth:sanctum, admin</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Super Admin Routes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Endpoint</th>
+                <th>HTTP Method</th>
+                <th>Description</th>
+                <th>Middleware</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>/admins</td>
+                <td>GET</td>
+                <td>List all admins.</td>
+                <td>auth:sanctum, super_admin, verify.browser</td>
+            </tr>
+            <tr>
+                <td>/disable-currency</td>
+                <td>POST</td>
+                <td>Disable a currency for exchange.</td>
+                <td>auth:sanctum, super_admin, verify.browser</td>
+            </tr>
+            <tr>
+                <td>/enable-currency</td>
+                <td>POST</td>
+                <td>Enable a currency for exchange.</td>
+                <td>auth:sanctum, super_admin, verify.browser</td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 </html>

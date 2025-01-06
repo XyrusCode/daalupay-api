@@ -24,6 +24,8 @@ use DaaluPay\Http\Controllers\User\AuthenticatedUserController;
 
 // App Info
 Route::get('/', [MiscController::class, 'getAppInfo']);
+Route::get('/docs', [MiscController::class, 'getAppDocs']);
+
 
 // Database Routes
 Route::prefix('/db')->group(function () {
@@ -36,7 +38,7 @@ Route::prefix('/db')->group(function () {
 });
 
 // Token Routes
-Route::post('/token', [AuthController::class, 'getMobileToken']);
+Route::post('/sanctum/token', [AuthController::class, 'iosToken']);
 
 // User Auth Routes
 Route::post('/register', [AuthController::class, 'register'])
