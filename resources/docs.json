@@ -1,0 +1,185 @@
+{
+    "routes": [
+        {
+            "group": "Authentication",
+            "routes": [
+                {
+                    "route": "/auth/login",
+                    "method": "POST",
+                    "description": "Authenticate user and get token",
+                    "middleware": [],
+                    "request_body": {
+                        "email": "string",
+                        "password": "string"
+                    },
+                    "response_body": {
+                        "token": "string",
+                        "user": {
+                            "id": "integer",
+                            "email": "string",
+                            "name": "string"
+                        }
+                    }
+                },
+                {
+                    "route": "/auth/register",
+                    "method": "POST",
+                    "description": "Register new user",
+                    "middleware": [],
+                    "request_body": {
+                        "first_name": "string",
+                        "last_name": "string",
+                        "email": "string",
+                        "password": "string",
+                        "password_confirmation": "string"
+                    },
+                    "response_body": {
+                        "message": "string",
+                        "user": {
+                            "id": "integer",
+                            "email": "string",
+                            "name": "string"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "group": "User",
+            "routes": [
+                {
+                    "route": "/user/profile",
+                    "method": "GET",
+                    "description": "Get authenticated user profile",
+                    "middleware": "auth:sanctum",
+                    "response_body": {
+                        "id": "integer",
+                        "first_name": "string",
+                        "last_name": "string",
+                        "email": "string",
+                        "phone": "string"
+                    }
+                },
+                {
+                    "route": "/user/wallets",
+                    "method": "GET",
+                    "description": "Get user wallets",
+                    "middleware": "auth:sanctum",
+                    "response_body": {
+                        "wallets": [
+                            {
+                                "id": "integer",
+                                "balance": "decimal",
+                                "currency": "string"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "route": "/user/swaps",
+                    "method": "GET",
+                    "description": "Get user currency swaps",
+                    "middleware": "auth:sanctum",
+                    "response_body": {
+                        "swaps": [
+                            {
+                                "id": "integer",
+                                "from_currency": "string",
+                                "to_currency": "string",
+                                "amount": "decimal",
+                                "rate": "decimal",
+                                "status": "string",
+                                "created_at": "timestamp"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "group": "Admin",
+            "routes": [
+                {
+                    "route": "/admin/transactions",
+                    "method": "GET",
+                    "description": "Get all transactions",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "response_body": {
+                        "transactions": [
+                            {
+                                "id": "integer",
+                                "user_id": "integer",
+                                "amount": "decimal",
+                                "type": "string",
+                                "status": "string",
+                                "created_at": "timestamp"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "route": "/admin/exchange-rates",
+                    "method": "POST",
+                    "description": "Set exchange rate",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "request_body": {
+                        "from_currency": "string",
+                        "to_currency": "string",
+                        "rate": "decimal"
+                    },
+                    "response_body": {
+                        "message": "string",
+                        "rate": {
+                            "id": "integer",
+                            "from_currency": "string",
+                            "to_currency": "string",
+                            "rate": "decimal"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "group": "Super Admin",
+            "routes": [
+                {
+                    "route": "/super-admin/admins",
+                    "method": "GET",
+                    "description": "Get all admins",
+                    "middleware": ["auth:sanctum", "super-admin"],
+                    "response_body": {
+                        "admins": [
+                            {
+                                "id": "integer",
+                                "name": "string",
+                                "email": "string",
+                                "role": "string",
+                                "status": "string"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "route": "/super-admin/payment-methods",
+                    "method": "POST",
+                    "description": "Create payment method",
+                    "middleware": ["auth:sanctum", "super-admin"],
+                    "request_body": {
+                        "name": "string",
+                        "description": "string",
+                        "status": "string"
+                    },
+                    "response_body": {
+                        "message": "string",
+                        "payment_method": {
+                            "id": "integer",
+                            "name": "string",
+                            "description": "string",
+                            "status": "string"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

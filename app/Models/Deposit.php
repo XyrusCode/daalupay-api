@@ -6,6 +6,7 @@ use DaaluPay\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Deposit extends BaseModel
 {
@@ -23,7 +24,7 @@ class Deposit extends BaseModel
         'amount',
         'status',
         'user_id',
-        'payment_id',
+        'transaction_id',
         'channel',
     ];
 
@@ -38,12 +39,12 @@ class Deposit extends BaseModel
     }
 
     /**
-     * Get the payment that owns the deposit.
+     * Get the transaction for the deposit.
      *
-     * @return BelongsTo
+     * @return  HasOne
      */
-    public function payment(): BelongsTo
+    public function transaction(): HasOne
     {
-        return $this->belongsTo(Payment::class, 'payment_id', 'id');
+        return $this->belongsTo(Transaction::class, 'payment_id', 'id');
     }
 }

@@ -3,7 +3,6 @@
 namespace DaaluPay\Http\Controllers\Payment;
 
 use DaaluPay\Http\Controllers\BaseController;
-use DaaluPay\Models\Payment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use DaaluPay\Models\Transaction;
@@ -43,14 +42,10 @@ class TransactionController extends BaseController
             'name' => 'required|string|max:255', // Payment name
             'amount' => 'required|numeric|min:0', // Payment amount
             'method' => 'required|string|max:255', // Payment method
-            'type' => 'required|string|max:255', // Payment type
             'channel' => 'required|string|max:255', // Payment channel
             'status' => 'required|string|in:pending,completed,failed', // Payment status
             'reference_number' => 'required|string|max:255|unique:transactions,reference_number',
-            'send_currency' => 'required|string|max:3',
-            'receive_currency' => 'required|string|max:3',
-            'rate' => 'required|numeric|min:0',
-            'fee' => 'required|numeric|min:0',
+            'type' => 'required|string|in:deposit,withdrawal,swap',
             'transaction_date' => 'required|date',
             'status' => 'required|string|in:pending,completed,canceled',
             ]);
@@ -63,11 +58,7 @@ class TransactionController extends BaseController
             'reference_number' => $validated['reference_number'],
             'channel' => $validated['channel'],
             'amount' => $validated['amount'],
-            'send_currency' => $validated['send_currency'],
-            'receive_currency' => $validated['receive_currency'],
-            'rate' => $validated['rate'],
-            'fee' => $validated['fee'],
-            'transaction_date' => $validated['transaction_date'],
+            'type' => $validated['type'],
             'status' => $validated['status'],
             'user_id' => $user->id,
             'admin_id' => $admin->id, // Assign admin
@@ -82,14 +73,9 @@ class TransactionController extends BaseController
                 $user->wallet->save();
             }
 
-            return response()->json([
-            'message' => 'Transaction and payment created successfully',
-            'transaction' => $transaction,
-            ], 201);
+            return $this->getResponse('success', $transaction, 201);
         }, true);
     }
-
-
 
 
     public function update(Request $request, $transaction_id)

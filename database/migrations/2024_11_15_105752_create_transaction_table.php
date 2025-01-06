@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             $table->string('reference_number');
             $table->enum('channel', ['paystack', 'flutterwave', 'alipay', 'paypal']);
+            $table->enum('type', ['deposit', 'withdrawal', 'swap']);
             $table->decimal('amount', 10, 2);
             $table->enum('status', ['pending', 'completed', 'failed']);
             $table->timestamps();
