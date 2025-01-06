@@ -9,6 +9,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use DaaluPay\Exceptions\CustomException;
 use DaaluPay\Helpers\StatusCodeHelper;
@@ -56,6 +57,7 @@ class BaseController extends Controller
 
             return $result;
         } catch (\Throwable $e) {
+            Log::error('Transaction failed: ' . $e->getMessage());
             // Rollback the transaction in case of any error
             DB::rollBack();
 
@@ -115,6 +117,8 @@ class BaseController extends Controller
     {
         // capture exception to sentry
         captureException($e);
+
+        Log::error('Exception handled: ' . $e->getMessage());
 
         // Determine the type of throwable
         return match (true) {

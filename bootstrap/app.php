@@ -19,7 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
             '/transactions/*',
             '/login',
             '/user/*',
-            '/register'
+            '/register',
+            '/sanctum/*'
         ]);
 
          $middleware->trustHosts(at: ['daalupay.internal']);
@@ -54,7 +55,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
             'verified' => \DaaluPay\Http\Middleware\EnsureEmailIsVerified::class,
             // 'logActivity' => \DaaluPay\Http\Middleware\LogUserActivity::class,
-             'verify.browser' => \DaaluPay\Http\Middleware\VerifyBrowserId::class,
+            //  'verify.browser' => \DaaluPay\Http\Middleware\VerifyBrowserId::class,
         ]);
     })
 ->withExceptions(function (Exceptions $exceptions) {

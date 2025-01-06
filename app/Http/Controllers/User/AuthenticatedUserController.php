@@ -3,6 +3,7 @@
 namespace DaaluPay\Http\Controllers\User;
 
 use DaaluPay\Http\Controllers\BaseController;
+use DaaluPay\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DaaluPay\Models\Wallet;
@@ -15,17 +16,23 @@ class AuthenticatedUserController extends BaseController
      */
     public function show(Request $request)
     {
+  
         return $this->process(function () use ($request) {
-            $user = Auth::user();
 
-            $user = $user->load('wallets', 'transactions');
-            return $this->getResponse('success', $user, 200);
+                $user = User::find($request->user()?->id);
+
+                $user->load('wallets', 'transactions');
+
+
+                return $this->getResponse('success', $user, 200);
+
         }, true);
     }
 
-    public function stats(Request $request) {
+    public function stats(Request $request)
+    {
         return $this->process(function () use ($request) {
-            $user = Auth::user();
+            $user = User::find($request->user()->id);
             $wallets = $user->wallets;
             $transactions = $user->transactions->take(5);
             $swaps = $user->swaps->take(5);
@@ -39,15 +46,17 @@ class AuthenticatedUserController extends BaseController
         }, true);
     }
 
-    public function update(Request $request) {
+    public function update(Request $request)
+    {
         return $this->process(function () use ($request) {
-            $user = Auth::user();
+            $user = User::find($request->user()->id);
             $user->update($request->all());
             return $this->getResponse('success', $user, 200);
         }, true);
     }
 
-    public function updatePassword(Request $request) {
+    public function updatePassword(Request $request)
+    {
         return $this->process(function () use ($request) {
             $user = Auth::user();
 
@@ -67,7 +76,8 @@ class AuthenticatedUserController extends BaseController
         }, true);
     }
 
-    public function createWallet(Request $request) {
+    public function createWallet(Request $request)
+    {
         return $this->process(function () use ($request) {
             $user = Auth::user();
             $currency = $request->currency;

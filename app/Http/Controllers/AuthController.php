@@ -36,13 +36,56 @@ class AuthController extends BaseController
             $request->authenticate();
 
             $request->session()->regenerate();
+            $token = $request->user()->createToken('auth_token')->plainTextToken;
 
             $user = $request->user()->load('wallets', 'transactions');
+            $user->token = $token;
 
             return $this->getResponse(
                 data: $user,
                 message: 'Login Success'
             );
+        });
+    }
+
+    /**
+     * Register a new user.
+     *
+     * {
+     */
+    public function register(Request $request): JsonResponse
+    {
+        return $this->process(function () use ($request) {
+            $request->validate([
+                'first_name' => 'required|string|max:255',
+                'last_name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'phone_number' => 'required|string|max:255',
+                // confirm_password & password must be the same
+                'confirm_password' => 'required|string|same:password',
+                'password' => 'required|string|min:8',
+                'country' => 'required|string|max:255',
+                'gender' => 'required|string|max:255',
+                'address' => 'required|string|max:255',
+                'city' => 'required|string|max:255',
+                'zip_code' => 'required|string|max:255',
+                'date_of_birth' => 'required|date',
+                'document_type' => 'required|string|max:255',
+                // 'document_file' => 'required|file',
+            ]);
+
+            $user = User::create([
+                'uuid' => Str::uuid(),
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'phone' => $request->phone_number,
+                'password' => Hash::make($request->password),
+            ]);
+
+
+
+            return $this->getResponse('success', $user, 200);
         });
     }
 
@@ -60,7 +103,7 @@ class AuthController extends BaseController
         return response()->noContent();
     }
 
-    public function iosToken(Request $request): Response
+    public function iosToken(Request $request): JsonResponse
     {
         return $this->process(function () use ($request) {
             $request->validate([
@@ -70,6 +113,7 @@ class AuthController extends BaseController
             ]);
 
             $user = User::where('email', $request->email)->first();
+             $user->load('wallets', 'transactions');
 
             if (! $user || ! Hash::check($request->password, $user->password)) {
                 throw ValidationException::withMessages([
@@ -77,11 +121,15 @@ class AuthController extends BaseController
                 ]);
             }
 
+            $request->session()->regenerate();
+
             return $this->getResponse(
-                data: $user->createToken($request->device_name)->plainTextToken,
+                data: [
+                    'user' => $user,
+                    'token' => $user->createToken($request->device_name)->plainTextToken
+                ],
                 message: 'Login Success'
             );
-            $request->session()->regenerate();
         });
     }
 

@@ -17,8 +17,11 @@ class UserController extends BaseController
     {
         $this->process(function () use ($request) {
             $user = $request->user();
-            // $user->load('wallets', 'transactions');
-            return $this->getResponse('success', $user, 200);
+            $userData = User::select(['id', 'name', 'email', 'created_at', 'updated_at'])
+                ->with(['wallets:id,user_id,currency,balance'])
+                ->where('id', $user->id)
+                ->first();
+            return $this->getResponse('success', $userData, 200);
         }, true);
     }
 
@@ -123,3 +126,4 @@ class UserController extends BaseController
         }, true);
     }
 }
+

@@ -71,15 +71,12 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::prefix('/user')->group(function () {
-
-        // Route::group(function () {
-            Route::get('/', [AuthenticatedUserController::class, 'show']);
-            Route::post('/', [AuthenticatedUserController::class, 'update']);
-            Route::get('/stats', [AuthenticatedUserController::class, 'stats']);
-            Route::post('/', [AuthenticatedUserController::class, 'updatePassword']);
-            Route::post('/wallets', [AuthenticatedUserController::class, 'createWallet']);
-            Route::get('/wallets', [AuthenticatedUserController::class, 'getWallets']);
-        // });
+        Route::get('/', [AuthenticatedUserController::class, 'show']);
+        Route::post('/', [AuthenticatedUserController::class, 'update']);
+        Route::get('/stats', [AuthenticatedUserController::class, 'stats']);
+        Route::post('/password', [AuthenticatedUserController::class, 'updatePassword']);
+        Route::post('/wallets', [AuthenticatedUserController::class, 'createWallet']);
+        Route::get('/wallets', [AuthenticatedUserController::class, 'getWallets']);
 
         Route::prefix('/transactions')->group(function () {
             Route::get('/', [TransactionController::class, 'index']);
@@ -120,7 +117,7 @@ Route::middleware(['auth:sanctum,super_admin, verify.browser'])->group(function 
     Route::get('/admins', [SuperAdminController::class, 'getAllAdmins']);
     Route::get('/admins/{id}', [SuperAdminController::class, 'getAdmin']);
 
-        // Disable currency from exchange
+    // Disable currency from exchange
     Route::post('/disable-currency', [SuperAdminController::class, 'disableCurrency']);
 
     // Enable currency from exchange
