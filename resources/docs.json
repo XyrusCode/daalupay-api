@@ -1,16 +1,62 @@
 {
     "routes": [
         {
+            "group": "Public",
+            "routes": [
+                {
+                    "route": "/",
+                    "method": "GET",
+                    "description": "Get app info",
+                    "response_body": {
+                        "name": "string",
+                        "version": "string"
+                    }
+                },
+                {
+                    "route": "/docs",
+                    "method": "GET",
+                    "description": "Get app docs",
+                    "response_body": {
+                        "docs": "string"
+                    }
+                },
+                {
+                    "route": "/exchange-rate",
+                    "method": "GET",
+                    "description": "Get exchange rate for a currency pair",
+                    "middleware": [],
+                    "request_body": {
+                        "from_currency": "string",
+                        "to_currency": "string"
+                    },
+                    "response_body": {
+                        "rate": "decimal"
+                    }
+                }
+            ]
+        },
+        {
+            "group": "Database",
+            "routes": [
+                {
+                    "route": "/db",
+                    "method": "GET",
+                    "description": "Get database status"
+                }
+            ]
+        },
+        {
             "group": "Authentication",
             "routes": [
                 {
-                    "route": "/auth/login",
+                    "route": "/sanctum/token",
                     "method": "POST",
-                    "description": "Authenticate user and get token",
+                    "description": "Authenticate mobile user and get token",
                     "middleware": [],
                     "request_body": {
                         "email": "string",
-                        "password": "string"
+                        "password": "string",
+                        "device_name": "string"
                     },
                     "response_body": {
                         "token": "string",
@@ -22,7 +68,7 @@
                     }
                 },
                 {
-                    "route": "/auth/register",
+                    "route": "/register",
                     "method": "POST",
                     "description": "Register new user",
                     "middleware": [],
@@ -35,11 +81,76 @@
                     },
                     "response_body": {
                         "message": "string",
-                        "user": {
+                        "data": {
                             "id": "integer",
                             "email": "string",
                             "name": "string"
                         }
+                    }
+                },
+                {
+                    "route": "/login",
+                    "method": "POST",
+                    "description": "Login user",
+                    "middleware": [],
+                    "request_body": {
+                        "email": "string",
+                        "password": "string"
+                    },
+                    "response_body": {
+                        "data": {
+                            "id": "integer",
+                            "email": "string",
+                            "first_name": "string",
+                            "last_name": "string"
+                        }
+                    }
+                },
+                {
+                    "route": "/forgot-password",
+                    "method": "POST",
+                    "description": "Send password reset link",
+                    "middleware": [],
+                    "request_body": {
+                        "email": "string"
+                    }
+                },
+                {
+                    "route": "/reset-password",
+                    "method": "POST",
+                    "description": "Reset user password",
+                    "middleware": [],
+                    "request_body": {
+                        "email": "string",
+                        "password": "string",
+                        "password_confirmation": "string"
+                    }
+                },
+                {
+                    "route": "/verify-email/{id}/{hash}",
+                    "method": "GET",
+                    "description": "Verify user email",
+                    "middleware": ["auth:sanctum", "signed", "throttle:6,1"],
+                    "response_body": {
+                        "message": "string"
+                    }
+                },
+                {
+                    "route": "/email/verification-notification",
+                    "method": "POST",
+                    "description": "Send email verification notification",
+                    "middleware": ["auth:sanctum", "throttle:6,1"],
+                    "response_body": {
+                        "message": "string"
+                    }
+                },
+                {
+                    "route": "/logout",
+                    "method": "POST",
+                    "description": "Logout user",
+                    "middleware": ["auth:sanctum"],
+                    "response_body": {
+                        "message": "string"
                     }
                 }
             ]
@@ -48,7 +159,7 @@
             "group": "User",
             "routes": [
                 {
-                    "route": "/user/profile",
+                    "route": "/user",
                     "method": "GET",
                     "description": "Get authenticated user profile",
                     "middleware": "auth:sanctum",
@@ -58,6 +169,57 @@
                         "last_name": "string",
                         "email": "string",
                         "phone": "string"
+                    }
+                },
+                {
+                    "route": "/user",
+                    "method": "POST",
+                    "description": "Create user profile",
+                    "middleware": "auth:sanctum",
+                    "request_body": {
+                        "first_name": "string",
+                        "last_name": "string",
+                        "gender": "enum:male,female",
+                        "date_of_birth": "date",
+                        "email": "string",
+                        "phone": "string",
+                        "password": "string",
+                        "confirm_password": "string",
+                        "address": "string",
+                        "city": "string",
+                        "state": "string",
+                        "zip_code": "string",
+                        "country": "string",
+                        "document_type": "enum:national_id,passport",
+                        "document_file": "file"
+                    },
+                    "response_body": {
+                        "message": "string",
+                        "data": {
+                            "id": "integer",
+                            "first_name": "string",
+                            "last_name": "string",
+                            "email": "string",
+                            "phone": "string",
+                            "address": "string",
+                            "city": "string",
+                            "state": "string",
+                            "zip_code": "string",
+                            "country": "string"
+                        }
+                    }
+                },
+                {
+                    "route": "/user/stats",
+                    "method": "GET",
+                    "description": "Get user stats for the home screen. Shows the wallets, transactions, and swaps",
+                    "middleware": "auth:sanctum",
+                    "response_body": {
+                        "stats": {
+                            "wallets": "array:object",
+                            "transactions": "array:object",
+                            "swaps": "array:object"
+                        }
                     }
                 },
                 {
@@ -73,6 +235,23 @@
                                 "currency": "string"
                             }
                         ]
+                    }
+                },
+                {
+                    "route": "/user/wallets",
+                    "method": "POST",
+                    "description": "Create user wallet",
+                    "middleware": "auth:sanctum",
+                    "request_body": {
+                        "currency": "string"
+                    },
+                    "response_body": {
+                        "message": "string",
+                        "data": {
+                            "id": "integer",
+                            "balance": "decimal",
+                            "currency": "string"
+                        }
                     }
                 },
                 {
@@ -93,12 +272,160 @@
                             }
                         ]
                     }
+                },
+                {
+                    "route": "/user/swaps",
+                    "method": "POST",
+                    "description": "Create user swap",
+                    "middleware": "auth:sanctum",
+                    "request_body": {
+                        "from_currency": "string",
+                        "to_currency": "string",
+                        "amount": "decimal"
+                    }
+                },
+                {
+                    "route": "/user/swaps/{id}",
+                    "method": "GET",
+                    "description": "Get user swap by id",
+                    "middleware": "auth:sanctum",
+                    "response_body": {
+                        "swap": "object"
+                    }
+                },
+                {
+                    "route": "/user/transactions",
+                    "method": "GET",
+                    "description": "Get user transactions",
+                    "middleware": "auth:sanctum",
+                    "response_body": {
+                        "transactions": "array:object"
+                    }
+                },
+                {
+                    "route": "/user/transactions/{id}",
+                    "method": "GET",
+                    "description": "Get user transaction by id",
+                    "middleware": "auth:sanctum",
+                    "response_body": {
+                        "transaction": "object"
+                    }
+                },
+                {
+                    "route": "/user/password",
+                    "method": "POST",
+                    "description": "Update user password",
+                    "middleware": "auth:sanctum",
+                    "request_body": {
+                        "old_password": "string",
+                        "new_password": "string"
+                    }
                 }
             ]
         },
         {
             "group": "Admin",
             "routes": [
+                {
+                    "route": "/admin/login",
+                    "method": "POST",
+                    "description": "Login admin",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "request_body": {
+                        "email": "string",
+                        "password": "string"
+                    }
+                },
+                {
+                    "route": "/admin/stats",
+                    "method": "GET",
+                    "description": "Get admin stats",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "response_body": {
+                        "stats": {
+                            "transactions": "array:object",
+                            "swaps": "array:object",
+                            "users": "array:object"
+                        }
+                    }
+                },
+                {
+                    "route": "/admin/users",
+                    "method": "GET",
+                    "description": "Get all users",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "response_body": {
+                        "users": [
+                            {
+                                "id": "integer",
+                                "name": "string",
+                                "email": "string"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "route": "/admin/users/{id}",
+                    "method": "GET",
+                    "description": "Get user by id",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "response_body": {
+                        "user": "object"
+                    }
+                },
+                {
+                    "route": "/admin/users/{id}",
+                    "method": "POST",
+                    "description": "Update user",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "request_body": {
+                        "first_name": "string",
+                        "last_name": "string",
+                        "email": "string"
+                    }
+                },
+                {
+                    "route": "/admin/users/{id}/approve",
+                    "method": "POST",
+                    "description": "Approve user verification",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "request_body": {
+                        "status": "enum:approved,rejected"
+                    }
+                },
+                {
+                    "route": "/admin/users/{id}/deny",
+                    "method": "POST",
+                    "description": "Deny user verification",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "request_body": {
+                        "status": "enum:approved,rejected"
+                    }
+                },
+                {
+                    "route": "/admin/users/{id}/suspend",
+                    "method": "POST",
+                    "description": "Suspend user",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "request_body": {
+                        "reason": "string"
+                    }
+                },
+                {
+                    "route": "/admin/users/{id}/unsuspend",
+                    "method": "POST",
+                    "description": "Unsuspend user",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "request_body": {
+                        "reason": "string"
+                    }
+                },
+                {
+                    "route": "/admin/users/{id}/delete",
+                    "method": "POST",
+                    "description": "Delete user",
+                    "middleware": ["auth:sanctum", "admin"]
+                },
                 {
                     "route": "/admin/transactions",
                     "method": "GET",
@@ -118,30 +445,55 @@
                     }
                 },
                 {
-                    "route": "/admin/exchange-rates",
-                    "method": "POST",
-                    "description": "Set exchange rate",
+                    "route": "/admin/transactions/{id}",
+                    "method": "GET",
+                    "description": "Get transaction by id",
                     "middleware": ["auth:sanctum", "admin"],
-                    "request_body": {
-                        "from_currency": "string",
-                        "to_currency": "string",
-                        "rate": "decimal"
-                    },
                     "response_body": {
-                        "message": "string",
-                        "rate": {
-                            "id": "integer",
-                            "from_currency": "string",
-                            "to_currency": "string",
-                            "rate": "decimal"
-                        }
+                        "transaction": "object"
                     }
-                }
+                },
+                {
+                    "route": "/admin/transactions/{id}/approve",
+                    "method": "POST",
+                    "description": "Approve transaction",
+                    "middleware": ["auth:sanctum", "admin"]
+                },
+                {
+                    "route": "/admin/transactions/{id}/deny",
+                    "method": "POST",
+                    "description": "Deny transaction",
+                    "middleware": ["auth:sanctum", "admin"]
+                    }
             ]
         },
         {
             "group": "Super Admin",
             "routes": [
+                {
+                    "route": "/super-admin/login",
+                    "method": "POST",
+                    "description": "Login super admin",
+                    "middleware": ["auth:sanctum", "super-admin"],
+                    "request_body": {
+                        "email": "string",
+                        "password": "string"
+                    }
+                },
+                {
+                    "route": "/super-admin/stats",
+                    "method": "GET",
+                    "description": "Get super admin stats",
+                    "middleware": ["auth:sanctum", "super-admin"],
+                    "response_body": {
+                        "stats": {
+                            "admins": "array:object",
+                            "users": "array:object",
+                            "transactions": "array:object",
+                            "swaps": "array:object"
+                        }
+                    }
+                },
                 {
                     "route": "/super-admin/admins",
                     "method": "GET",
@@ -160,26 +512,105 @@
                     }
                 },
                 {
-                    "route": "/super-admin/payment-methods",
+                    "route": "/super-admin/admins",
                     "method": "POST",
-                    "description": "Create payment method",
+                    "description": "Create admin",
                     "middleware": ["auth:sanctum", "super-admin"],
                     "request_body": {
-                        "name": "string",
-                        "description": "string",
-                        "status": "string"
+                        "first_name": "string",
+                        "last_name": "string",
+                        "gender": "enum:male,female",
+                        "date_of_birth": "date",
+                        "email": "string",
+                        "phone": "string",
+                        "address": "string",
+                        "city": "string",
+                        "state": "string",
+                        "zip_code": "string",
+                        "country": "string",
+                        "password": "string",
+                        "role": "enum:processor,blogger"
                     },
                     "response_body": {
                         "message": "string",
-                        "payment_method": {
+                        "data": {
                             "id": "integer",
-                            "name": "string",
-                            "description": "string",
-                            "status": "string"
+                            "first_name": "string",
+                            "last_name": "string",
+                            "email": "string",
+                                "role": "string",
+                                "status": "string"
+                            }
                         }
+                    },
+
+                {
+                    "route": "/super-admin/admins/{id}",
+                    "method": "GET",
+                    "description": "Get admin by id",
+                    "middleware": ["auth:sanctum", "super-admin"],
+                    "response_body": {
+                        "admin": "object"
                     }
+                },
+                {
+                    "route": "/super-admin/admins/{id}/suspend",
+                    "method": "POST",
+                    "description": "Suspend admin",
+                    "middleware": ["auth:sanctum", "super-admin"]
+                },
+                {
+                    "route": "/super-admin/admins/{id}/unsuspend",
+                    "method": "POST",
+                    "description": "Unsuspend admin",
+                    "middleware": ["auth:sanctum", "super-admin"]
+                },
+                {
+                    "route": "/super-admin/admins/{id}/delete",
+                    "method": "POST",
+                    "description": "Delete admin",
+                    "middleware": ["auth:sanctum", "super-admin"]
+                },
+                {
+                    "route": "/super-admin/payment-methods",
+                    "method": "GET",
+                    "description": "Get all payment methods",
+                    "middleware": ["auth:sanctum", "super-admin"],
+                    "response_body": {
+                        "payment_methods": "array:object"
+                    }
+                },
+                {
+                    "route": "/super-admin/payment-methods/{id}/disable",
+                    "method": "POST",
+                    "description": "Disable payment method",
+                    "middleware": ["auth:sanctum", "super-admin"]
+                },
+                {
+                    "route": "/super-admin/payment-methods/{id}/enable",
+                    "method": "POST",
+                    "description": "Enable payment method",
+                    "middleware": ["auth:sanctum", "super-admin"]
+                },
+                {
+                    "route": "/super-admin/exchange-rates",
+                    "method": "GET",
+                    "description": "Get all exchange rates",
+                    "middleware": ["auth:sanctum", "super-admin"],
+                    "response_body": {
+                        "exchange_rates": "array:object"
+                    }
+                },
+                {
+                    "route": "/super-admin/exchange-rates",
+                    "method": "POST",
+                    "description": "Create exchange rate",
+                    "middleware": ["auth:sanctum", "super-admin"]
                 }
             ]
         }
     ]
 }
+
+
+

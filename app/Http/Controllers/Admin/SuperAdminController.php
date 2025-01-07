@@ -8,8 +8,29 @@ use DaaluPay\Models\Admin;
 use DaaluPay\Models\Currency;
 use DaaluPay\Models\PaymentMethod;
 use DaaluPay\Models\ExchangeRate;
+use DaaluPay\Models\User;
+use DaaluPay\Models\Transaction;
+use DaaluPay\Models\Swap;
+
 class SuperAdminController extends BaseController
 {
+
+    public function stats()
+    {
+        return $this->process(function () {
+            $admins = Admin::count();
+            $users = User::count();
+            $transactions = Transaction::count();
+            $swaps = Swap::count();
+            $stats = [
+                'admins' => $admins,
+                'users' => $users,
+                'transactions' => $transactions,
+                'swaps' => $swaps,
+            ];
+            return $this->getResponse(true, 'Super admin dashboard fetched successfully', $stats);
+        }, true);
+    }
 
     public function index()
     {

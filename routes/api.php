@@ -102,24 +102,65 @@ Route::prefix('/exchange-rate')->group(function () {
 
 
 // Admin routes
+Route::post('/admin/login', [AuthController::class, 'adminLogin'])
+    ->name('admin.login');
+
 Route::group(['middleware' => 'auth:sanctum,admin'], function () {
-    Route::get('/users', [AdminController::class, 'index']);
-    Route::post('/users', [AdminController::class, 'store']);
+    Route::get('/stats', [AdminController::class, 'stats']);
 
-    // Suspend user
-    Route::post('/suspend-user', [AdminController::class, 'suspendUser']);
+    Route::prefix('/users')->group(function () {
+        Route::get('/', [AdminController::class, 'getAllUsers']);
+        Route::get('/{id}', [AdminController::class, 'getUser']);
+        Route::post('/{id}', [AdminController::class, 'updateUser']);
+        Route::post('/{id}/approve', [AdminController::class, 'approveUserVerification']);
+        Route::post('/{id}/deny', [AdminController::class, 'denyUserVerification']);
+        Route::post('/{id}/suspend', [AdminController::class, 'suspendUser']);
+        Route::post('/{id}/unsuspend', [AdminController::class, 'unsuspendUser']);
+        Route::post('/{id}/delete', [AdminController::class, 'deleteUser']);
+    });
 
-    // Unsuspend user
-    Route::post('/unsuspend-user', [AdminController::class, 'unsuspendUser']);
+    Route::prefix('/transactions')->group(function () {
+        Route::get('/', [AdminController::class, 'index']);
+        Route::get('/{id}', [AdminController::class, 'show']);
+        Route::post('/{id}/approve', [AdminController::class, 'approveTransaction']);
+        Route::post('/{id}/deny', [AdminController::class, 'denyTransaction']);
+    });
+
 });
 
+// Auth
+Route::post('super-admin/login', [AuthController::class, 'superAdminLogin'])
+    ->name('super-admin.login');
+
 Route::middleware(['auth:sanctum,super_admin, verify.browser'])->group(function () {
-    Route::get('/admins', [SuperAdminController::class, 'getAllAdmins']);
-    Route::get('/admins/{id}', [SuperAdminController::class, 'getAdmin']);
 
-    // Disable currency from exchange
-    Route::post('/disable-currency', [SuperAdminController::class, 'disableCurrency']);
+    Route::get('/stats', [SuperAdminController::class, 'stats']);
 
-    // Enable currency from exchange
-    Route::post('/enable-currency', [SuperAdminController::class, 'enableCurrency']);
+    Route::prefix('/admins')->group(function () {
+        Route::get('/', [SuperAdminController::class, 'getAllAdmins']);
+        Route::post('/', [SuperAdminController::class, 'addAdmin']);
+        Route::get('/{id}', [SuperAdminController::class, 'getAdmin']);
+        Route::post('/{id}/suspend', [SuperAdminController::class, 'suspendAdmin']);
+        Route::post('/{id}/unsuspend', [SuperAdminController::class, 'reactivateAdmin']);
+
+        Route::post('/{id}/delete', [SuperAdminController::class, 'deleteAdmin']);
+    });
+
+    Route::prefix('/currencies')->group(function () {
+        Route::get('/', [SuperAdminController::class, 'getAllCurrencies']);
+        Route::post('/disable', [SuperAdminController::class, 'disableCurrency']);
+        Route::post('/enable', [SuperAdminController::class, 'enableCurrency']);
+    });
+
+    Route::prefix('/payment-methods')->group(function () {
+        Route::get('/', [SuperAdminController::class, 'getAllPaymentMethods']);
+        Route::post('{id}/disable', [SuperAdminController::class, 'disablePaymentMethod']);
+        Route::post('{id}/enable', [SuperAdminController::class, 'enablePaymentMethod']);
+    });
+
+    Route::prefix('/exchange-rates')->group(function () {
+        Route::get('/', [SuperAdminController::class, 'getAllExchangeRates']);
+        Route::post('/', [SuperAdminController::class, 'setExchangeRate']);
+    });
+
 });

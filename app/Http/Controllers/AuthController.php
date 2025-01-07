@@ -24,6 +24,8 @@ use DaaluPay\Models\Wallet;
 use DaaluPay\Mail\NewUser;
 use DaaluPay\Models\KYC;
 use DaaluPay\Models\Address;
+use DaaluPay\Models\Admin;
+use DaaluPay\Models\SuperAdmin;
 
 class AuthController extends BaseController
 {
@@ -44,6 +46,58 @@ class AuthController extends BaseController
             return $this->getResponse(
                 data: $user,
                 message: 'Login Success'
+            );
+        });
+    }
+
+    public function adminLogin(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
+        });
+
+        $admin = Admin::where('email', $request->email)->first();
+
+        if (!$admin || !Hash::check($request->password, $admin->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
+        }
+
+        $token = $admin->createToken('auth_token')->plainTextToken;
+
+        return $this->getResponse(
+            data: $admin,
+            message: 'Admin login successful',
+            status_code: 200
+        );
+    }
+
+    public function superAdminLogin(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
+
+            $superAdmin = SuperAdmin::where('email', $request->email)->first();
+
+            if (!$superAdmin || !Hash::check($request->password, $superAdmin->password)) {
+                throw ValidationException::withMessages([
+                    'email' => ['The provided credentials are incorrect.'],
+                ]);
+            }
+
+            $token = $superAdmin->createToken('auth_token')->plainTextToken;
+
+            return $this->getResponse(
+                data: $superAdmin,
+                message: 'Super admin login successful',
+                status_code: 200
             );
         });
     }
