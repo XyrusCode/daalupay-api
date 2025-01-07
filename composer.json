@@ -10,6 +10,7 @@
         "darkaonline/l5-swagger": "^8.6",
         "doctrine/dbal": "^4.2",
         "fakerphp/faker": "^1.24",
+        "laravel-notification-channels/twilio": "^4.0",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",

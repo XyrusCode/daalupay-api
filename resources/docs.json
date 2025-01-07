@@ -159,6 +159,27 @@
             "group": "User",
             "routes": [
                 {
+                    "route": "/user/request-otp",
+                    "method": "GET",
+                    "description": "Request OTP for email verification",
+                    "middleware": "guest",
+                    "request_body": {
+                        "email": "string"
+                    }
+                },
+                {
+                    "route": "/user/verify-otp",
+                    "method": "POST",
+                    "description": "Verify OTP for email verification",
+                    "middleware": "auth:sanctum",
+                    "request_body": {
+                        "otp": "string"
+                    },
+                    "response_body": {
+                        "message": "string"
+                    }
+                },
+                {
                     "route": "/user",
                     "method": "GET",
                     "description": "Get authenticated user profile",

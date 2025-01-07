@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('gender', ['male', 'female'])->nullable();
             $table->string('email')->unique();
             $table->string('phone')->unique();
-            $table->enum('status', ['active', 'suspended', 'banned'])->default('active');
+            $table->enum('status', ['active', 'suspended', 'banned', 'unverified'])->default('unverified');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

@@ -78,6 +78,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('/wallets', [AuthenticatedUserController::class, 'createWallet']);
         Route::get('/wallets', [AuthenticatedUserController::class, 'getWallets']);
 
+
+        Route::get('/request-otp', [AuthController::class, 'requestOtp']);
+        Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
+
+
         Route::prefix('/transactions')->group(function () {
             Route::get('/', [TransactionController::class, 'index']);
             Route::get('/{id}', [TransactionController::class, 'show']);

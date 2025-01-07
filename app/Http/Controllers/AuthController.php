@@ -26,6 +26,9 @@ use DaaluPay\Models\KYC;
 use DaaluPay\Models\Address;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\SuperAdmin;
+use Illuminate\Support\Facades\Cache;
+use DaaluPay\Notifications\OtpNotification;
+use Illuminate\Support\Facades\Notification;
 
 class AuthController extends BaseController
 {
@@ -141,6 +144,55 @@ class AuthController extends BaseController
 
             return $this->getResponse('success', $user, 200);
         });
+    }
+
+    public function requestOtp(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $request->validate([
+                'email' => 'required|email',
+                ]);
+
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user) {
+                throw ValidationException::withMessages([
+                    'email' => ['The provided email is incorrect.'],
+                ]);
+            }
+
+            $otp = random_int(100000, 999999);
+            Cache::put('otp_' . $user->id, $otp, now()->addMinutes(15));
+
+            // $user->notify(new OtpNotification($otp, now()->addMinutes(15)->format('H:i')));
+
+            // Notification::send($user, new OtpNotification($otp, 5));
+
+            return $this->getResponse('success', 'OTP sent to email', 200);
+        });
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $request->validate([
+                'otp' => 'required|string',
+            ]);
+
+            $user = User::find($request->user()?->id);
+
+            $otp = Cache::get('otp_' . $user->id);
+
+            if (!$otp) {
+                throw ValidationException::withMessages([
+                    'otp' => ['The provided OTP is incorrect.'],
+                ]);
+            }
+            $user->status = 'verified';
+            $user->save();
+            return $this->getResponse('success', $user, 200);
+        });
+
     }
 
     /**
