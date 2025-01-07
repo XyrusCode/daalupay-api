@@ -18,12 +18,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             '/transactions/*',
             '/login',
+            '/logout',
+            '/request-otp',
+            '/verify-otp',
             '/user/*',
             '/register',
             '/sanctum/*'
         ]);
 
-         $middleware->trustHosts(at: ['daalupay.internal']);
+         $middleware->trustHosts(at: ['daalupay.internal', 'daalupay.com']);
 
         // Ensure frontend requests are stateful (Sanctum middleware)
         $middleware->api(prepend: [

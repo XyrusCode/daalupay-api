@@ -76,8 +76,17 @@
                         "first_name": "string",
                         "last_name": "string",
                         "email": "string",
+                        "gender": "enum:male,female",
+                        "date_of_birth": "date",
                         "password": "string",
-                        "password_confirmation": "string"
+                        "confirm_password": "string",
+                        "phone_number": "string",
+                        "address": "string",
+                        "city": "string",
+                        "zip_code": "string",
+                        "country": "string",
+                        "document_type": "enum:national_id,passport",
+                        "document_file": "file"
                     },
                     "response_body": {
                         "message": "string",

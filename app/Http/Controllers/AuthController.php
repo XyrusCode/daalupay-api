@@ -128,7 +128,7 @@ class AuthController extends BaseController
                 'zip_code' => 'required|string|max:255',
                 'date_of_birth' => 'required|date',
                 'document_type' => 'required|string|max:255',
-                // 'document_file' => 'required|file',
+                'document_file' => 'required|file',
             ]);
 
             $user = User::create([

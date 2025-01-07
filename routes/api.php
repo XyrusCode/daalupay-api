@@ -41,9 +41,7 @@ Route::prefix('/db')->group(function () {
 Route::post('/sanctum/token', [AuthController::class, 'iosToken']);
 
 // User Auth Routes
-Route::post('/register', [AuthController::class, 'register'])
-    ->middleware('guest')
-    ->name('register');
+Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/login', [AuthController::class, 'login'])
     ->name('login');
