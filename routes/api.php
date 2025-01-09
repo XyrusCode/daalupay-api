@@ -41,6 +41,8 @@ Route::prefix('/db')->group(function () {
 // Token Routes
 Route::post('/sanctum/token', [AuthController::class, 'iosToken']);
 
+Route::get('/exchange-rates', [SuperAdminController::class, 'getAllExchangeRates']);
+
 // User Auth Routes
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -97,14 +99,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::post('/', [SwapController::class, 'store']);
         });
     });
-});
-
-Route::prefix('/exchange-rate')->group(function () {
-    Route::get('/', [ExchangeRateController::class, 'index']);
-    Route::get('/{uuid}', [ExchangeRateController::class, 'show']);
-    Route::post('/', [ExchangeRateController::class, 'store']);
-    Route::put('/{uuid}', [ExchangeRateController::class, 'update']);
-    Route::delete('/{uuid}', [ExchangeRateController::class, 'destroy']);
 });
 
 
@@ -164,8 +158,11 @@ Route::middleware(['auth:sanctum,super_admin, verify.browser'])->group(function 
     });
 
     Route::prefix('/exchange-rates')->group(function () {
-        Route::get('/', [SuperAdminController::class, 'getAllExchangeRates']);
+        // Route::get('/', [SuperAdminController::class, 'getAllExchangeRates']);
         Route::post('/', [SuperAdminController::class, 'setExchangeRate']);
+        Route::post('/', [ExchangeRateController::class, 'store']);
+        Route::put('/{uuid}', [ExchangeRateController::class, 'update']);
+        Route::delete('/{uuid}', [ExchangeRateController::class, 'destroy']);
     });
 
 });

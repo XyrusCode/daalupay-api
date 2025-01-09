@@ -5,26 +5,33 @@ namespace DaaluPay\Http\Controllers;
 use Illuminate\Http\Request;
 use DaaluPay\Models\ExchangeRate;
 use DaaluPay\Http\Controllers\BaseController;
+use Illuminate\Support\Facades\DB;
 class ExchangeRateController extends BaseController
 {
     public function index(Request $request)
     {
         $this->process(function () use ($request) {
+            $from = $request->query('from');
+            $to = $request->query('to');
+           // if no query params, return all exchange rates
+           if(!$from && !$to){
+            $exchangeRate = DB::table('exchange_rate')->get();
+            return $this->getResponse(status: true, message: 'Exchange rate fetched successfully', data: $exchangeRate);
+           }
+
             $exchangeRate = ExchangeRate::where('from_currency', $request->from_currency)->where('to_currency', $request->to_currency)->first();
-            return $this->getResponse(true, 'Exchange rate fetched successfully', $exchangeRate);
-        }, true);
+            return $this->getResponse(status: true, message: 'Exchange rate fetched successfully', data: $exchangeRate);
+
+
+            // dummy response
+            return $this->getResponse(status: true, message: 'Exchange rate fetched successfully', data: [
+                'from_currency' => $from,
+                'to_currency' => $to,
+                'rate' => 100,
+            ]);
+    }, true);
     }
 
-    public function show(Request $request)
-    {
-        $this->process(function () use ($request) {
-            // use query params to get the exchange rate
-            $fromCurrency = $request->query('from_currency');
-            $toCurrency = $request->query('to_currency');
-            $exchangeRate = ExchangeRate::where('from_currency', $fromCurrency)->where('to_currency', $toCurrency)->first();
-            return $this->getResponse(true, 'Exchange rate fetched successfully', $exchangeRate);
-        }, true);
-    }
 
     public function store(Request $request)
     {

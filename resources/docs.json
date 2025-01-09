@@ -21,15 +21,18 @@
                     }
                 },
                 {
-                    "route": "/exchange-rate",
+                    "route": "/exchange-rates",
                     "method": "GET",
                     "description": "Get exchange rate for a currency pair",
                     "middleware": [],
-                    "request_body": {
-                        "from_currency": "string",
-                        "to_currency": "string"
+                    "query_params": {
+                        "from": "string",
+                        "to": "string"
                     },
                     "response_body": {
+                        "id": "integer",
+                        "fromCurrency": "string",
+                        "toCurrency": "string",
                         "rate": "decimal"
                     }
                 }
@@ -273,13 +276,11 @@
                             "userId": "integer",
                             "currencyId": "integer",
                             "balance": "decimal",
-                            "updatedAt": "
-
-                            timestamp",
+                            "updatedAt": "timestamp",
                             "createdAt": "timestamp",
                             "id": "integer"
-  }
-}
+                        }
+                    }
                 },
                 {
                     "route": "/user/swaps",

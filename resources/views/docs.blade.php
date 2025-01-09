@@ -66,55 +66,77 @@
     <p>This document outlines the available API routes, their HTTP methods, required authentication, and usage details for the application.</p>
 
     @php
-        $docs = json_decode(file_get_contents(resource_path('docs.json')), true);
+        $jsonPath = resource_path('docs.json');
+        $docs = [];
+
+        if (file_exists($jsonPath)) {
+            $jsonContent = file_get_contents($jsonPath);
+            if ($jsonContent !== false) {
+                $docs = json_decode($jsonContent, true) ?? [];
+            }
+        }
     @endphp
 
-    @foreach ($docs['routes'] as $group)
-        <div class="route-group">
-            <h2 class="group-title">{{ $group['group'] }}</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Endpoint</th>
-                        <th>HTTP Method</th>
-                        <th>Description</th>
-                        <th>Middleware</th>
-                        <th>Request Body</th>
-                        <th>Response Body</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($group['routes'] as $route)
+    @if(!empty($docs['routes']))
+        @foreach ($docs['routes'] as $group)
+            <div class="route-group">
+                <h2 class="group-title">{{ $group['group'] }}</h2>
+                <table>
+                    <thead>
                         <tr>
-                            <td>{{ $route['route'] }}</td>
-                            <td>{{ $route['method'] }}</td>
-                            <td>{{ $route['description'] }}</td>
-                            <td>
-                                @if(isset($route['middleware']) && is_array($route['middleware']) && count($route['middleware']) > 0)
-                                    {{ implode(', ', $route['middleware']) }}
-                                @else
-                                    None
-                                @endif
-                            </td>
-                            <td>
-                                @if(isset($route['request_body']))
-                                    <pre>{{ json_encode($route['request_body'], JSON_PRETTY_PRINT) }}</pre>
-                                @else
-                                    None
-                                @endif
-                            </td>
-                            <td>
-                                @if(isset($route['response_body']))
-                                    <pre>{{ json_encode($route['response_body'], JSON_PRETTY_PRINT) }}</pre>
-                                @else
-                                    None
-                                @endif
-                            </td>
+                            <th>Endpoint</th>
+                            <th>HTTP Method</th>
+                            <th>Description</th>
+                            <th>Middleware</th>
+                            <th>Request Body</th>
+                            <th>Query Params</th>
+                            <th>Response Body</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($group['routes'] as $route)
+                            <tr>
+                                <td>{{ $route['route'] }}</td>
+                                <td>{{ $route['method'] }}</td>
+                                <td>{{ $route['description'] }}</td>
+                                <td>
+                                    @if(isset($route['middleware']) && is_array($route['middleware']) && count($route['middleware']) > 0)
+                                        {{ implode(', ', $route['middleware']) }}
+                                    @else
+                                        None
+                                    @endif
+                                </td>
+                                <td>
+                                    @if(isset($route['query_params']))
+                                        <pre>{{ json_encode($route['query_params'], JSON_PRETTY_PRINT) }}</pre>
+                                    @else
+                                        None
+                                    @endif
+                                </td>
+                                 <td>
+                                    @if(isset($route['request_body']))
+                                        <pre>{{ json_encode($route['request_body'], JSON_PRETTY_PRINT) }}</pre>
+                                    @else
+                                        None
+                                    @endif
+                                </td>
+                                <td>
+                                    @if(isset($route['response_body']))
+                                        <pre>{{ json_encode($route['response_body'], JSON_PRETTY_PRINT) }}</pre>
+                                    @else
+                                        None
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endforeach
+    @else
+        <div class="route-group">
+            <p>No API documentation available.</p>
         </div>
-    @endforeach
+    @endif
 </body>
 </html>

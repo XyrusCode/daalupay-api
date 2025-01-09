@@ -11,6 +11,7 @@ use DaaluPay\Models\ExchangeRate;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Transaction;
 use DaaluPay\Models\Swap;
+use Illuminate\Support\Facades\DB;
 
 class SuperAdminController extends BaseController
 {
@@ -259,6 +260,23 @@ class SuperAdminController extends BaseController
         return $this->process(function () use ($request) {
             $exchangeRate = ExchangeRate::create($request->all());
             return $this->getResponse(true, 'Exchange rate created successfully', $exchangeRate);
+        }, true);
+    }
+
+    public function getAllExchangeRates(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $from = $request->query('from');
+            $to = $request->query('to');
+            // if no query params, return all exchange rates
+            if (!$from && !$to) {
+                $exchangeRate = DB::table('exchange_rate')->get();
+                return $this->getResponse(status: true, message: 'Exchange rate fetched successfully', data: $exchangeRate);
+            }
+
+            $exchangeRate = DB::table('exchange_rate')->where('from_currency', $from)->where('to_currency', $to)->first();
+            return $this->getResponse(status: true, message: 'Exchange rate fetched successfully', data: $exchangeRate);
+
         }, true);
     }
 }
