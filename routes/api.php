@@ -7,6 +7,7 @@ use DaaluPay\Http\Controllers\MigrationController;
 use DaaluPay\Http\Controllers\MiscController;
 use DaaluPay\Http\Controllers\AuthController;
 use DaaluPay\Http\Controllers\Payment\SwapController;
+use DaaluPay\Http\Controllers\Payment\WalletController;
 use DaaluPay\Http\Controllers\Admin\SuperAdminController;
 use DaaluPay\Http\Controllers\Admin\AdminController;
 use DaaluPay\Http\Controllers\ExchangeRateController;
@@ -67,19 +68,22 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
 
+Route::post('/user/request-otp', [AuthController::class, 'requestOtp']);
+Route::post('/user/verify-otp', [AuthController::class, 'verifyOtp']);
+
+
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::prefix('/user')->group(function () {
         Route::get('/', [AuthenticatedUserController::class, 'show']);
         Route::post('/', [AuthenticatedUserController::class, 'update']);
         Route::get('/stats', [AuthenticatedUserController::class, 'stats']);
         Route::post('/password', [AuthenticatedUserController::class, 'updatePassword']);
-        Route::post('/wallets', [AuthenticatedUserController::class, 'createWallet']);
-        Route::get('/wallets', [AuthenticatedUserController::class, 'getWallets']);
 
 
-        Route::get('/request-otp', [AuthController::class, 'requestOtp']);
-        Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
-
+        Route::prefix('/wallets')->group(function () {
+            Route::post('/', [WalletController::class, 'store']);
+            Route::get('/', [WalletController::class, 'index']);
+        });
 
         Route::prefix('/transactions')->group(function () {
             Route::get('/', [TransactionController::class, 'index']);
@@ -105,8 +109,7 @@ Route::prefix('/exchange-rate')->group(function () {
 
 
 // Admin routes
-Route::post('/admin/login', [AuthController::class, 'adminLogin'])
-    ->name('admin.login');
+Route::post('/admin/login', [AuthController::class, 'adminLogin']);
 
 Route::group(['middleware' => 'auth:sanctum,admin'], function () {
     Route::get('/stats', [AdminController::class, 'stats']);
@@ -132,8 +135,7 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
 });
 
 // Auth
-Route::post('super-admin/login', [AuthController::class, 'superAdminLogin'])
-    ->name('super-admin.login');
+Route::post('/super-admin/login', [AuthController::class, 'superAdminLogin']);
 
 Route::middleware(['auth:sanctum,super_admin, verify.browser'])->group(function () {
 

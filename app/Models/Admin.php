@@ -2,6 +2,7 @@
 
 namespace DaaluPay\Models;
 
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
@@ -10,10 +11,18 @@ use  DaaluPay\Models\Traits\AdminTrait;
 
 class Admin extends Authenticatable
 {
+    use HasApiTokens;
     use HasFactory;
     use Notifiable;
     // use UUIDTrait;
     // use AdminTrait;
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'created_at',
+        'updated_at',
+    ];
 
     protected $fillable = [
         'first_name',

@@ -136,15 +136,6 @@
                     }
                 },
                 {
-                    "route": "/verify-email/{id}/{hash}",
-                    "method": "GET",
-                    "description": "Verify user email",
-                    "middleware": ["auth:sanctum", "signed", "throttle:6,1"],
-                    "response_body": {
-                        "message": "string"
-                    }
-                },
-                {
                     "route": "/email/verification-notification",
                     "method": "POST",
                     "description": "Send email verification notification",
@@ -276,13 +267,19 @@
                         "currency": "string"
                     },
                     "response_body": {
-                        "message": "string",
+  "status": "success",
                         "data": {
-                            "id": "integer",
+                            "uuid": "string",
+                            "userId": "integer",
+                            "currencyId": "integer",
                             "balance": "decimal",
-                            "currency": "string"
-                        }
-                    }
+                            "updatedAt": "
+
+                            timestamp",
+                            "createdAt": "timestamp",
+                            "id": "integer"
+  }
+}
                 },
                 {
                     "route": "/user/swaps",

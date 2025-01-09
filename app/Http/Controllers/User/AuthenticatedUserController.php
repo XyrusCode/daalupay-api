@@ -3,6 +3,9 @@
 namespace DaaluPay\Http\Controllers\User;
 
 use DaaluPay\Http\Controllers\BaseController;
+use DaaluPay\Models\Currency;
+use DaaluPay\Models\Swap;
+use DaaluPay\Models\Transaction;
 use DaaluPay\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +19,7 @@ class AuthenticatedUserController extends BaseController
      */
     public function show(Request $request)
     {
-  
+
         return $this->process(function () use ($request) {
 
                 $user = User::find($request->user()?->id);
@@ -33,9 +36,17 @@ class AuthenticatedUserController extends BaseController
     {
         return $this->process(function () use ($request) {
             $user = User::find($request->user()->id);
-            $wallets = $user->wallets;
+
             $transactions = $user->transactions->take(5);
             $swaps = $user->swaps->take(5);
+
+            $wallets = Wallet::where('user_id', $user->id)->get();
+
+            // set currency name
+            foreach ($wallets as $wallet) {
+                $wallet->currency = Currency::find($wallet->currency_id)->code;
+            }
+
 
             $stats = [
                 'wallets' => $wallets,
@@ -76,20 +87,4 @@ class AuthenticatedUserController extends BaseController
         }, true);
     }
 
-    public function createWallet(Request $request)
-    {
-        return $this->process(function () use ($request) {
-            $user = Auth::user();
-            $currency = $request->currency;
-            $balance = 0;
-
-            $wallet = Wallet::create([
-                'user_id' => $user->id,
-                'currency' => $currency,
-                'balance' => $balance,
-            ]);
-
-            return $this->getResponse('success', $wallet, 200);
-        }, true);
-    }
 }

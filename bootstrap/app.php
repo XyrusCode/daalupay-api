@@ -7,10 +7,10 @@ use Sentry\Laravel\Integration;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/api.php',
+        web: __DIR__ . '/../routes/api.php',
         // api: __DIR__.'/../routes/api.php',
-        commands: __DIR__.'/../routes/console.php',
-        channels: __DIR__.'/../routes/channels.php',
+        commands: __DIR__ . '/../routes/console.php',
+        channels: __DIR__ . '/../routes/channels.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -22,19 +22,22 @@ return Application::configure(basePath: dirname(__DIR__))
             '/request-otp',
             '/verify-otp',
             '/user/*',
+            '/user',
             '/register',
-            '/sanctum/*'
+            '/sanctum/*',
+            '/admin/login',
+            '/super-admin/login',
         ]);
 
-         $middleware->trustHosts(at: ['daalupay.internal', 'daalupay.com']);
+        $middleware->trustHosts(at: ['daalupay.internal', 'daalupay.com']);
 
         // Ensure frontend requests are stateful (Sanctum middleware)
         $middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
 
-                // $middleware->api(prepend: [
-            //  \DaaluPay\Http\Middleware\LogUserActivity::class,
+        // $middleware->api(prepend: [
+        //  \DaaluPay\Http\Middleware\LogUserActivity::class,
         // ]);
 
         // // Force HTTPS for all routes (HSTS)
@@ -55,13 +58,13 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Aliases for verified email middleware
         $middleware->alias([
-
             'verified' => \DaaluPay\Http\Middleware\EnsureEmailIsVerified::class,
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
             // 'logActivity' => \DaaluPay\Http\Middleware\LogUserActivity::class,
             //  'verify.browser' => \DaaluPay\Http\Middleware\VerifyBrowserId::class,
         ]);
     })
-->withExceptions(function (Exceptions $exceptions) {
+    ->withExceptions(function (Exceptions $exceptions) {
         // Integrating Sentry for error handling
         Integration::handles($exceptions);
     })

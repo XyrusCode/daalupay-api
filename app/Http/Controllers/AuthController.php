@@ -28,7 +28,6 @@ use DaaluPay\Models\Admin;
 use DaaluPay\Models\SuperAdmin;
 use Illuminate\Support\Facades\Cache;
 use DaaluPay\Notifications\OtpNotification;
-use Illuminate\Support\Facades\Notification;
 
 class AuthController extends BaseController
 {
@@ -60,23 +59,26 @@ class AuthController extends BaseController
                 'email' => 'required|email',
                 'password' => 'required',
             ]);
+
+            $admin = Admin::where('email', $request->email)->first();
+
+            if (!$admin || !Hash::check($request->password, $admin->password)) {
+                throw ValidationException::withMessages([
+                    'email' => ['The provided credentials are incorrect.'],
+                ]);
+            }
+
+            $token = $admin->createToken('auth_token')->plainTextToken;
+
+            return $this->getResponse(
+                data: [
+                    'admin' => $admin,
+                    'token' => $token
+                ],
+                message: 'Admin login successful',
+                status_code: 200
+            );
         });
-
-        $admin = Admin::where('email', $request->email)->first();
-
-        if (!$admin || !Hash::check($request->password, $admin->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
-        }
-
-        $token = $admin->createToken('auth_token')->plainTextToken;
-
-        return $this->getResponse(
-            data: $admin,
-            message: 'Admin login successful',
-            status_code: 200
-        );
     }
 
     public function superAdminLogin(Request $request)
@@ -151,7 +153,7 @@ class AuthController extends BaseController
         return $this->process(function () use ($request) {
             $request->validate([
                 'email' => 'required|email',
-                ]);
+            ]);
 
             $user = User::where('email', $request->email)->first();
 
@@ -164,9 +166,7 @@ class AuthController extends BaseController
             $otp = random_int(100000, 999999);
             Cache::put('otp_' . $user->id, $otp, now()->addMinutes(15));
 
-            // $user->notify(new OtpNotification($otp, now()->addMinutes(15)->format('H:i')));
-
-            // Notification::send($user, new OtpNotification($otp, 5));
+            $user->notify(new OtpNotification($otp, 15));
 
             return $this->getResponse('success', 'OTP sent to email', 200);
         });
@@ -192,7 +192,6 @@ class AuthController extends BaseController
             $user->save();
             return $this->getResponse('success', $user, 200);
         });
-
     }
 
     /**
@@ -219,7 +218,7 @@ class AuthController extends BaseController
             ]);
 
             $user = User::where('email', $request->email)->first();
-             $user->load('wallets', 'transactions');
+            $user->load('wallets', 'transactions');
 
             if (! $user || ! Hash::check($request->password, $user->password)) {
                 throw ValidationException::withMessages([

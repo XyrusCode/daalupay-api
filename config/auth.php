@@ -45,18 +45,18 @@ return [
             'provider' => 'users',
         ],
 
-            'user' => [
-        'driver' => 'sanctum',
-        'provider' => 'users',
+        'user' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
         ],
 
         'admin' => [
-        'driver' => 'sanctum',
-        'provider' => 'admins',
+            'driver' => 'sanctum',
+            'provider' => 'admins',
         ],
 
         'super_admin' => [
-        'driver' => 'sanctum',
+            'driver' => 'sanctum',
             'provider' => 'super_admins',
         ],
     ],
