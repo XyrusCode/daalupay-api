@@ -8,11 +8,9 @@ class ExchangeRate extends Model
 {
 
     protected $table = 'exchange_rate';
-    protected $fillable = ['from_currency', 'to_currency', 'rate'];
-
-    protected $primaryKey = 'id';
 
     protected $hidden = ['created_at', 'updated_at'];
 
+    protected $fillable = ['from_currency', 'to_currency', 'rate'];
 
 }

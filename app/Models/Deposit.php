@@ -4,10 +4,9 @@ namespace DaaluPay\Models;
 
 use DaaluPay\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-
+use DaaluPay\Models\Wallet;
 class Deposit extends BaseModel
 {
     use HasFactory;
@@ -26,6 +25,7 @@ class Deposit extends BaseModel
         'user_id',
         'transaction_id',
         'channel',
+        'wallet_id',
     ];
 
     /**
@@ -45,6 +45,16 @@ class Deposit extends BaseModel
      */
     public function transaction(): HasOne
     {
-        return $this->belongsTo(Transaction::class, 'payment_id', 'id');
+        return $this->hasOne(Transaction::class, 'payment_id', 'id');
+    }
+
+    /**
+     * Get the wallet that the person is depositing to
+     *
+     * @return BelongsTo
+     */
+    public function wallet(): BelongsTo
+    {
+        return $this->belongsTo(Wallet::class, 'wallet_id', 'id');
     }
 }

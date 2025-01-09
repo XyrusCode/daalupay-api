@@ -22,7 +22,6 @@ class WalletSeeder extends Seeder
         $users = User::all();
         foreach ($users as $user) {
             Wallet::create([
-
                 'uuid' => Uuid::uuid4(),
                 'user_id' => $user->id,
                 'currency_id' => $currencyId,

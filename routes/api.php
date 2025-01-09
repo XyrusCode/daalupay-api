@@ -12,6 +12,7 @@ use DaaluPay\Http\Controllers\Admin\SuperAdminController;
 use DaaluPay\Http\Controllers\Admin\AdminController;
 use DaaluPay\Http\Controllers\ExchangeRateController;
 use DaaluPay\Http\Controllers\User\AuthenticatedUserController;
+use DaaluPay\Http\Controllers\Payment\DepositController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -98,6 +99,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::get('/{id}', [SwapController::class, 'show']);
             Route::post('/', [SwapController::class, 'store']);
         });
+
+        Route::prefix('/deposits')->group(function () {
+            Route::post('/', [DepositController::class, 'store']);
+        });
     });
 });
 
@@ -125,7 +130,6 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
         Route::post('/{id}/approve', [AdminController::class, 'approveTransaction']);
         Route::post('/{id}/deny', [AdminController::class, 'denyTransaction']);
     });
-
 });
 
 // Auth
@@ -164,5 +168,4 @@ Route::middleware(['auth:sanctum,super_admin, verify.browser'])->group(function 
         Route::put('/{uuid}', [ExchangeRateController::class, 'update']);
         Route::delete('/{uuid}', [ExchangeRateController::class, 'destroy']);
     });
-
 });

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone')->unique();
             $table->enum('status', ['active', 'suspended', 'banned', 'unverified'])->default('unverified');
+            $table->enum('kyc_status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

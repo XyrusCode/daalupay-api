@@ -15,6 +15,8 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        $kycStatus = ['pending', 'approved', 'rejected'];
+
         // Create 5 test users if not already created
         for ($i = 1; $i <= 5; $i++) {
             $firstName = Faker::create()->firstName;
@@ -29,6 +31,8 @@ class UserSeeder extends Seeder
                     'email' => $email,
                     'password' => Hash::make('password'),
                     'gender' => Faker::create()->randomElement(['male', 'female']),
+                    'status' => 'active',
+                    'kyc_status' => $kycStatus[rand(0, 2)],
                     'phone' => Faker::create()->phoneNumber,
                     'email_verified_at' => now(),
                     'created_at' => now(),
@@ -47,6 +51,8 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'gender' => 'male',
             'phone' => '08123456789',
+            'status' => 'active',
+            'kyc_status' => 'approved',
             'email_verified_at' => now(),
             'created_at' => now(),
             'updated_at' => now(),

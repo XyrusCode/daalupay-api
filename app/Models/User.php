@@ -97,6 +97,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'status',
+        'kyc_status',
     ];
 
     /**

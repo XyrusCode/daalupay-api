@@ -20,7 +20,7 @@ class ExchangeRateSeeder extends Seeder
             ExchangeRate::create([
                 'from_currency' => $currency->code,
                 'to_currency' => 'USD',
-                'rate' => 1,
+                'rate' => rand(1, 2000),
             ]);
         }
     }
