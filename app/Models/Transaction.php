@@ -106,11 +106,5 @@ class Transaction extends BaseModel
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    /**
-     * Get the admin who approved the transaction.
-     */
-    public function admin()
-    {
-        return $this->belongsTo(Admin::class, 'admin_id', 'id');
-    }
+
 }

@@ -69,12 +69,10 @@ class AuthController extends BaseController
             }
 
             $token = $admin->createToken('auth_token')->plainTextToken;
+            $admin->token = $token;
 
             return $this->getResponse(
-                data: [
-                    'admin' => $admin,
-                    'token' => $token
-                ],
+                data: $admin,
                 message: 'Admin login successful',
                 status_code: 200
             );

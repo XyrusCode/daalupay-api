@@ -9,7 +9,7 @@ class KYC extends Model
 {
     protected $table = 'kyc';
 
-    protected $fillable = ['user_id', 'status', 'type', 'document_type', 'document_number', 'document_image'];
+    protected $fillable = ['user_id', 'status', 'type', 'document_type', 'document_number', 'document_image', 'admin_id'];
 
     public function user(): BelongsTo
     {

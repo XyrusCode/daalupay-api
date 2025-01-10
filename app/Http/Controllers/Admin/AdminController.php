@@ -8,27 +8,28 @@ use DaaluPay\Models\User;
 use DaaluPay\Models\Transaction;
 use DaaluPay\Models\Suspension;
 use DaaluPay\Models\Swap;
-
+use DaaluPay\Models\KYC;
 class AdminController extends BaseController
 {
 
     public function stats()
     {
         return $this->process(function () {
+            $admin_id = auth('admin')->user()->id;
             // last 5 transactions assigned to admin
-            $transactions = Transaction::where('assigned_to', auth('admin')->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
+            // $transactions = Transaction::where('admin_id', auth('admin')->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
             // last 5 swaps assigned to admin
-            $swaps = Swap::where('assigned_to', auth('admin')->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
+            $swaps = Swap::where('admin_id', $admin_id)->orderBy('created_at', 'desc')->take(5)->get();
             // last 5 users assigned to admin
-            $users = User::where('assigned_to', auth('admin')->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
-
+            // $users = User::where('admin_id', auth('admin')->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
+            // $kycs = KYC::where('admin_id', $admin_id)->orderBy('created_at', 'desc')->take(5)->get();
             $stats = [
-                'transactions' => $transactions,
+                // 'transactions' => $transactions,
                 'swaps' => $swaps,
-                'users' => $users,
+                // 'kycs' => $kycs,
             ];
 
-            return $this->getResponse(true, 'Admin dashboard fetched successfully', $stats);
+            return $this->getResponse(status: true, message: 'Admin dashboard fetched where admin is ' . $admin_id, data: $stats);
         }, true);
     }
 

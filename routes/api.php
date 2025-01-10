@@ -66,9 +66,7 @@ Route::post('/email/verification-notification', [AuthController::class, 'sendVer
     ->middleware(['auth', 'throttle:6,1'])
     ->name('verification.send');
 
-Route::post('/logout', [AuthController::class, 'logout'])
-    ->middleware('auth')
-    ->name('logout');
+Route::post('/logout', [AuthController::class, 'logout']);
 
 
 Route::post('/user/request-otp', [AuthController::class, 'requestOtp']);
@@ -111,9 +109,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 Route::post('/admin/login', [AuthController::class, 'adminLogin']);
 
 Route::group(['middleware' => 'auth:sanctum,admin'], function () {
-    Route::get('/stats', [AdminController::class, 'stats']);
 
-    Route::prefix('/users')->group(function () {
+    Route::prefix('/admin')->group(function () {
+        Route::get('/stats', [AdminController::class, 'stats']);
         Route::get('/', [AdminController::class, 'getAllUsers']);
         Route::get('/{id}', [AdminController::class, 'getUser']);
         Route::post('/{id}', [AdminController::class, 'updateUser']);
@@ -135,7 +133,7 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
 // Auth
 Route::post('/super-admin/login', [AuthController::class, 'superAdminLogin']);
 
-Route::middleware(['auth:sanctum,super_admin, verify.browser'])->group(function () {
+Route::middleware(['auth:sanctum,super_admin'])->group(function () {
 
     Route::get('/stats', [SuperAdminController::class, 'stats']);
 
