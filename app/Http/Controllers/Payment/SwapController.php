@@ -7,13 +7,17 @@ use DaaluPay\Models\Admin;
 use Illuminate\Http\Request;
 use DaaluPay\Models\Swap;
 use DaaluPay\Notifications\SwapApprovalNotification;
+use DaaluPay\Models\Currency;
+use DaaluPay\Models\Transaction;
+use Illuminate\Support\Facades\DB;
+use Ramsey\Uuid\Uuid;
 
 class SwapController extends BaseController
 {
 
     public function index(Request $request)
     {
-        return $this->process(function() use ($request) {
+        return $this->process(function () use ($request) {
             $user = $request->user();
             $swaps = Swap::where('user_id', $user->id)->get();
             return $this->getResponse('success', $swaps, 200);
@@ -22,7 +26,7 @@ class SwapController extends BaseController
 
     public function store(Request $request)
     {
-        return $this->process(function() use ($request) {
+        return $this->process(function () use ($request) {
             $user = $request->user();
 
             $request->validate([
@@ -31,8 +35,11 @@ class SwapController extends BaseController
                 'amount' => 'required|numeric|min:0',
             ]);
 
-            $from_wallet = $user->wallets()->where('currency', $request->from_currency)->first();
-            $to_wallet = $user->wallets()->where('currency', $request->to_currency)->first();
+            $from_currency_id = DB::table('currencies')->where('code', $request->from_currency)->first()->id;
+            $to_currency_id = DB::table('currencies')->where('code', $request->to_currency)->first()->id;
+
+            $from_wallet = $user->wallets()->where('currency_id', $from_currency_id)->first();
+            $to_wallet = $user->wallets()->where('currency_id', $to_currency_id)->first();
 
             if (!$from_wallet) {
                 return $this->getResponse('failure', null, 404, 'From wallet not found');
@@ -51,9 +58,25 @@ class SwapController extends BaseController
             $from_wallet->save();
             $to_wallet->save();
 
-           $admin = Admin::find(1)->notify(new SwapApprovalNotification($user, $request->amount, $request->from_currency, $request->to_currency, $request->from_amount, $request->to_amount, $request->rate));
+            $admin = Admin::find(1);
+            // ->notify(new SwapApprovalNotification($user, $request->amount, $request->from_currency, $request->to_currency, $request->from_amount, $request->to_amount, $request->rate));
+
+            $transaction = Transaction::create([
+                'uuid' => Uuid::uuid4(),
+                'reference_number' => Uuid::uuid4(),
+                'channel' => 'paystack',
+                'amount' => $request->amount,
+                'type' => 'swap',
+                'status' => 'pending',
+                'user_id' => $user->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $transaction->save();
 
             Swap::create([
+                'uuid' => Uuid::uuid4(),
                 'user_id' => $user->id,
                 'amount' => $request->amount,
                 'from_currency' => $request->from_currency,
@@ -63,6 +86,7 @@ class SwapController extends BaseController
                 'rate' => $request->rate,
                 'status' => 'pending',
                 'admin_id' => $admin->id,
+                'transaction_id' => $transaction->id,
             ]);
 
             return $this->getResponse('success', null, 200);
@@ -72,7 +96,7 @@ class SwapController extends BaseController
 
     public function show(Request $request, $swap_id)
     {
-        return $this->process(function() use ($request, $swap_id) {
+        return $this->process(function () use ($request, $swap_id) {
             $swap = Swap::find($swap_id);
 
             if (!$swap) {

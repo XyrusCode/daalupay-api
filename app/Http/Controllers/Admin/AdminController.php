@@ -33,6 +33,24 @@ class AdminController extends BaseController
         }, true);
     }
 
+    public function getTransactions(Request $request)
+    {
+        return $this->process(function () use ($request) {
+
+            // where admin_id is the admin id
+            $transactions = Swap::where('admin_id', auth('admin')->user()->id)->get();
+            return $this->getResponse(status: true, message: 'Transactions fetched successfully', data: $transactions);
+        }, true);
+    }
+
+    public function getTransaction($id)
+    {
+        return $this->process(function () use ($id) {
+            $transaction = Swap::find($id);
+            return $this->getResponse(status: true, message: 'Transaction fetched successfully', data: $transaction);
+        }, true);
+    }
+
     /**
      * Get all users
      * @return JsonResponse

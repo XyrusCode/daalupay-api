@@ -66,21 +66,29 @@
     <p>This document outlines the available API routes, their HTTP methods, required authentication, and usage details for the application.</p>
 
     @php
-        $jsonPath = resource_path('docs.json');
-        $docs = [];
+        $routesJsonPath = resource_path('doc-routes.json');
+        $modelsJsonPath = resource_path('doc-models.json');
+        $routes = [];
+        $models = [];
+        if (file_exists($routesJsonPath)) {
+            $routesJsonContent = file_get_contents($routesJsonPath);
+            if ($routesJsonContent !== false) {
+                $routes = json_decode($routesJsonContent, true) ?? [];
+            }
+        }
 
-        if (file_exists($jsonPath)) {
-            $jsonContent = file_get_contents($jsonPath);
-            if ($jsonContent !== false) {
-                $docs = json_decode($jsonContent, true) ?? [];
+        if (file_exists($modelsJsonPath)) {
+            $modelsJsonContent = file_get_contents($modelsJsonPath);
+            if ($modelsJsonContent !== false) {
+                $models = json_decode($modelsJsonContent, true) ?? [];
             }
         }
     @endphp
 
-    @if(!empty($docs['routes']))
-        @foreach ($docs['routes'] as $group)
+    @if(!empty($routes))
+        @foreach ($routes['routes'] as $groupData)
             <div class="route-group">
-                <h2 class="group-title">{{ $group['group'] }}</h2>
+                <h2 class="group-title">{{ $groupData['group'] ?? 'Unnamed Group' }}</h2>
                 <table>
                     <thead>
                         <tr>
@@ -88,13 +96,13 @@
                             <th>HTTP Method</th>
                             <th>Description</th>
                             <th>Middleware</th>
-                            <th>Request Body</th>
                             <th>Query Params</th>
+                            <th>Request Body</th>
                             <th>Response Body</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($group['routes'] as $route)
+                        @foreach ($groupData['routes'] as $route)
                             <tr>
                                 <td>{{ $route['route'] }}</td>
                                 <td>{{ $route['method'] }}</td>
@@ -113,7 +121,7 @@
                                         None
                                     @endif
                                 </td>
-                                 <td>
+                                <td>
                                     @if(isset($route['request_body']))
                                         <pre>{{ json_encode($route['request_body'], JSON_PRETTY_PRINT) }}</pre>
                                     @else
@@ -134,6 +142,40 @@
             </div>
         @endforeach
     @else
+        <div class="route-group">
+            <p>No API documentation available.</p>
+        </div>
+    @endif
+
+    @if(!empty($models))
+        @foreach ($models as $model)
+            <h2>{{ $model['name'] }}</h2>
+            <p>{{ $model['description'] }}</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($model['fields'] as $field)
+                        <tr>
+                            <td>{{ $field['name'] }}</td>
+                            <td>{{ $field['type'] }}</td>
+                            <td>{{ $field['description'] }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endforeach
+    @endif
+
+
+
+<hr>
+    @if(empty($routes) && empty($models))
         <div class="route-group">
             <p>No API documentation available.</p>
         </div>

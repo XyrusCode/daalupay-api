@@ -1,0 +1,146 @@
+[
+    {
+        "name": "User",
+        "description": "A user is a record of a user of the application.",
+        "fields": [
+            {
+                "name": "id",
+                "type": "integer",
+                "description": "The unique identifier for the user."
+            },
+            {
+                "name": "first_name",
+                "type": "string",
+                "description": "The first name of the user."
+            },
+            {
+                "name": "last_name",
+                "type": "string",
+                "description": "The last name of the user."
+            },
+            {
+                "name": "email",
+                "type": "string",
+                "description": "The email of the user."
+            },
+            {
+                "name": "phone",
+                "type": "string",
+                "description": "The phone number of the user."
+            },
+            {
+                "name": "address",
+                "type": "string",
+                "description": "The address of the user."
+            },
+            {
+                "name": "city",
+                "type": "string",
+                "description": "The city of the user."
+            },
+            {
+                "name": "state",
+                "type": "string",
+                "description": "The state of the user."
+            },
+            {
+                "name": "zip_code",
+                "type": "string",
+                "description": "The zip code of the user."
+            },
+            {
+                "name": "country",
+                "type": "string",
+                "description": "The country of the user."
+            },
+            {
+                "name": "document_type",
+                "type": "enum:national_id,passport",
+                "description": "The type of document the user has."
+            },
+            {
+                "name": "document_file",
+                "type": "file",
+                "description": "The file of the document the user has."
+            }
+        ]
+    },
+    {
+        "name": "Admin",
+        "description": "An admin is a record of an admin of the application. It can be a super admin or an admin.",
+        "fields": [
+            {
+                "name": "id",
+                "type": "integer",
+                "description": "The unique identifier for the admin."
+            },
+            {
+                "name": "first_name",
+                "type": "string",
+                "description": "The first name of the admin."
+            },
+            {
+                "name": "last_name",
+                "type": "string",
+                "description": "The last name of the admin."
+            },
+            {
+                "name": "email",
+                "type": "string",
+                "description": "The email of the admin."
+            },
+            {
+                "name": "phone",
+                "type": "string",
+                "description": "The phone number of the admin."
+            }
+        ]
+    },
+    {
+        "name": "SuperAdmin",
+        "description": "A super admin is a record of a super admin of the application. There can only be one super admin.",
+        "fields": [
+            {
+                "name": "id",
+                "type": "integer",
+                "description": "The unique identifier for the super admin."
+            }
+        ]
+    },
+    {
+        "name": "Transaction",
+        "description": "A transaction is a record of a financial transaction between two parties. It can be a deposit, withdrawal, or transfer.",
+        "fields": [
+            {
+                "name": "id",
+                "type": "integer",
+                "description": "The unique identifier for the transaction."
+            },
+            {
+                "name": "reference_number",
+                "type": "string",
+                "description": "The reference number for the transaction."
+            },
+            {
+                "name": "channel",
+                "type": "string",
+                "description": "The channel through which the transaction was made."
+            }
+        ]
+    },
+    {
+        "name": "Swap",
+        "description": "A swap is a record of a swap transaction between two parties. It can be a swap from one currency to another.",
+        "fields": []
+    },
+    {
+        "name": "KYC",
+        "description": "A KYC is a record of a KYC transaction between a user and an admin. It can be a KYC for a user.",
+        "fields": []
+    },
+    {
+        "name": "Wallet",
+        "description": "A wallet is a record of a wallet of a user. It can be a wallet for a user.",
+        "fields": []
+    }
+]

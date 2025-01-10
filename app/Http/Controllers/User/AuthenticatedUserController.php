@@ -22,13 +22,16 @@ class AuthenticatedUserController extends BaseController
 
         return $this->process(function () use ($request) {
 
-                $user = User::find($request->user()?->id);
+            $user = User::find($request->user()?->id);
 
-                $user->load('wallets', 'transactions');
+            $user->load('wallets', 'transactions');
+
+            $user->wallets->each(function ($wallet) {
+                $wallet->currency = Currency::find($wallet->currency_id)->code;
+            });
 
 
-                return $this->getResponse('success', $user, 200);
-
+            return $this->getResponse('success', $user, 200);
         }, true);
     }
 
@@ -86,5 +89,4 @@ class AuthenticatedUserController extends BaseController
             return $this->getResponse('success', $user, 200);
         }, true);
     }
-
 }

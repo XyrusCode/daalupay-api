@@ -112,22 +112,27 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
 
     Route::prefix('/admin')->group(function () {
         Route::get('/stats', [AdminController::class, 'stats']);
-        Route::get('/', [AdminController::class, 'getAllUsers']);
-        Route::get('/{id}', [AdminController::class, 'getUser']);
-        Route::post('/{id}', [AdminController::class, 'updateUser']);
-        Route::post('/{id}/approve', [AdminController::class, 'approveUserVerification']);
-        Route::post('/{id}/deny', [AdminController::class, 'denyUserVerification']);
-        Route::post('/{id}/suspend', [AdminController::class, 'suspendUser']);
-        Route::post('/{id}/unsuspend', [AdminController::class, 'unsuspendUser']);
-        Route::post('/{id}/delete', [AdminController::class, 'deleteUser']);
+
+        Route::prefix('/users')->group(function () {
+            Route::get('/', [AdminController::class, 'getAllUsers']);
+            Route::get('/{id}', [AdminController::class, 'getUser']);
+            Route::post('/{id}', [AdminController::class, 'updateUser']);
+            Route::post('/{id}/approve', [AdminController::class, 'approveUserVerification']);
+            Route::post('/{id}/deny', [AdminController::class, 'denyUserVerification']);
+            Route::post('/{id}/suspend', [AdminController::class, 'suspendUser']);
+            Route::post('/{id}/unsuspend', [AdminController::class, 'unsuspendUser']);
+            Route::post('/{id}/delete', [AdminController::class, 'deleteUser']);
+        });
+
+
+        Route::prefix('/transactions')->group(function () {
+            Route::get('/', [AdminController::class, 'getTransactions']);
+            Route::get('/{id}', [AdminController::class, 'getTransaction']);
+            Route::post('/{id}/approve', [AdminController::class, 'approveTransaction']);
+            Route::post('/{id}/deny', [AdminController::class, 'denyTransaction']);
+        });
     });
 
-    Route::prefix('/transactions')->group(function () {
-        Route::get('/', [AdminController::class, 'index']);
-        Route::get('/{id}', [AdminController::class, 'show']);
-        Route::post('/{id}/approve', [AdminController::class, 'approveTransaction']);
-        Route::post('/{id}/deny', [AdminController::class, 'denyTransaction']);
-    });
 });
 
 // Auth
@@ -165,10 +170,5 @@ Route::middleware(['auth:sanctum,super_admin'])->group(function () {
         Route::post('/', [ExchangeRateController::class, 'store']);
         Route::put('/{uuid}', [ExchangeRateController::class, 'update']);
         Route::delete('/{uuid}', [ExchangeRateController::class, 'destroy']);
-    });
-
-    Route::prefix('/transfer-fees')->group(function () {
-        Route::get('/', [SuperAdminController::class, 'getTransferFees']);
-        Route::post('/', [SuperAdminController::class, 'setTransferFee']);
     });
 });
