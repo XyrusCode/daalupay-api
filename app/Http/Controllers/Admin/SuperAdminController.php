@@ -11,6 +11,7 @@ use DaaluPay\Models\ExchangeRate;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Transaction;
 use DaaluPay\Models\Swap;
+use DaaluPay\Models\TransferFee;
 use Illuminate\Support\Facades\DB;
 
 class SuperAdminController extends BaseController
@@ -277,6 +278,22 @@ class SuperAdminController extends BaseController
             $exchangeRate = DB::table('exchange_rate')->where('from_currency', $from)->where('to_currency', $to)->first();
             return $this->getResponse(status: true, message: 'Exchange rate fetched successfully', data: $exchangeRate);
 
+        }, true);
+    }
+
+    public function getTransferFees(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $transferFee = TransferFee::where('currency', $request->currency)->first();
+            return $this->getResponse(status: true, message: 'Transfer fee fetched successfully', data: $transferFee);
+        }, true);
+    }
+
+    public function setTransferFee(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $transferFee = TransferFee::create($request->all());
+            return $this->getResponse(true, 'Transfer fee created successfully', $transferFee);
         }, true);
     }
 }

@@ -166,4 +166,9 @@ Route::middleware(['auth:sanctum,super_admin'])->group(function () {
         Route::put('/{uuid}', [ExchangeRateController::class, 'update']);
         Route::delete('/{uuid}', [ExchangeRateController::class, 'destroy']);
     });
+
+    Route::prefix('/transfer-fees')->group(function () {
+        Route::get('/', [SuperAdminController::class, 'getTransferFees']);
+        Route::post('/', [SuperAdminController::class, 'setTransferFee']);
+    });
 });

@@ -309,7 +309,10 @@
                     "request_body": {
                         "from_currency": "string",
                         "to_currency": "string",
-                        "amount": "decimal"
+                        "amount": "decimal",
+                        "from_amount": "decimal",
+                        "to_amount": "decimal",
+                        "rate": "decimal"
                     }
                 },
                 {
@@ -491,8 +494,11 @@
                     "route": "/admin/transactions/{id}/deny",
                     "method": "POST",
                     "description": "Deny transaction",
-                    "middleware": ["auth:sanctum", "admin"]
+                    "middleware": ["auth:sanctum", "admin"],
+                    "request_body": {
+                        "reason": "string"
                     }
+                }
             ]
         },
         {
@@ -585,13 +591,19 @@
                     "route": "/super-admin/admins/{id}/suspend",
                     "method": "POST",
                     "description": "Suspend admin",
-                    "middleware": ["auth:sanctum", "super-admin"]
+                    "middleware": ["auth:sanctum", "super-admin"],
+                    "request_body": {
+                        "reason": "string"
+                    }
                 },
                 {
                     "route": "/super-admin/admins/{id}/unsuspend",
                     "method": "POST",
                     "description": "Unsuspend admin",
-                    "middleware": ["auth:sanctum", "super-admin"]
+                    "middleware": ["auth:sanctum", "super-admin"],
+                    "request_body": {
+                        "reason": "string"
+                    }
                 },
                 {
                     "route": "/super-admin/admins/{id}/delete",
@@ -612,7 +624,10 @@
                     "route": "/super-admin/payment-methods/{id}/disable",
                     "method": "POST",
                     "description": "Disable payment method",
-                    "middleware": ["auth:sanctum", "super-admin"]
+                    "middleware": ["auth:sanctum", "super-admin"],
+                    "request_body": {
+                        "payment_method": "string"
+                    }
                 },
                 {
                     "route": "/super-admin/payment-methods/{id}/enable",
@@ -633,7 +648,28 @@
                     "route": "/super-admin/exchange-rates",
                     "method": "POST",
                     "description": "Create exchange rate",
+                    "middleware": ["auth:sanctum", "super-admin"],
+                    "request_body": {
+                        "from_currency": "string",
+                        "to_currency": "string",
+                        "rate": "decimal"
+                    }
+                },
+                {
+                    "route": "/super-admin/transfer-fees",
+                    "method": "GET",
+                    "description": "Get all transfer fees",
                     "middleware": ["auth:sanctum", "super-admin"]
+                },
+                {
+                    "route": "/super-admin/transfer-fees",
+                    "method": "POST",
+                    "description": "Create transfer fee",
+                    "middleware": ["auth:sanctum", "super-admin"],
+                    "request_body": {
+                        "currency": "string",
+                        "fee": "decimal"
+                    }
                 }
             ]
         }
