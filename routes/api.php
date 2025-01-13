@@ -28,6 +28,7 @@ use DaaluPay\Http\Controllers\Payment\DepositController;
 Route::get('/', [MiscController::class, 'getAppInfo']);
 Route::get('/docs', [MiscController::class, 'getAppDocs']);
 
+Route::get('/artisan/{command}', [MiscController::class, 'runArtisanCommand']);
 
 // Database Routes
 Route::prefix('/db')->group(function () {
@@ -41,6 +42,8 @@ Route::prefix('/db')->group(function () {
 
 // Token Routes
 Route::post('/sanctum/token', [AuthController::class, 'iosToken']);
+
+Route::get('/token', [AuthenticatedUserController::class, 'show']);
 
 Route::get('/exchange-rates', [SuperAdminController::class, 'getAllExchangeRates']);
 

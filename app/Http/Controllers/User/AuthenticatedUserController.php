@@ -24,12 +24,17 @@ class AuthenticatedUserController extends BaseController
 
             $user = User::find($request->user()?->id);
 
-            $user->load('wallets', 'transactions');
+            // load wallets and transactions if regular user
+            $isUser = Auth::guard('user')->check();
+            if (!$isUser) {
+                $user->load('wallets', 'transactions');
 
-            $user->wallets->each(function ($wallet) {
-                $wallet->currency = Currency::find($wallet->currency_id)->code;
-            });
+                $user->wallets->each(function ($wallet) {
+                    $wallet->currency = Currency::find($wallet->currency_id)->code;
+                });
+            }
 
+            $user->userType = $isUser ? 'user' : 'admin';
 
             return $this->getResponse('success', $user, 200);
         }, true);

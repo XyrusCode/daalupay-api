@@ -66,7 +66,8 @@
                         "user": {
                             "id": "integer",
                             "email": "string",
-                            "name": "string"
+                            "name": "string",
+                            "userType": "enum:user,admin,superadmin"
                         }
                     }
                 },
@@ -114,7 +115,8 @@
                             "id": "integer",
                             "email": "string",
                             "first_name": "string",
-                            "last_name": "string"
+                            "last_name": "string",
+                            "userType": "enum:user,admin,superadmin"
                         }
                     }
                 },

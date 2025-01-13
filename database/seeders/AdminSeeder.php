@@ -32,5 +32,15 @@ class AdminSeeder extends Seeder
                 'role' => 'processor',
             ]);
         }
+
+        // create a known admin
+        Admin::create([
+            'id' => 6,
+            'uuid' => Uuid::uuid4(),
+            'first_name' => 'Known',
+            'last_name' => 'Admin',
+            'email' => 'admin@daalupay.com',
+            'password' => Hash::make('password'),
+        ]);
     }
 }

@@ -5,7 +5,7 @@ namespace DaaluPay\Http\Controllers;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Artisan;
 class MiscController extends BaseController
 {
 
@@ -17,12 +17,13 @@ class MiscController extends BaseController
         ]);
     }
 
-    // 
-    public function getAppDocs()
+    //
+    public function runArtisanCommand($command)
     {
-        return view('docs')->with([
-            'title' => 'API Documentation'
-        ]);
+
+        // $command = 'ph ' . $command;
+        Artisan::call($command);
+        return Artisan::output();
     }
 
 

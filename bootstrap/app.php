@@ -27,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             '/sanctum/*',
             '/admin/login',
             '/super-admin/login',
+            '/admin/*',
         ]);
 
         $middleware->trustHosts(at: ['daalupay.internal', 'daalupay.com']);

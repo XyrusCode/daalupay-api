@@ -104,6 +104,12 @@
             <div id="apiResponse"></div>
 
             <div class="card">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Run Artisan Command</h2>
+                <input type="text" id="artisanCommandInput" placeholder="Enter Command">
+                <button class="button" id="runArtisanCommandButton">Run</button>
+            </div>
+
+            <div class="card">
                 <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Migrations</h2>
                 <table>
                     <thead></thead>
@@ -118,6 +124,7 @@
     </div>
     <script>
         const correctPassword = "1234";
+
         function checkPassword() {
             const enteredPassword = document.getElementById('passwordInput').value;
             if (enteredPassword === correctPassword) {
@@ -139,6 +146,10 @@
             document.getElementById('seedTables').addEventListener('click', function() {
                 seedTables();
             });
+        });
+
+        document.getElementById('runArtisanCommandButton').addEventListener('click', function() {
+            runArtisanCommand();
         });
 
         function updateApiResponse(message) {
@@ -265,6 +276,14 @@
                     console.error('Error seeding tables:', error);
                     updateApiResponse('Error seeding tables: ' + error.message);
                 });
+        }
+
+        function runArtisanCommand() {
+            const command = document.getElementById('artisanCommandInput').value;
+            fetch('/artisan/' + command)
+                .then(response => response.text())
+                .then(data => updateApiResponse(data))
+                .catch(error => updateApiResponse('Error running artisan command: ' + error.message));
         }
     </script>
 </body>
