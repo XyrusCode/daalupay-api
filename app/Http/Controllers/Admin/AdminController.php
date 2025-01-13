@@ -114,49 +114,46 @@ class AdminController extends BaseController
         }, true);
     }
 
-    public function approveTransaction(Request $request, Transaction $transaction)
+    public function approveTransaction(Request $request)
     {
-        return $this->process(function () use ($request, $transaction) {
-            if ($transaction->status !== 'pending') {
-                return $this->getResponse(
-                    status: 'error',
-                    message: 'Transaction is not pending approval',
-                    status_code: 400
-                );
-            }
+        return $this->process(function () use ($request) {
+            // get id from route
+            $id = $request->route('id');
+            $swap = Swap::find($id);
 
-            $transaction->update([
-                'status' => 'approved',
-                'approved_by' => $request->user()->id,
+
+            $swap->update([
+                'status' => 'approved'
             ]);
 
             return $this->getResponse(
-                data: $transaction,
-                message: 'Transaction approved successfully'
+                data: $swap,
+                message: 'Swap approved successfully'
             );
         }, true);
     }
 
-    public function denyTransaction(Request $request, Transaction $transaction)
+    public function denyTransaction(Request $request)
     {
-        return $this->process(function () use ($request, $transaction) {
-            if ($transaction->status !== 'pending') {
+        return $this->process(function () use ($request) {
+            // get id from route
+            $id = $request->route('id');
+            $swap = Swap::find($id);
+
+            $swap->update([
+                'status' => 'rejected'
+            ]);
+
+            return $this->getResponse(
+                data: $swap,
+                message: 'Swap rejected successfully'
+            );
                 return $this->getResponse(
                     status: 'error',
                     message: 'Transaction is not pending approval',
                     status_code: 400
                 );
-            }
 
-            $transaction->update([
-                'status' => 'denied',
-                'approved_by' => $request->user()->id,
-            ]);
-
-            return $this->getResponse(
-                data: $transaction,
-                message: 'Transaction denied successfully'
-            );
         });
     }
 

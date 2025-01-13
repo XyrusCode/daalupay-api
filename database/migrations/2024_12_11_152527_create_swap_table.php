@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('swap_operations', function (Blueprint $table) {
-             $table->id()->primary();
-             $table->uuid('uuid')->unique();
+            $table->id()->primary();
+            $table->uuid('uuid')->unique();
             $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             $table->foreignId('admin_id')->constrained('admins', 'id')->onDelete('cascade');
             $table->foreignId('transaction_id')->constrained('transactions', 'id')->onDelete('cascade');
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('from_amount', 15, 8);
             $table->decimal('to_amount', 15, 8);
             $table->decimal('rate', 15, 8);
-            $table->string('status');
+            $table->enum('status', ['pending', 'approved', 'rejected']);
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
