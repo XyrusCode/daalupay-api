@@ -16,6 +16,8 @@ class SwapSeeder extends Seeder
      */
     public function run(): void
     {
+
+        $swapStatuses = ['pending', 'approved', 'rejected'];
         // Create 5 swap operations for each user
         $users = User::all();
         $admins = Admin::all();
@@ -32,7 +34,7 @@ class SwapSeeder extends Seeder
                     'from_amount' => 100,
                     'to_amount' => 85,
                     'rate' => 0.85,
-                    'status' => 'completed',
+                    'status' => $swapStatuses[array_rand($swapStatuses)],
                     'notes' => 'Swap operation completed successfully',
                 ]);
             }

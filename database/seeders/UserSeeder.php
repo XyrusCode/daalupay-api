@@ -8,6 +8,7 @@ use DaaluPay\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Faker\Factory as Faker;
 use Ramsey\Uuid\Uuid;
+
 class UserSeeder extends Seeder
 {
     /**
@@ -17,8 +18,25 @@ class UserSeeder extends Seeder
     {
         $kycStatus = ['pending', 'approved', 'rejected'];
 
+        // create known user for test  operations
+        User::create([
+            'id' => 1,
+            'uuid' => Uuid::uuid4(),
+            'first_name' => 'Test',
+            'last_name' => 'User',
+            'email' => 'test@example.com',
+            'password' => Hash::make('password'),
+            'gender' => 'male',
+            'phone' => '08123456789',
+            'status' => 'active',
+            'kyc_status' => 'approved',
+            'email_verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         // Create 5 test users if not already created
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 2; $i <= 6; $i++) {
             $firstName = Faker::create()->firstName;
             $lastName = Faker::create()->lastName;
             $email = $firstName . '.' . $lastName . '@example.com';
@@ -40,22 +58,5 @@ class UserSeeder extends Seeder
                 ]);
             }
         }
-
-        // create known user for test  operations
-        User::create([
-            'id' => 6,
-            'uuid' => Uuid::uuid4(),
-            'first_name' => 'Test',
-            'last_name' => 'User',
-            'email' => 'test@example.com',
-            'password' => Hash::make('password'),
-            'gender' => 'male',
-            'phone' => '08123456789',
-            'status' => 'active',
-            'kyc_status' => 'approved',
-            'email_verified_at' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
     }
 }

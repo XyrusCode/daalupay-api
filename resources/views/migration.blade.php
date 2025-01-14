@@ -96,6 +96,7 @@
                 <!-- Show only in local env -->
                 @if (app()->environment('local'))
                     <button class="button" id="rollbackMigrationsButton">Rollback Migrations</button>
+                    <button class="button" id="resetDBButton">Reset DB</button>
                 @endif
                 <button class="button" id="seedTables">Seed</button>
                 <p id="noNewActionsMessage" style="display: none;">Nothing new to do</p>
@@ -105,7 +106,15 @@
 
             <div class="card">
                 <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Run Artisan Command</h2>
-                <input type="text" id="artisanCommandInput" placeholder="Enter Command">
+                <select id="artisanCommandInput" class="w-full p-4 border border-gray-300 rounded-md">
+                    <option class="p-4" selected value="cache:clear">cache:clear</option>
+                    <option class="p-4" value="config:clear">config:clear</option>
+                    <option class="p-4" value="config:cache">config:cache</option>
+                    <option class="p-4" value="route:clear">route:clear</option>
+                    <option class="p-4" value="route:cache">route:cache</option>
+                    <option class="p-4" value="view:clear">view:clear</option>
+                    <option class="p-4" value="view:cache">view:cache</option>
+                </select>
                 <button class="button" id="runArtisanCommandButton">Run</button>
             </div>
 
@@ -142,6 +151,9 @@
             });
             document.getElementById('rollbackMigrationsButton').addEventListener('click', function() {
                 rollbackMigrations();
+            });
+            document.getElementById('resetDBButton').addEventListener('click', function() {
+                resetDB();
             });
             document.getElementById('seedTables').addEventListener('click', function() {
                 seedTables();
@@ -254,6 +266,23 @@
                 .catch(error => {
                     console.error('Error rolling back migrations:', error);
                     updateApiResponse('Error rolling back migrations: ' + error.message);
+                });
+        }
+
+        function resetDB() {
+            fetch('/db/reset', { method: 'POST' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok. Status: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    updateApiResponse(data.message || 'Error resetting database');
+                })
+                .catch(error => {
+                    console.error('Error resetting database:', error);
+                    updateApiResponse('Error resetting database: ' + error.message);
                 });
         }
 

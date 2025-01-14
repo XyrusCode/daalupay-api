@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'resend'),
+    'default' => env('MAIL_MAILER', 'smtp'),
 
     /*
     |--------------------------------------------------------------------------
@@ -44,7 +44,7 @@ return [
         'smtp' => [
             'transport' => 'smtp',
             'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', 'smtp.zoho.com'),
+            'host' => env('MAIL_HOST', 'smtp.sengrid.net'),
             'port' => env('MAIL_PORT', 465),
             'encryption' => env('MAIL_ENCRYPTION', 'ssl'),
             'username' => env('MAIL_USERNAME'),
@@ -67,10 +67,10 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@daluupay.com'),
+        'address' => env('MAIL_FROM_ADDRESS', 'hello@recruitnig.com'),
         'name' => env('MAIL_FROM_NAME', 'DaaluPay'),
-        'reply_to' => env('MAIL_REPLY_TO_ADDRESS', 'hello@daluupay.com'),
-        'support' => env('MAIL_SUPPORT_ADDRESS', 'support@daluupay.com'),
+        'reply_to' => env('MAIL_REPLY_TO_ADDRESS', 'hello@recruitnig.com'),
+        'support' => env('MAIL_SUPPORT_ADDRESS', 'support@recruitnig.com'),
     ],
 
 ];

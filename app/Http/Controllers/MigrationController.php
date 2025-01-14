@@ -54,11 +54,20 @@ class MigrationController extends BaseController
     }
 
 
-
     public function rollbackMigrations()
     {
         try {
             Artisan::call('migrate:rollback');
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function resetDB()
+    {
+        try {
+            Artisan::call('migrate:fresh');
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);

@@ -38,6 +38,7 @@ Route::prefix('/db')->group(function () {
     Route::post('/migrate', [MigrationController::class, 'runMigrations']);
     Route::post('/rollback', [MigrationController::class, 'rollbackMigrations']);
     Route::post('/seed', [MigrationController::class, 'runSeeds']);
+    Route::post('/reset', [MigrationController::class, 'resetDB']);
 });
 
 // Token Routes
@@ -123,7 +124,7 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
             Route::post('/{id}/approve', [AdminController::class, 'approveUserVerification']);
             Route::post('/{id}/deny', [AdminController::class, 'denyUserVerification']);
             Route::post('/{id}/suspend', [AdminController::class, 'suspendUser']);
-            Route::post('/{id}/unsuspend', [AdminController::class, 'unsuspendUser']);
+            Route::post('/{id}/unsuspend', [AdminController::class, 'reactivateUser']);
             Route::post('/{id}/delete', [AdminController::class, 'deleteUser']);
         });
 

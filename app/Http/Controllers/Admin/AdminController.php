@@ -9,6 +9,9 @@ use DaaluPay\Models\Transaction;
 use DaaluPay\Models\Suspension;
 use DaaluPay\Models\Swap;
 use DaaluPay\Models\KYC;
+use DaaluPay\Notifications\SwapStatusUpdated;
+use Ramsey\Uuid\Uuid;
+
 class AdminController extends BaseController
 {
 
@@ -126,6 +129,10 @@ class AdminController extends BaseController
                 'status' => 'approved'
             ]);
 
+            $user = User::find($swap->user_id);
+
+            $user->notify(new SwapStatusUpdated('approved'));
+
             return $this->getResponse(
                 data: $swap,
                 message: 'Swap approved successfully'
@@ -138,22 +145,26 @@ class AdminController extends BaseController
         return $this->process(function () use ($request) {
             // get id from route
             $id = $request->route('id');
+            $reason = $request->reason;
             $swap = Swap::find($id);
 
             $swap->update([
                 'status' => 'rejected'
             ]);
 
+            $user = User::find($swap->user_id);
+
+            $user->notify(new SwapStatusUpdated('denied', $reason));
+
             return $this->getResponse(
                 data: $swap,
                 message: 'Swap rejected successfully'
             );
-                return $this->getResponse(
-                    status: 'error',
-                    message: 'Transaction is not pending approval',
-                    status_code: 400
-                );
-
+            return $this->getResponse(
+                status: 'error',
+                message: 'Transaction is not pending approval',
+                status_code: 400
+            );
         });
     }
 
@@ -182,9 +193,12 @@ class AdminController extends BaseController
     }
 
 
-    public function suspendUser(Request $request, User $user)
+    public function suspendUser(Request $request)
     {
-        return $this->process(function () use ($user) {
+        return $this->process(function () use ($request) {
+
+            $user = User::find($request->route('id'));
+
             if ($user->status === 'suspended') {
                 return $this->getResponse(
                     status: 'error',
@@ -195,6 +209,15 @@ class AdminController extends BaseController
 
             $user->update(['status' => 'suspended']);
 
+            Suspension::create([
+                'uuid' => Uuid::uuid4(),
+                'user_id' => $user->id,
+                'reason' => $request->reason,
+                'start_date' => now(),
+                // 'end_date' => now()->addDays(30),
+                'admin_id' => auth('admin')->user()->id,
+            ]);
+
             return $this->getResponse(
                 data: $user,
                 message: 'User suspended successfully'
@@ -203,9 +226,11 @@ class AdminController extends BaseController
     }
 
 
-    public function reactivateUser(Request $request, User $user)
+    public function reactivateUser(Request $request)
     {
-        return $this->process(function () use ($user) {
+        return $this->process(function () use ($request) {
+            $user = User::find($request->route('id'));
+
             if ($user->status === 'active') {
                 return $this->getResponse(
                     status: 'error',
@@ -216,6 +241,13 @@ class AdminController extends BaseController
 
             $user->update(['status' => 'active']);
 
+            $suspension = Suspension::where('user_id', $user->id)->where('status', 'ongoing')->first();
+
+            if ($suspension) {
+                $suspension->update(['status' => 'ended']);
+                $suspension->update(['reactivation_reason' => $request->reason]);
+            }
+
             return $this->getResponse(
                 data: $user,
                 message: 'User reactivated successfully'
@@ -223,22 +255,20 @@ class AdminController extends BaseController
         });
     }
 
-    public function delete(Request $request, $user_id)
+    public function deleteUser(Request $request)
     {
-        $this->process(function () use ($request, $user_id) {
-            $this->is_admin($request);
-
-            $user = User::find($user_id);
+        return $this->process(function () use ($request) {
+            $user = User::find($request->route('id'));
 
             if (!$user) {
                 $message = 'User does not exist';
-                return $this->getResponse('failure', null, 404, $message);
+                return $this->getResponse(status: false, message: $message, data: null, status_code: 404);
             }
 
             $user->delete();
 
             $message = 'User deleted successfully';
-            return $this->getResponse('failure', null, 200, $message);
+            return $this->getResponse(status: true, message: $message, data: null, status_code: 200);
         }, true);
     }
 

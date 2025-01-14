@@ -14,7 +14,10 @@ class Suspension extends BaseModel
     protected $fillable = [
         'uuid',
         'user_id',
+        'admin_id',
+        'status',
         'reason',
+        'reactivation_reason',
         'start_date',
         'end_date',
     ];
@@ -27,5 +30,10 @@ class Suspension extends BaseModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function admin(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class);
     }
 }
