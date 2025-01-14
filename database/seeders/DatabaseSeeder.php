@@ -18,12 +18,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            AdminSeeder::class,
             CountryCurrencySeeder::class,
             ExchangeRateSeeder::class,
             PaymentMethodSeeder::class,
             UserSeeder::class,
             WalletSeeder::class,
-            AdminSeeder::class,
 
             DepositSeeder::class,
             TransactionSeeder::class,

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             $table->foreignId('admin_id')->constrained('admins', 'id')->onDelete('cascade');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->text('reason')->nullable();
             $table->enum('type', ['individual', 'company'])->default('individual');
             $table->enum('document_type', ['passport', 'national_id', 'driver_license', 'voter_id', 'other'])->default('passport');
             $table->string('document_number');
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('k_y_c');
+        Schema::dropIfExists('kyc');
     }
 };

@@ -131,16 +131,143 @@
     {
         "name": "Swap",
         "description": "A swap is a record of a swap transaction between two parties. It can be a swap from one currency to another.",
-        "fields": []
+        "fields": [
+            {
+                "name": "id",
+                "type": "integer",
+                "description": "The unique identifier for the swap."
+            },
+            {
+                "name": "amount",
+                "type": "number",
+                "description": "The amount of the swap."
+            },
+            {
+                "name": "from_wallet_id",
+                "type": "integer",
+                "description": "The wallet id of the user swapping from."
+            },
+            {
+                "name": "to_currency",
+                "type": "enum:NGN,USD,EUR",
+                "description": "The currency the user is swapping to."
+            }
+        ]
+    },
+    {
+        "name": "Address",
+        "description": "An address is a record of an address of a user. It can be an address for a user.",
+        "fields": [
+            {
+                "name": "id",
+                "type": "integer",
+                "description": "The unique identifier for the address."
+            },
+            {
+                "name": "town",
+                "type": "string",
+                "description": "The town of the address."
+            },
+            {
+                "name": "state",
+                "type": "string",
+                "description": "The state of the address."
+            },
+            {
+                "name": "country",
+                "type": "string",
+                "description": "The country of the address."
+            }
+        ]
     },
     {
         "name": "KYC",
         "description": "A KYC is a record of a KYC transaction between a user and an admin. It can be a KYC for a user.",
-        "fields": []
+        "fields": [
+            {
+                "name": "id",
+                "type": "integer",
+                "description": "The unique identifier for the KYC."
+            },
+            {
+                "name": "status",
+                "type": "enum:pending,approved,rejected",
+                "description": "The status of the KYC."
+            },
+            {
+                "name": "reason",
+                "type": "string",
+                "description": "The reason for the KYC rejection if it is rejected."
+            },
+            {
+                "name": "type",
+                "type": "enum:individual,company",
+                "description": "The type of the KYC."
+            },
+            {
+                "name": "document_type",
+                "type": "enum:national_id,passport",
+                "description": "The type of document the user has."
+            }
+        ]
     },
     {
         "name": "Wallet",
         "description": "A wallet is a record of a wallet of a user. It can be a wallet for a user.",
-        "fields": []
+        "fields": [
+            {
+                "name": "id",
+                "type": "integer",
+                "description": "The unique identifier for the wallet."
+            },
+            {
+                "name": "balance",
+                "type": "number",
+                "description": "The balance of the wallet."
+            },
+            {
+                "name": "currency",
+                "type": "enum:NGN,USD,EUR",
+                "description": "The currency of the wallet."
+            },
+            {
+                "name": "user_id",
+                "type": "integer",
+                "description": "The user id of the wallet."
+            }
+        ]
+    },
+    {
+        "name": "Deposit",
+        "description": "A deposit is a record of a deposit transaction on a wallet. It can be a deposit on a wallet.",
+        "fields": [
+            {
+                "name": "id",
+                "type": "integer",
+                "description": "The unique identifier for the deposit."
+            },
+            {
+                "name": "amount",
+                "type": "number",
+                "description": "The amount of the deposit."
+            }
+        ]
+    },
+    {
+        "name": "Withdrawal",
+        "description": "A withdrawal is a record of a withdrawal transaction on a wallet. It can be a withdrawal on a wallet.",
+        "fields": [
+            {
+                "name": "id",
+                "type": "integer",
+                "description": "The unique identifier for the withdrawal."
+            },
+            {
+                "name": "amount",
+                "type": "number",
+                "description": "The amount of the withdrawal."
+            }
+        ]
     }
+
 ]

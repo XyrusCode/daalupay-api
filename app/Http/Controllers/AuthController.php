@@ -44,7 +44,8 @@ class AuthController extends BaseController
 
             $user = $request->user()->load('wallets', 'transactions');
             $user->token = $token;
-
+            $user->userType = 'user';
+            
             return $this->getResponse(
                 data: $user,
                 message: 'Login Success'
@@ -70,7 +71,7 @@ class AuthController extends BaseController
 
             $token = $admin->createToken('auth_token')->plainTextToken;
             $admin->token = $token;
-
+            $admin->userType = 'admin';
             return $this->getResponse(
                 data: $admin,
                 message: 'Admin login successful',
@@ -96,6 +97,9 @@ class AuthController extends BaseController
             }
 
             $token = $superAdmin->createToken('auth_token')->plainTextToken;
+
+            $superAdmin->token = $token;
+            $superAdmin->userType = 'super_admin';
 
             return $this->getResponse(
                 data: $superAdmin,
@@ -140,7 +144,32 @@ class AuthController extends BaseController
                 'password' => Hash::make($request->password),
             ]);
 
+            Wallet::create([
+                'user_id' => $user->id,
+                'currency' => 'NGN',
+                'balance' => 0,
+            ]);
 
+            KYC::create([
+                'user_id' => $user->id,
+                // random admin id
+                'admin_id' => Admin::inRandomOrder()->first()->id,
+                'status' => 'pending',
+                'type' => 'individual',
+                'document_type' => $request->document_type,
+                'document_number' => $request->document_number,
+                'document_image' => $request->document_file,
+            ]);
+
+            Address::create([
+                'user_id' => $user->id,
+                'town' => $request->city,
+                'state' => $request->state,
+                'country' => $request->country,
+                'zip_code' => $request->zip_code,
+            ]);
+
+            Mail::to($user->email)->send(new NewUser($user));
 
             return $this->getResponse('success', $user, 200);
         });

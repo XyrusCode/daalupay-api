@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use DaaluPay\Models\Admin;
+use DaaluPay\Models\SuperAdmin;
 use Illuminate\Support\Facades\Hash;
 use Faker\Factory as Faker;
 use Ramsey\Uuid\Uuid;
@@ -40,6 +41,14 @@ class AdminSeeder extends Seeder
             'first_name' => 'Known',
             'last_name' => 'Admin',
             'email' => 'admin@daalupay.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        SuperAdmin::create([
+            'id' => 1,
+            'first_name' => 'Super',
+            'last_name' => 'Admin',
+            'email' => 'superadmin@daalupay.com',
             'password' => Hash::make('password'),
         ]);
     }

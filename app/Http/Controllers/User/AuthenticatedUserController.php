@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DaaluPay\Models\Wallet;
 use Illuminate\Support\Facades\Hash;
-
+use DaaluPay\Models\Admin;
 class AuthenticatedUserController extends BaseController
 {
     /**
@@ -34,9 +34,18 @@ class AuthenticatedUserController extends BaseController
                 });
             }
 
-            $user->userType = $isUser ? 'user' : 'admin';
-
             return $this->getResponse('success', $user, 200);
+        }, true);
+    }
+
+    public function showAdmin(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $user = Admin::find($request->user());
+
+            $message = 'success for user' . $request->user();
+
+            return $this->getResponse(status: $message, data: $user, status_code: 200);
         }, true);
     }
 

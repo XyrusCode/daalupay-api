@@ -45,6 +45,7 @@ Route::prefix('/db')->group(function () {
 Route::post('/sanctum/token', [AuthController::class, 'iosToken']);
 
 Route::get('/token', [AuthenticatedUserController::class, 'show']);
+Route::get('/token/admin', [AuthenticatedUserController::class, 'showAdmin']);
 
 Route::get('/exchange-rates', [SuperAdminController::class, 'getAllExchangeRates']);
 
@@ -144,6 +145,8 @@ Route::post('/super-admin/login', [AuthController::class, 'superAdminLogin']);
 
 Route::middleware(['auth:sanctum,super_admin'])->group(function () {
 
+    Route::prefix('/super-admin')->group(function () {
+
     Route::get('/stats', [SuperAdminController::class, 'stats']);
 
     Route::prefix('/admins')->group(function () {
@@ -174,5 +177,7 @@ Route::middleware(['auth:sanctum,super_admin'])->group(function () {
         Route::post('/', [ExchangeRateController::class, 'store']);
         Route::put('/{uuid}', [ExchangeRateController::class, 'update']);
         Route::delete('/{uuid}', [ExchangeRateController::class, 'destroy']);
+    });
+
     });
 });

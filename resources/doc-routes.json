@@ -421,10 +421,7 @@
                     "route": "/admin/users/{id}/approve",
                     "method": "POST",
                     "description": "Approve user verification",
-                    "middleware": ["auth:sanctum", "admin"],
-                    "request_body": {
-                        "status": "enum:approved,rejected"
-                    }
+                    "middleware": ["auth:sanctum", "admin"]
                 },
                 {
                     "route": "/admin/users/{id}/deny",
@@ -432,7 +429,7 @@
                     "description": "Deny user verification",
                     "middleware": ["auth:sanctum", "admin"],
                     "request_body": {
-                        "status": "enum:approved,rejected"
+                        "reason": "string"
                     }
                 },
                 {
@@ -522,11 +519,23 @@
                     "description": "Get super admin stats",
                     "middleware": ["auth:sanctum", "super-admin"],
                     "response_body": {
-                        "stats": {
-                            "admins": "array:object",
+                        "status": "boolean",
+                        "message": "string",
+                        "data": {
+                            "userStats": {
+                                "total": "integer",
+                                "active": "integer",
+                                "new": "integer"
+                            },
                             "users": "array:object",
-                            "transactions": "array:object",
-                            "swaps": "array:object"
+                            "transactionStats": {
+                                "total": "integer",
+                                "pending": "integer",
+                                "approved": "integer",
+                                "rejected": "integer"
+                            },
+                            "swaps": "array:object",
+                            "nairaBalance": "decimal"
                         }
                     }
                 },

@@ -13,24 +13,44 @@ use DaaluPay\Models\Transaction;
 use DaaluPay\Models\Swap;
 use DaaluPay\Models\TransferFee;
 use Illuminate\Support\Facades\DB;
-
+use DaaluPay\Models\Wallet;
 class SuperAdminController extends BaseController
 {
 
     public function stats()
     {
         return $this->process(function () {
-            $admins = Admin::count();
-            $users = User::count();
-            $transactions = Transaction::count();
-            $swaps = Swap::count();
-            $stats = [
-                'admins' => $admins,
-                'users' => $users,
-                'transactions' => $transactions,
-                'swaps' => $swaps,
+
+
+            $users = User::get();
+            $swaps = Swap::get();
+
+            $ngnCode = Currency::where('code', 'NGN')->first();
+
+            // All naira wallet
+            $nairaWallet = Wallet::where('currency_id', $ngnCode->id)->first();
+            // total naira balance from all wallets
+            $nairaBalance = $nairaWallet->balance;
+
+            $userStats = [
+                'total' => User::count(),
+                'active' => User::where('status', 'active')->count(),
+                'new' => User::where('status', 'unverified')->count(),
             ];
-            return $this->getResponse(true, 'Super admin dashboard fetched successfully', $stats);
+
+            $transactionStats = [
+                'total' => Swap::count(),
+                'pending' => Swap::where('status', 'pending')->count(),
+                'approved' => Swap::where('status', 'approved')->count(),
+                'rejected' => Swap::where('status', 'rejected')->count(),
+            ];
+            $stats = [
+                'userStats' => $userStats,
+                'transactionStats' => $transactionStats,
+                'swaps' => $swaps,
+                'nairaBalance' => $nairaBalance,
+            ];
+            return $this->getResponse(status: true, message: 'Super admin dashboard fetched successfully', data: $stats);
         }, true);
     }
 
@@ -38,7 +58,7 @@ class SuperAdminController extends BaseController
     {
         $this->process(function () {
             $admin = Admin::find(auth('admin')->user()->id);
-            return $this->getResponse(true, 'Super admin dashboard fetched successfully', $admin);
+            return $this->getResponse(status: true, message: 'Super admin dashboard fetched successfully', data: $admin);
         }, true);
     }
 

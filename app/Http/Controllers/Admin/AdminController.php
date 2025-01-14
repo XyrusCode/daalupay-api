@@ -3,6 +3,7 @@
 namespace DaaluPay\Http\Controllers\Admin;
 
 use DaaluPay\Http\Controllers\BaseController;
+use DaaluPay\Models\Address;
 use Illuminate\Http\Request;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Transaction;
@@ -62,6 +63,11 @@ class AdminController extends BaseController
     {
         return $this->process(function () {
             $users = User::all();
+
+            foreach ($users as $user) {
+                $user->address = Address::where('user_id', $user->id)->first();
+                $user->kyc = KYC::where('user_id', $user->id)->first();
+            }
 
             return $this->getResponse('success', $users, 200);
         }, true);
@@ -169,10 +175,12 @@ class AdminController extends BaseController
     }
 
 
-    public function approveUserVerification(Request $request, User $user)
+    public function approveUserVerification(Request $request)
     {
-        return $this->process(function () use ($user, $request) {
-            if ($user->verification_status === 'approved') {
+        return $this->process(function () use ($request) {
+            $id = $request->route('id');
+            $user = User::find($id);
+            if ($user->kyc_status === 'approved') {
                 return $this->getResponse(
                     status: 'error',
                     message: 'User is already verified',
@@ -181,13 +189,35 @@ class AdminController extends BaseController
             }
 
             $user->update([
-                'verification_status' => 'approved',
+                'kyc_status' => 'approved',
                 'verified_by' => $request->user()->id,
             ]);
 
+            KYC::where('user_id', $user->id)->update([
+                'status' => 'approved'
+            ]);
+
             return $this->getResponse(
-                data: $user,
+                status: 'success',
                 message: 'User verification approved successfully'
+            );
+        });
+    }
+
+    public function denyUserVerification(Request $request)
+    {
+        return $this->process(function () use ( $request) {
+            $id = $request->route('id');
+            $user = User::find($id);
+            $user->update(['kyc_status' => 'rejected']);
+            KYC::where('user_id', $user->id)->update([
+                'status' => 'rejected',
+                'reason' => $request->reason,
+            ]);
+
+            return $this->getResponse(
+                status: 'success',
+                message: 'User verification denied successfully'
             );
         });
     }
