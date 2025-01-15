@@ -42,15 +42,30 @@ class SwapController extends BaseController
             $to_wallet = $user->wallets()->where('currency_id', $to_currency_id)->first();
 
             if (!$from_wallet) {
-                return $this->getResponse('failure', null, 404, 'From wallet not found');
+                return $this->getResponse(
+                    status: false,
+                    message: 'From wallet not found',
+                    data: null,
+                    status_code: 404
+                );
             }
 
             if (!$to_wallet) {
-                return $this->getResponse('failure', null, 404, 'To wallet not found');
+                return $this->getResponse(
+                    status: false,
+                    message: 'To wallet not found',
+                    data: null,
+                    status_code: 404
+                );
             }
 
             if ($from_wallet->balance < $request->amount) {
-                return $this->getResponse('failure', null, 404, 'Insufficient balance');
+                return $this->getResponse(
+                    status: false,
+                    message: 'Insufficient balance',
+                    data: null,
+                    status_code: 422
+                );
             }
 
             $from_wallet->balance -= $request->amount;
@@ -58,7 +73,8 @@ class SwapController extends BaseController
             $from_wallet->save();
             $to_wallet->save();
 
-            $admin = Admin::find(1);
+            // random admin
+            $admin = Admin::inRandomOrder()->first();
             // ->notify(new SwapApprovalNotification($user, $request->amount, $request->from_currency, $request->to_currency, $request->from_amount, $request->to_amount, $request->rate));
 
             $transaction = Transaction::create([
@@ -75,7 +91,7 @@ class SwapController extends BaseController
 
             $transaction->save();
 
-            Swap::create([
+            $swap = Swap::create([
                 'uuid' => Uuid::uuid4(),
                 'user_id' => $user->id,
                 'amount' => $request->amount,
@@ -89,7 +105,14 @@ class SwapController extends BaseController
                 'transaction_id' => $transaction->id,
             ]);
 
-            return $this->getResponse('success', null, 200);
+            $swap->save();
+
+            return $this->getResponse(
+                status: true,
+                message: 'Swap created successfully',
+                data: $swap,
+                status_code: 200
+            );
         }, true);
     }
 

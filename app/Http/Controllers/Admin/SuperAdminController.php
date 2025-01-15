@@ -14,6 +14,7 @@ use DaaluPay\Models\Swap;
 use DaaluPay\Models\TransferFee;
 use Illuminate\Support\Facades\DB;
 use DaaluPay\Models\Wallet;
+
 class SuperAdminController extends BaseController
 {
 
@@ -72,7 +73,7 @@ class SuperAdminController extends BaseController
                 $search = $request->input('search');
                 $admins->where(function ($query) use ($search) {
                     $query->where('name', 'like', "%{$search}%")
-                            ->orWhere('email', 'like', "%{$search}%");
+                        ->orWhere('email', 'like', "%{$search}%");
                 });
             }
 
@@ -90,9 +91,10 @@ class SuperAdminController extends BaseController
     }
 
 
-    public function getAdmin(Request $request, $id)
+    public function getAdmin(Request $request)
     {
-        return $this->process(function () use ($id) {
+        return $this->process(function () use ($request) {
+            $id = $request->route('id');
             $admin = Admin::find($id);
 
             if (!$admin) {
@@ -113,7 +115,9 @@ class SuperAdminController extends BaseController
 
     public function suspendAdmin(Request $request, Admin $admin)
     {
-        return $this->process(function () use ($admin) {
+        return $this->process(function () use ($request) {
+            $id = $request->route('id');
+            $admin = Admin::find($id);
             if ($admin->status === 'suspended') {
                 return $this->getResponse(
                     status: 'error',
@@ -133,7 +137,9 @@ class SuperAdminController extends BaseController
 
     public function reactivateAdmin(Request $request, Admin $admin)
     {
-        return $this->process(function () use ($admin) {
+        return $this->process(function () use ($request) {
+            $id = $request->route('id');
+            $admin = Admin::find($id);
             if ($admin->status === 'active') {
                 return $this->getResponse(
                     status: 'error',
@@ -175,6 +181,16 @@ class SuperAdminController extends BaseController
         });
     }
 
+    public function deleteAdmin(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $id = $request->route('id');
+            $admin = Admin::find($id);
+            $admin->delete();
+            return $this->getResponse(status: true, message: 'Admin deleted successfully');
+        });
+    }
+
 
     public function getAllCurrencies(Request $request)
     {
@@ -182,7 +198,7 @@ class SuperAdminController extends BaseController
             $currencies = Currency::query();
 
             if ($request->filled('status')) {
-                    $currencies->where('status', $request->input('status'));
+                $currencies->where('status', $request->input('status'));
             }
 
             return $this->getResponse(
@@ -193,9 +209,11 @@ class SuperAdminController extends BaseController
     }
 
 
-    public function enableCurrency(Request $request, Currency $currency)
+    public function enableCurrency(Request $request)
     {
-        return $this->process(function () use ($currency) {
+        return $this->process(function () use ($request) {
+            $id = $request->route('id');
+            $currency = Currency::find($id);
             if ($currency->status === 'enabled') {
                 return $this->getResponse(
                     status: 'error',
@@ -214,9 +232,11 @@ class SuperAdminController extends BaseController
     }
 
 
-    public function disableCurrency(Request $request, Currency $currency)
+    public function disableCurrency(Request $request)
     {
-        return $this->process(function () use ($currency) {
+        return $this->process(function () use ($request) {
+            $id = $request->route('id');
+            $currency = Currency::find($id);
             if ($currency->status === 'disabled') {
                 return $this->getResponse(
                     status: 'error',
@@ -234,10 +254,21 @@ class SuperAdminController extends BaseController
         });
     }
 
+    public function getAllPaymentMethods(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $paymentMethods = PaymentMethod::query();
+            $paymentMethods = $paymentMethods->get();
+            return $this->getResponse(status: true, message: 'Payment methods fetched successfully', data: $paymentMethods);
+        });
+    }
+
 
     public function enablePaymentMethod(Request $request, PaymentMethod $paymentMethod)
     {
-        return $this->process(function () use ($paymentMethod) {
+        return $this->process(function () use ($request) {
+            $id = $request->route('id');
+            $paymentMethod = PaymentMethod::find($id);
             if ($paymentMethod->status === 'enabled') {
                 return $this->getResponse(
                     status: 'error',
@@ -256,9 +287,11 @@ class SuperAdminController extends BaseController
     }
 
 
-    public function disablePaymentMethod(Request $request, PaymentMethod $paymentMethod)
+    public function disablePaymentMethod(Request $request)
     {
-        return $this->process(function () use ($paymentMethod) {
+        return $this->process(function () use ($request) {
+            $id = $request->route('id');
+            $paymentMethod = PaymentMethod::find($id);
             if ($paymentMethod->status === 'disabled') {
                 return $this->getResponse(
                     status: 'error',
@@ -297,23 +330,61 @@ class SuperAdminController extends BaseController
 
             $exchangeRate = DB::table('exchange_rate')->where('from_currency', $from)->where('to_currency', $to)->first();
             return $this->getResponse(status: true, message: 'Exchange rate fetched successfully', data: $exchangeRate);
-
         }, true);
     }
 
     public function getTransferFees(Request $request)
     {
         return $this->process(function () use ($request) {
-            $transferFee = TransferFee::where('currency', $request->currency)->first();
-            return $this->getResponse(status: true, message: 'Transfer fee fetched successfully', data: $transferFee);
+            $transferFees = TransferFee::query();
+
+            $transferFees = $transferFees->get();
+
+            foreach ($transferFees as $transferFee) {
+                $currency = Currency::where('id', $transferFee->currency_code)->first();
+                $transferFee->currency = $currency->code;
+            }
+
+            return $this->getResponse(status: true, message: 'Transfer fee fetched successfully', data: $transferFees);
         }, true);
     }
 
     public function setTransferFee(Request $request)
     {
         return $this->process(function () use ($request) {
-            $transferFee = TransferFee::create($request->all());
-            return $this->getResponse(true, 'Transfer fee created successfully', $transferFee);
+            // Validate the request
+            $validated = $request->validate([
+                'currency' => 'required|string|exists:currencies,code',
+                'fee' => 'required|numeric|min:0'
+            ]);
+
+            $currency = Currency::where('code', $validated['currency'])->first();
+
+            // Check if a transfer fee already exists for this currency
+            $existingFee = TransferFee::where('currency_code', $currency->id)->first();
+
+            if ($existingFee) {
+                // Update existing fee
+                $existingFee->update([
+                    'fee' => $validated['fee'],
+                    'updated_at' => now()
+                ]);
+                $transferFee = $existingFee;
+            } else {
+                // Create new fee
+                $transferFee = TransferFee::create([
+                    'currency_code' => $currency->id,
+                    'fee' => $validated['fee'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            return $this->getResponse(
+                status: true,
+                message: 'Transfer fee ' . ($existingFee ? 'updated' : 'created') . ' successfully',
+                data: $transferFee
+            );
         }, true);
     }
 }

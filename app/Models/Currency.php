@@ -8,6 +8,8 @@ class Currency extends BaseModel
 {
     use HasFactory;
 
+    protected $table = 'currencies';
+
     /**
      * The attributes that are mass assignable.
      */

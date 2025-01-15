@@ -28,6 +28,11 @@ return Application::configure(basePath: dirname(__DIR__))
             '/admin/login',
             '/super-admin/login',
             '/admin/*',
+            '/super-admin/admins/*',
+            '/super-admin/currencies/*',
+            '/super-admin/payment-methods/*',
+            '/super-admin/exchange-rates/*',
+            '/super-admin/transfer-fees/',
         ]);
 
         $middleware->trustHosts(at: ['daalupay.internal', 'daalupay.com']);
