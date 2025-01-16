@@ -119,6 +119,15 @@ class SuperAdminController extends BaseController
         return $this->process(function () use ($request) {
             $id = $request->route('id');
             $admin = Admin::find($id);
+
+            if (!$admin) {
+                return $this->getResponse(
+                    status: 'error',
+                    message: 'Admin not found',
+                    status_code: 404
+                );
+            }
+
             if ($admin->status === 'suspended') {
                 return $this->getResponse(
                     status: 'error',
@@ -203,9 +212,11 @@ class SuperAdminController extends BaseController
         return $this->process(function () use ($request) {
             $currencies = Currency::query();
 
-            if ($request->filled('status')) {
-                $currencies->where('status', $request->input('status'));
-            }
+            // if ($request->filled('status')) {
+            //     $currencies->where('status', $request->input('status'));
+            // }
+
+            $currencies = $currencies->get();
 
             return $this->getResponse(
                 data: $currencies,
@@ -319,7 +330,25 @@ class SuperAdminController extends BaseController
     {
         return $this->process(function () use ($request) {
             $exchangeRate = ExchangeRate::create($request->all());
-            return $this->getResponse(true, 'Exchange rate created successfully', $exchangeRate);
+            return $this->getResponse(status: true, message: 'Exchange rate created successfully', data: $exchangeRate);
+        }, true);
+    }
+
+    public function updateExchangeRate(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $exchangeRate = ExchangeRate::find($request->route('id'));
+            $exchangeRate->update($request->all());
+            return $this->getResponse(status: true, message: 'Exchange rate updated successfully', data: $exchangeRate);
+        }, true);
+    }
+
+    public function deleteExchangeRate(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $exchangeRate = ExchangeRate::find($request->route('id'));
+            $exchangeRate->delete();
+            return $this->getResponse(status: true, message: 'Exchange rate deleted successfully');
         }, true);
     }
 

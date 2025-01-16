@@ -167,16 +167,15 @@ Route::middleware(['auth:sanctum,super_admin'])->group(function () {
 
     Route::prefix('/payment-methods')->group(function () {
         Route::get('/', [SuperAdminController::class, 'getAllPaymentMethods']);
-        Route::post('{id}/disable', [SuperAdminController::class, 'disablePaymentMethod']);
-        Route::post('{id}/enable', [SuperAdminController::class, 'enablePaymentMethod']);
+        Route::post('/{id}/disable', [SuperAdminController::class, 'disablePaymentMethod']);
+        Route::post('/{id}/enable', [SuperAdminController::class, 'enablePaymentMethod']);
     });
 
     Route::prefix('/exchange-rates')->group(function () {
         Route::get('/', [SuperAdminController::class, 'getAllExchangeRates']);
         Route::post('/', [SuperAdminController::class, 'setExchangeRate']);
-        Route::post('/', [ExchangeRateController::class, 'store']);
-        Route::put('/{id}', [ExchangeRateController::class, 'update']);
-        Route::delete('/{id}', [ExchangeRateController::class, 'destroy']);
+        Route::post('/{id}', [SuperAdminController::class, 'updateExchangeRate']);
+        Route::delete('/{id}', [SuperAdminController::class, 'deleteExchangeRate']);
     });
 
     Route::prefix('/transfer-fees')->group(function () {

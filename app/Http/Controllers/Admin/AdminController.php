@@ -43,19 +43,20 @@ class AdminController extends BaseController
         return $this->process(function () use ($request) {
             $admin = auth('admin')->user() ?? auth('super_admin')->user();
 
-            if (!$admin) {
-                return $this->getResponse(status: false, message: 'Unauthorized access', status_code: 401);
-            }
+            $transactions = Swap::where('admin_id', $admin->id)
+                ->with('user')
+                ->get();
 
+            $transactions = $transactions->filter(function ($transaction) {
+                return $transaction->user !== null;
+            })->map(function ($transaction) {
+                $user = $transaction->user;
+                $transaction->user->fullName = $user->firstName && $user->lastName
+                    ? $user->firstName . ' ' . $user->lastName
+                    : $user->email;
 
-            $transactions = Swap::where('admin_id', $admin->id)->get();
-
-            // for all get user name and email
-            foreach ($transactions as $transaction) {
-                $transaction->user = User::find($transaction->user_id);
-                $transaction->user->name = $transaction->user->first_name . ' ' . $transaction->user->last_name;
-                $transaction->user->email = $transaction->user->email;
-            }
+                return $transaction;
+            })->values();
 
             return $this->getResponse(status: true, message: 'Transactions fetched successfully', data: $transactions);
         }, true);
@@ -242,8 +243,8 @@ class AdminController extends BaseController
     public function suspendUser(Request $request)
     {
         return $this->process(function () use ($request) {
-
-            $user = User::find($request->route('id'));
+            $id = $request->route('id');
+            $user = User::find($id);
 
             if ($user->status === 'suspended') {
                 return $this->getResponse(
@@ -255,14 +256,30 @@ class AdminController extends BaseController
 
             $user->update(['status' => 'suspended']);
 
-            Suspension::create([
-                'uuid' => Uuid::uuid4(),
-                'user_id' => $user->id,
-                'reason' => $request->reason,
-                'start_date' => now(),
-                // 'end_date' => now()->addDays(30),
-                'admin_id' => auth('admin')->user()->id,
-            ]);
+            // Check for existing suspension
+            $existingSuspension = Suspension::where('user_id', $id)
+                ->where('status', 'ongoing')
+                ->first();
+
+            if ($existingSuspension) {
+                // Update existing suspension
+                $existingSuspension->update([
+                    'reason' => $request->reason,
+                    'start_date' => now(),
+                    'admin_id' => $request->user()->id,
+                ]);
+                $suspension = $existingSuspension;
+            } else {
+                // Create new suspension
+                $suspension = Suspension::create([
+                    'uuid' => Uuid::uuid4(),
+                    'user_id' => $user->id,
+                    'reason' => $request->reason,
+                    'start_date' => now(),
+                    'status' => 'ongoing',
+                    'admin_id' => $request->user()->id,
+                ]);
+            }
 
             return $this->getResponse(
                 data: $user,

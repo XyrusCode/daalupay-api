@@ -623,6 +623,27 @@
                     "middleware": ["auth:sanctum", "super-admin"]
                 },
                 {
+                    "route": "/super-admin/currencies",
+                    "method": "GET",
+                    "description": "Get all currencies",
+                    "middleware": ["auth:sanctum", "super-admin"],
+                    "response_body": {
+                        "currencies": "array:object"
+                    }
+                },
+                {
+                    "route": "/super-admin/currencies/{id}/disable",
+                    "method": "POST",
+                    "description": "Disable currency",
+                    "middleware": ["auth:sanctum", "super-admin"]
+                },
+                {
+                    "route": "/super-admin/currencies/{id}/enable",
+                    "method": "POST",
+                    "description": "Enable currency",
+                    "middleware": ["auth:sanctum", "super-admin"]
+                },
+                {
                     "route": "/super-admin/payment-methods",
                     "method": "GET",
                     "description": "Get all payment methods",
@@ -665,6 +686,23 @@
                         "to_currency": "string",
                         "rate": "decimal"
                     }
+                },
+                {
+                    "route": "/super-admin/exchange-rates/{id}",
+                    "method": "POST",
+                    "description": "Update exchange rate",
+                    "middleware": ["auth:sanctum", "super-admin"],
+                    "request_body": {
+                        "from_currency": "string",
+                        "to_currency": "string",
+                        "rate": "decimal"
+                    }
+                },
+                {
+                    "route": "/super-admin/exchange-rates/{id}",
+                    "method": "DELETE",
+                    "description": "Delete exchange rate",
+                    "middleware": ["auth:sanctum", "super-admin"]
                 },
                 {
                     "route": "/super-admin/transfer-fees",
