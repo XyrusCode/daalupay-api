@@ -14,6 +14,7 @@ use DaaluPay\Models\Swap;
 use DaaluPay\Models\TransferFee;
 use Illuminate\Support\Facades\DB;
 use DaaluPay\Models\Wallet;
+use Ramsey\Uuid\Uuid;
 
 class SuperAdminController extends BaseController
 {
@@ -162,16 +163,21 @@ class SuperAdminController extends BaseController
     {
         return $this->process(function () use ($request) {
             $validated = $request->validate([
-                'name' => 'required|string|max:255',
+                'first_name' => 'required|string|max:255',
+                'last_name' => 'required|string|max:255',
                 'email' => 'required|email|unique:admins,email',
                 'password' => 'required|string|min:8',
             ]);
 
             $admin = Admin::create([
-                'name' => $validated['name'],
+                'uuid' => Uuid::uuid4()->toString(),
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
                 'email' => $validated['email'],
                 'password' => bcrypt($validated['password']),
                 'status' => 'active',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             return $this->getResponse(

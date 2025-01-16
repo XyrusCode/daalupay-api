@@ -12,6 +12,7 @@ use DaaluPay\Models\Swap;
 use DaaluPay\Models\KYC;
 use DaaluPay\Notifications\SwapStatusUpdated;
 use Ramsey\Uuid\Uuid;
+use DaaluPay\Models\Admin;
 
 class AdminController extends BaseController
 {
@@ -40,9 +41,22 @@ class AdminController extends BaseController
     public function getTransactions(Request $request)
     {
         return $this->process(function () use ($request) {
+            $admin = auth('admin')->user() ?? auth('super_admin')->user();
 
-            // where admin_id is the admin id
-            $transactions = Swap::where('admin_id', auth('admin')->user()->id)->get();
+            if (!$admin) {
+                return $this->getResponse(status: false, message: 'Unauthorized access', status_code: 401);
+            }
+
+
+            $transactions = Swap::where('admin_id', $admin->id)->get();
+
+            // for all get user name and email
+            foreach ($transactions as $transaction) {
+                $transaction->user = User::find($transaction->user_id);
+                $transaction->user->name = $transaction->user->first_name . ' ' . $transaction->user->last_name;
+                $transaction->user->email = $transaction->user->email;
+            }
+
             return $this->getResponse(status: true, message: 'Transactions fetched successfully', data: $transactions);
         }, true);
     }
@@ -199,6 +213,7 @@ class AdminController extends BaseController
 
             return $this->getResponse(
                 status: 'success',
+                data: $user,
                 message: 'User verification approved successfully'
             );
         });
@@ -206,7 +221,7 @@ class AdminController extends BaseController
 
     public function denyUserVerification(Request $request)
     {
-        return $this->process(function () use ( $request) {
+        return $this->process(function () use ($request) {
             $id = $request->route('id');
             $user = User::find($id);
             $user->update(['kyc_status' => 'rejected']);
@@ -217,6 +232,7 @@ class AdminController extends BaseController
 
             return $this->getResponse(
                 status: 'success',
+                data: $user,
                 message: 'User verification denied successfully'
             );
         });

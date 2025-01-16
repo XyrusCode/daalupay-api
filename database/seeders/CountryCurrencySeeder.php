@@ -54,6 +54,8 @@ class CountryCurrencySeeder extends Seeder
                     }
                 }
 
+                $this->removeDuplicateUSD();
+
                 DB::commit();
                 $this->command->info('Countries and currencies seeded successfully.');
             } catch (\Exception $e) {
@@ -105,5 +107,11 @@ class CountryCurrencySeeder extends Seeder
         // Debug output
         $this->command->info("Exchange rates count: " . count($rates));
         return $rates;
+    }
+
+    // remove all the dubpicates of USD where country is not United States
+    private function removeDuplicateUSD(): void
+    {
+        DB::table('currencies')->where('code', 'USD')->where('country_id', '!=', 237)->delete();
     }
 }
