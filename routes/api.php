@@ -10,7 +10,7 @@ use DaaluPay\Http\Controllers\Payment\SwapController;
 use DaaluPay\Http\Controllers\Payment\WalletController;
 use DaaluPay\Http\Controllers\Admin\SuperAdminController;
 use DaaluPay\Http\Controllers\Admin\AdminController;
-use DaaluPay\Http\Controllers\ExchangeRateController;
+use DaaluPay\Http\Controllers\Payment\ExchangeController;
 use DaaluPay\Http\Controllers\User\AuthenticatedUserController;
 use DaaluPay\Http\Controllers\Payment\DepositController;
 /*
@@ -106,6 +106,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::prefix('/deposits')->group(function () {
             Route::post('/', [DepositController::class, 'store']);
         });
+
+        // Route::prefix('/withdrawals')->group(function () {
+        //     Route::post('/', [WithdrawalController::class, 'store']);
+        // });
+
+        // transfer fee
+        Route::get('/transfer-fee', [ExchangeController::class, 'transferFee']);
     });
 });
 
