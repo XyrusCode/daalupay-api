@@ -70,9 +70,12 @@ class SwapController extends BaseController
                 );
             }
 
-            $from_wallet->balance -= $request->amount;
-            $to_wallet->balance += $request->amount;
+            // remove from_wallet balance from from_wallet
+            $from_wallet->balance -= $request->amount_to_swap;
             $from_wallet->save();
+
+            // add to_wallet balance to to_wallet
+            $to_wallet->balance += $request->amount_to_receive;
             $to_wallet->save();
 
             // random admin
