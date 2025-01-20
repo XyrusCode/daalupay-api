@@ -75,7 +75,6 @@ class ExchangeController extends BaseController
             }
 
 
-
             $currency = Currency::where('code', $from)->first();
             if (!$currency) {
                 return $this->getResponse(status: false, message: 'Currency not found');
