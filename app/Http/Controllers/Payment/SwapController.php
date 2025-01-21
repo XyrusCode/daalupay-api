@@ -32,9 +32,9 @@ class SwapController extends BaseController
             $request->validate([
                 'from_currency' => 'required|string',
                 'to_currency' => 'required|string',
-                'exchange_rate' => 'required|string',
-                'amount_to_receive' => 'required|numeric|min:0',
-                'amount_to_swap' => 'required|numeric|min:0',
+                'rate' => 'required|string',
+                'from_amount' => 'required|numeric|min:0',
+                'to_amount' => 'required|numeric|min:0',
             ]);
 
             $from_currency_id = DB::table('currencies')->where('code', $request->from_currency)->first()->id;
@@ -99,11 +99,10 @@ class SwapController extends BaseController
             $swap = Swap::create([
                 'uuid' => Uuid::uuid4(),
                 'user_id' => $user->id,
-                'amount' => $request->amount_to_swap,
                 'from_currency' => $request->from_currency,
                 'to_currency' => $request->to_currency,
-                'from_amount' => $request->amount_to_swap,
-                'to_amount' => $request->amount_to_receive,
+                'from_amount' => $request->from_amount,
+                'to_amount' => $request->to_amount,
                 'rate' => $request->exchange_rate,
                 'status' => 'pending',
                 'admin_id' => $admin->id,

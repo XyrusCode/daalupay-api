@@ -13,6 +13,7 @@ use DaaluPay\Http\Controllers\Admin\AdminController;
 use DaaluPay\Http\Controllers\Payment\ExchangeController;
 use DaaluPay\Http\Controllers\User\AuthenticatedUserController;
 use DaaluPay\Http\Controllers\Payment\DepositController;
+use DaaluPay\Http\Controllers\BlogPostController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -89,6 +90,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::prefix('/wallets')->group(function () {
             Route::post('/', [WalletController::class, 'store']);
             Route::get('/', [WalletController::class, 'index']);
+            Route::post('/alipay/verify', [WalletController::class, '']);
         });
 
         Route::prefix('/transactions')->group(function () {
@@ -142,6 +144,21 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
             Route::get('/{id}', [AdminController::class, 'getTransaction']);
             Route::post('/{id}/approve', [AdminController::class, 'approveTransaction']);
             Route::post('/{id}/deny', [AdminController::class, 'denyTransaction']);
+        });
+
+        Route::prefix('/receipts')->group(function () {
+            Route::get('/', [AdminController::class, 'getReceipts']);
+            Route::get('/{id}', [AdminController::class, 'getReceipt']);
+            Route::post('/{id}/approve', [AdminController::class, 'approveReceipt']);
+            Route::post('/{id}/deny', [AdminController::class, 'denyReceipt']);
+        });
+
+        Route::prefix('/blog-posts')->group(function () {
+            Route::get('/', [BlogPostController::class, 'getBlogPosts']);
+            Route::get('/{id}', [BlogPostController::class, 'getBlogPost']);
+            Route::post('/', [BlogPostController::class, 'createBlogPost']);
+            Route::post('/{id}', [BlogPostController::class, 'updateBlogPost']);
+            Route::delete('/{id}', [BlogPostController::class, 'deleteBlogPost']);
         });
     });
 

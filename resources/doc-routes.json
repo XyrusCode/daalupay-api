@@ -285,6 +285,19 @@
                     }
                 },
                 {
+                    "route": "/user/wallets/alipay/verify",
+                    "method": "POST",
+                    "description": "Verify alipay receipt",
+                    "middleware": "auth:sanctum",
+                    "request_body": {
+                        "amount": "string",
+                        "receipt": "file"
+                    },
+                    "response_body": {
+                        "message": "string"
+                    }
+                },
+                {
                     "route": "/user/swaps",
                     "method": "GET",
                     "description": "Get user currency swaps",
@@ -311,7 +324,6 @@
                     "request_body": {
                         "from_currency": "string",
                         "to_currency": "string",
-                        "amount": "decimal",
                         "from_amount": "decimal",
                         "to_amount": "decimal",
                         "rate": "decimal"
@@ -497,6 +509,36 @@
                     "request_body": {
                         "reason": "string"
                     }
+                },
+                {
+                    "route": "/admin/receipts",
+                    "method": "GET",
+                    "description": "Get all receipts",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "response_body": {
+                        "receipts": "array:object"
+                    }
+                },
+                {
+                    "route": "/admin/receipts/{id}",
+                    "method": "GET",
+                    "description": "Get receipt by id",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "response_body": {
+                        "receipt": "object"
+                    }
+                },
+                {
+                    "route": "/admin/receipts/{id}/approve",
+                    "method": "POST",
+                    "description": "Approve receipt",
+                    "middleware": ["auth:sanctum", "admin"]
+                },
+                {
+                    "route": "/admin/receipts/{id}/deny",
+                    "method": "POST",
+                    "description": "Deny receipt",
+                    "middleware": ["auth:sanctum", "admin"]
                 }
             ]
         },

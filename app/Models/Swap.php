@@ -29,6 +29,8 @@ class Swap extends Model
         'admin_id',
         'transaction_id',
         'notes',
+        'created_at',
+        'updated_at',
     ];
 
     public function user(): BelongsTo

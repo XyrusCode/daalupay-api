@@ -3,9 +3,11 @@
 namespace DaaluPay\Http\Controllers\Payment;
 
 use DaaluPay\Http\Controllers\BaseController;
+use DaaluPay\Models\Admin;
 use Illuminate\Http\Request;
 use DaaluPay\Models\Wallet;
 use DaaluPay\Models\Currency;
+use DaaluPay\Models\Receipt;
 use Illuminate\Support\Str;
 
 class WalletController extends BaseController
@@ -51,6 +53,36 @@ class WalletController extends BaseController
             ]);
 
             return $this->getResponse('success', $wallet, 200);
+        }, true);
+    }
+
+    // receive receipt from alipay and store in database and assign it to an admin
+    public function alipayVerify(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $validated = $request->validate([
+                'amount' => 'required|string',
+                'receipt' => 'required|file|mimes:jpeg,png,jpg|max:2048',
+            ]);
+
+            $receipt = $request->file('receipt')->store('receipts', 'public');
+
+            $user = $request->user();
+            $admin = Admin::inRandomOrder()->first();
+
+            $receipt = Receipt::create([
+                'user_id' => $user->id,
+                'amount' => $validated['amount'],
+                'receipt' => $receipt,
+                'admin_id' => $admin->id,
+                'status' => 'pending',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $admin = Admin::inRandomOrder()->first();
+
+            return $this->getResponse('success', $request->all(), 200);
         }, true);
     }
 }

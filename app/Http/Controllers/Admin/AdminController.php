@@ -13,7 +13,7 @@ use DaaluPay\Models\KYC;
 use DaaluPay\Notifications\SwapStatusUpdated;
 use Ramsey\Uuid\Uuid;
 use DaaluPay\Models\Admin;
-
+use DaaluPay\Models\Receipt;
 class AdminController extends BaseController
 {
 
@@ -359,4 +359,40 @@ class AdminController extends BaseController
             return $this->getResponse('success', null, 200, $message);
         }, true);
     }
+
+    public function getReceipts()
+    {
+        return $this->process(function () {
+            $receipts = Receipt::all();
+            return $this->getResponse('success', $receipts, 200);
+        }, true);
+    }
+
+    public function getReceipt($id)
+    {
+        return $this->process(function () use ($id) {
+            $receipt = Receipt::find($id);
+            return $this->getResponse('success', $receipt, 200);
+        }, true);
+    }
+
+    public function approveReceipt($id)
+    {
+        return $this->process(function () use ($id) {
+            $receipt = Receipt::find($id);
+            $receipt->update(['status' => 'approved']);
+            return $this->getResponse('success', $receipt, 200);
+        }, true);
+    }
+
+    public function denyReceipt($id)
+    {
+        return $this->process(function () use ($id) {
+            $receipt = Receipt::find($id);
+            $receipt->update(['status' => 'rejected']);
+            return $this->getResponse('success', $receipt, 200);
+        }, true);
+    }
+
+    
 }
