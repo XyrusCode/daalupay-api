@@ -90,7 +90,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::prefix('/wallets')->group(function () {
             Route::post('/', [WalletController::class, 'store']);
             Route::get('/', [WalletController::class, 'index']);
-            Route::post('/alipay/verify', [WalletController::class, '']);
+            Route::post('/alipay/verify', [WalletController::class, 'verifyAlipay']);
         });
 
         Route::prefix('/transactions')->group(function () {

@@ -85,4 +85,30 @@ class WalletController extends BaseController
             return $this->getResponse('success', $request->all(), 200);
         }, true);
     }
+
+    // receive receipt from alipay and store in database and assign it to an admin
+    public function verifyAlipay(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $user = $request->user();
+            $admin = Admin::inRandomOrder()->first();
+
+            $validated = $request->validate([
+                'amount' => 'required|string',
+                'proof' => 'required|file|mimes:jpeg,png,jpg|max:2048',
+            ]);
+
+            Receipt::create([
+                'user_id' => $user->id,
+                'amount' => $validated['amount'],
+                'receipt' => $validated['proof'],
+                'admin_id' => $admin->id,
+                'status' => 'pending',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            return $this->getResponse('success', $request->all(), 200);
+        }, true);
+    }
 }

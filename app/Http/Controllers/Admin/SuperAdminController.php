@@ -360,11 +360,16 @@ class SuperAdminController extends BaseController
             // if no query params, return all exchange rates
             if (!$from && !$to) {
                 $exchangeRate = DB::table('exchange_rate')->get();
-                return $this->getResponse(status: true, message: 'Exchange rate fetched successfully', data: $exchangeRate);
+                return $this->getResponse(status: true, message: 'Exchange rate fetched successully', data: $exchangeRate);
             }
 
             $exchangeRate = DB::table('exchange_rate')->where('from_currency', $from)->where('to_currency', $to)->first();
-            return $this->getResponse(status: true, message: 'Exchange rate fetched successfully', data: $exchangeRate);
+
+            if (!$exchangeRate) {
+                return $this->getResponse(status: false, message: 'Exchange rate not found', status_code: 404);
+            }
+
+            return $this->getResponse(status_code: 200, status: true, message: 'Exchange rate fetched successfully', data: $exchangeRate);
         }, true);
     }
 

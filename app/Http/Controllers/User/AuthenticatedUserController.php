@@ -41,11 +41,11 @@ class AuthenticatedUserController extends BaseController
     public function showAdmin(Request $request)
     {
         return $this->process(function () use ($request) {
-            $user = Admin::find($request->user());
+            $admin = auth('admin')->user() ?? auth('super_admin')->user();
 
             $message = 'success for user' . $request->user();
 
-            return $this->getResponse(status: $message, data: $user, status_code: 200);
+            return $this->getResponse(status: $message, data: $admin, status_code: 200);
         }, true);
     }
 

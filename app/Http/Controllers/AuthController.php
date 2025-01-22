@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Wallet;
 use DaaluPay\Mail\NewUser;
@@ -45,7 +46,7 @@ class AuthController extends BaseController
             $user = $request->user()->load('wallets', 'transactions');
             $user->token = $token;
             $user->userType = 'user';
-            
+
             return $this->getResponse(
                 data: $user,
                 message: 'Login Success'
@@ -118,58 +119,68 @@ class AuthController extends BaseController
     {
         return $this->process(function () use ($request) {
             $request->validate([
-                'first_name' => 'required|string|max:255',
-                'last_name' => 'required|string|max:255',
+                'firstName' => 'required|string|max:255',
+                'lastName' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
-                'phone_number' => 'required|string|max:255',
+                'phoneNumber' => 'required|string|max:255',
                 // confirm_password & password must be the same
-                'confirm_password' => 'required|string|same:password',
+                'confirmPassword' => 'required|string|same:password',
                 'password' => 'required|string|min:8',
                 'country' => 'required|string|max:255',
                 'gender' => 'required|string|max:255',
                 'address' => 'required|string|max:255',
                 'city' => 'required|string|max:255',
-                'zip_code' => 'required|string|max:255',
-                'date_of_birth' => 'required|date',
-                'document_type' => 'required|string|max:255',
-                'document_file' => 'required|file',
+                'zipCode' => 'required|string|max:255',
+                'dateOfBirth' => 'required|date',
+                'documentType' => 'required|string|max:255',
+                'documentFile' => 'required|file',
             ]);
 
             $user = User::create([
                 'uuid' => Str::uuid(),
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
+                'first_name' => $request->firstName,
+                'last_name' => $request->lastName,
                 'email' => $request->email,
-                'phone' => $request->phone_number,
+                'phone' => $request->phoneNumber,
                 'password' => Hash::make($request->password),
             ]);
 
+            $currencyCode = 'NGN';
+            $currencyId = DB::table('currencies')->where('code', $currencyCode)->first()->id;
+
+
             Wallet::create([
+                'uuid' => Str::uuid(),
                 'user_id' => $user->id,
-                'currency' => 'NGN',
+                'currency_id' => $currencyId,
                 'balance' => 0,
             ]);
 
-            KYC::create([
-                'user_id' => $user->id,
-                // random admin id
-                'admin_id' => Admin::inRandomOrder()->first()->id,
-                'status' => 'pending',
-                'type' => 'individual',
-                'document_type' => $request->document_type,
-                'document_number' => $request->document_number,
-                'document_image' => $request->document_file,
-            ]);
+            // KYC::create([
+            //     'user_id' => $user->id,
+            //     // random admin id
+            //     'admin_id' => 6, //Admin::inRandomOrder()->first()->id,
+            //     'status' => 'pending',
+            //     'type' => 'individual',
+            //     'document_type' => $request->documentType,
+            //     'document_number' => $request->documentNumber,
+            //     'document_image' => $request->documentFile,
+            // ]);
 
             Address::create([
                 'user_id' => $user->id,
                 'town' => $request->city,
-                'state' => $request->state,
+                'state' => 'Lagos',
                 'country' => $request->country,
-                'zip_code' => $request->zip_code,
+                'zip_code' => $request->zipCode,
             ]);
 
-            Mail::to($user->email)->send(new NewUser($user));
+            // Mail::to($user->email)->send(new NewUser($user));
+
+            // generate and send otp for user for testing
+            $otp = random_int(100000, 999999);
+            Cache::put('otp_' . $user->id, $otp, now()->addMinutes(15));
+            $user->otp = $otp;
 
             return $this->getResponse('success', $user, 200);
         });

@@ -14,6 +14,8 @@ use DaaluPay\Notifications\SwapStatusUpdated;
 use Ramsey\Uuid\Uuid;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\Receipt;
+use Illuminate\Support\Facades\Storage;
+
 class AdminController extends BaseController
 {
 
@@ -364,6 +366,11 @@ class AdminController extends BaseController
     {
         return $this->process(function () {
             $receipts = Receipt::all();
+
+            //geet url for receipt
+            foreach ($receipts as $receipt) {
+                $receipt->receipt = Storage::url($receipt->receipt);
+            }
             return $this->getResponse('success', $receipts, 200);
         }, true);
     }
@@ -394,5 +401,5 @@ class AdminController extends BaseController
         }, true);
     }
 
-    
+
 }
