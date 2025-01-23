@@ -366,6 +366,11 @@ class AuthController extends BaseController
             $request->only('email')
         );
 
+        dd($status);
+
+        $user = User::where('email', $request->email)->first();
+        // Mail::to($user->email)->send(new PasswordReset($user, $status));
+
         if ($status != Password::RESET_LINK_SENT) {
             throw ValidationException::withMessages([
                 'email' => [__($status)],

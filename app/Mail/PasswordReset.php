@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-
+use DaaluPay\Models\User;
 class PasswordReset extends Mailable
 {
     use Queueable, SerializesModels;
@@ -16,9 +16,10 @@ class PasswordReset extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
-    {
-        //
+    public function __construct(
+        public User $user,
+        public string $resetCode,
+    ) {
     }
 
     /**
@@ -37,7 +38,11 @@ class PasswordReset extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.password-reset',
+            with: [
+                'user' => $this->user,
+                'resetCode' => $this->resetCode,
+            ],
         );
     }
 

@@ -144,7 +144,10 @@
                     "route": "/email/verification-notification",
                     "method": "POST",
                     "description": "Send email verification notification",
-                    "middleware": ["auth:sanctum", "throttle:6,1"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "throttle:6,1"
+                    ],
                     "response_body": {
                         "message": "string"
                     }
@@ -153,7 +156,9 @@
                     "route": "/logout",
                     "method": "POST",
                     "description": "Logout user",
-                    "middleware": ["auth:sanctum"],
+                    "middleware": [
+                        "auth:sanctum"
+                    ],
                     "response_body": {
                         "message": "string"
                     }
@@ -272,7 +277,7 @@
                         "currency": "string"
                     },
                     "response_body": {
-  "status": "success",
+                        "status": "success",
                         "data": {
                             "uuid": "string",
                             "userId": "integer",
@@ -285,13 +290,37 @@
                     }
                 },
                 {
+                    "route": "/user/wallets/{uuid}",
+                    "method": "GET",
+                    "description": "Get user wallet by uuid",
+                    "middleware": "auth:sanctum",
+                    "response_body": {
+                        "wallet": "object"
+                    }
+                },
+                {
+                    "route": "/user/wallets/send",
+                    "method": "POST",
+                    "description": "Send money to a wallet",
+                    "middleware": "auth:sanctum",
+                    "request_body": {
+                        "amount": "string",
+                        "recipient_address": "string",
+                        "currency": "string"
+                    },
+                    "response_body": {
+                        "message": "string"
+                    }
+                },
+                {
                     "route": "/user/wallets/alipay/verify",
                     "method": "POST",
                     "description": "Verify alipay receipt",
                     "middleware": "auth:sanctum",
                     "request_body": {
                         "amount": "string",
-                        "receipt": "file"
+                        "proof": "file",
+                        "reference": "string"
                     },
                     "response_body": {
                         "message": "string"
@@ -375,7 +404,10 @@
                     "route": "/admin/login",
                     "method": "POST",
                     "description": "Login admin",
-                    "middleware": ["auth:sanctum", "admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ],
                     "request_body": {
                         "email": "string",
                         "password": "string"
@@ -385,7 +417,10 @@
                     "route": "/admin/stats",
                     "method": "GET",
                     "description": "Get admin stats",
-                    "middleware": ["auth:sanctum", "admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ],
                     "response_body": {
                         "stats": {
                             "transactions": "array:object",
@@ -398,7 +433,10 @@
                     "route": "/admin/users",
                     "method": "GET",
                     "description": "Get all users",
-                    "middleware": ["auth:sanctum", "admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ],
                     "response_body": {
                         "users": [
                             {
@@ -413,7 +451,10 @@
                     "route": "/admin/users/{id}",
                     "method": "GET",
                     "description": "Get user by id",
-                    "middleware": ["auth:sanctum", "admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ],
                     "response_body": {
                         "user": "object"
                     }
@@ -422,7 +463,10 @@
                     "route": "/admin/users/{id}",
                     "method": "POST",
                     "description": "Update user",
-                    "middleware": ["auth:sanctum", "admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ],
                     "request_body": {
                         "first_name": "string",
                         "last_name": "string",
@@ -433,13 +477,19 @@
                     "route": "/admin/users/{id}/approve",
                     "method": "POST",
                     "description": "Approve user verification",
-                    "middleware": ["auth:sanctum", "admin"]
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ]
                 },
                 {
                     "route": "/admin/users/{id}/deny",
                     "method": "POST",
                     "description": "Deny user verification",
-                    "middleware": ["auth:sanctum", "admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ],
                     "request_body": {
                         "reason": "string"
                     }
@@ -448,7 +498,10 @@
                     "route": "/admin/users/{id}/suspend",
                     "method": "POST",
                     "description": "Suspend user",
-                    "middleware": ["auth:sanctum", "admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ],
                     "request_body": {
                         "reason": "string"
                     }
@@ -457,7 +510,10 @@
                     "route": "/admin/users/{id}/unsuspend",
                     "method": "POST",
                     "description": "Unsuspend user",
-                    "middleware": ["auth:sanctum", "admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ],
                     "request_body": {
                         "reason": "string"
                     }
@@ -466,13 +522,19 @@
                     "route": "/admin/users/{id}/delete",
                     "method": "POST",
                     "description": "Delete user",
-                    "middleware": ["auth:sanctum", "admin"]
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ]
                 },
                 {
                     "route": "/admin/transactions",
                     "method": "GET",
                     "description": "Get all transactions",
-                    "middleware": ["auth:sanctum", "admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ],
                     "response_body": {
                         "transactions": [
                             {
@@ -490,7 +552,10 @@
                     "route": "/admin/transactions/{id}",
                     "method": "GET",
                     "description": "Get transaction by id",
-                    "middleware": ["auth:sanctum", "admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ],
                     "response_body": {
                         "transaction": "object"
                     }
@@ -499,13 +564,19 @@
                     "route": "/admin/transactions/{id}/approve",
                     "method": "POST",
                     "description": "Approve transaction",
-                    "middleware": ["auth:sanctum", "admin"]
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ]
                 },
                 {
                     "route": "/admin/transactions/{id}/deny",
                     "method": "POST",
                     "description": "Deny transaction",
-                    "middleware": ["auth:sanctum", "admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ],
                     "request_body": {
                         "reason": "string"
                     }
@@ -514,7 +585,10 @@
                     "route": "/admin/receipts",
                     "method": "GET",
                     "description": "Get all receipts",
-                    "middleware": ["auth:sanctum", "admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ],
                     "response_body": {
                         "receipts": "array:object"
                     }
@@ -523,7 +597,10 @@
                     "route": "/admin/receipts/{id}",
                     "method": "GET",
                     "description": "Get receipt by id",
-                    "middleware": ["auth:sanctum", "admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ],
                     "response_body": {
                         "receipt": "object"
                     }
@@ -532,13 +609,19 @@
                     "route": "/admin/receipts/{id}/approve",
                     "method": "POST",
                     "description": "Approve receipt",
-                    "middleware": ["auth:sanctum", "admin"]
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ]
                 },
                 {
                     "route": "/admin/receipts/{id}/deny",
                     "method": "POST",
                     "description": "Deny receipt",
-                    "middleware": ["auth:sanctum", "admin"]
+                    "middleware": [
+                        "auth:sanctum",
+                        "admin"
+                    ]
                 }
             ]
         },
@@ -549,7 +632,10 @@
                     "route": "/super-admin/login",
                     "method": "POST",
                     "description": "Login super admin",
-                    "middleware": ["auth:sanctum", "super-admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ],
                     "request_body": {
                         "email": "string",
                         "password": "string"
@@ -559,7 +645,10 @@
                     "route": "/super-admin/stats",
                     "method": "GET",
                     "description": "Get super admin stats",
-                    "middleware": ["auth:sanctum", "super-admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ],
                     "response_body": {
                         "status": "boolean",
                         "message": "string",
@@ -585,7 +674,10 @@
                     "route": "/super-admin/admins",
                     "method": "GET",
                     "description": "Get all admins",
-                    "middleware": ["auth:sanctum", "super-admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ],
                     "response_body": {
                         "admins": [
                             {
@@ -602,7 +694,10 @@
                     "route": "/super-admin/admins",
                     "method": "POST",
                     "description": "Create admin",
-                    "middleware": ["auth:sanctum", "super-admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ],
                     "request_body": {
                         "first_name": "string",
                         "last_name": "string",
@@ -625,17 +720,19 @@
                             "first_name": "string",
                             "last_name": "string",
                             "email": "string",
-                                "role": "string",
-                                "status": "string"
-                            }
+                            "role": "string",
+                            "status": "string"
                         }
-                    },
-
+                    }
+                },
                 {
                     "route": "/super-admin/admins/{id}",
                     "method": "GET",
                     "description": "Get admin by id",
-                    "middleware": ["auth:sanctum", "super-admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ],
                     "response_body": {
                         "admin": "object"
                     }
@@ -644,7 +741,10 @@
                     "route": "/super-admin/admins/{id}/suspend",
                     "method": "POST",
                     "description": "Suspend admin",
-                    "middleware": ["auth:sanctum", "super-admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ],
                     "request_body": {
                         "reason": "string"
                     }
@@ -653,7 +753,10 @@
                     "route": "/super-admin/admins/{id}/unsuspend",
                     "method": "POST",
                     "description": "Unsuspend admin",
-                    "middleware": ["auth:sanctum", "super-admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ],
                     "request_body": {
                         "reason": "string"
                     }
@@ -662,13 +765,19 @@
                     "route": "/super-admin/admins/{id}/delete",
                     "method": "POST",
                     "description": "Delete admin",
-                    "middleware": ["auth:sanctum", "super-admin"]
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ]
                 },
                 {
                     "route": "/super-admin/currencies",
                     "method": "GET",
                     "description": "Get all currencies",
-                    "middleware": ["auth:sanctum", "super-admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ],
                     "response_body": {
                         "currencies": "array:object"
                     }
@@ -677,19 +786,28 @@
                     "route": "/super-admin/currencies/{id}/disable",
                     "method": "POST",
                     "description": "Disable currency",
-                    "middleware": ["auth:sanctum", "super-admin"]
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ]
                 },
                 {
                     "route": "/super-admin/currencies/{id}/enable",
                     "method": "POST",
                     "description": "Enable currency",
-                    "middleware": ["auth:sanctum", "super-admin"]
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ]
                 },
                 {
                     "route": "/super-admin/payment-methods",
                     "method": "GET",
                     "description": "Get all payment methods",
-                    "middleware": ["auth:sanctum", "super-admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ],
                     "response_body": {
                         "payment_methods": "array:object"
                     }
@@ -698,7 +816,10 @@
                     "route": "/super-admin/payment-methods/{id}/disable",
                     "method": "POST",
                     "description": "Disable payment method",
-                    "middleware": ["auth:sanctum", "super-admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ],
                     "request_body": {
                         "payment_method": "string"
                     }
@@ -707,13 +828,19 @@
                     "route": "/super-admin/payment-methods/{id}/enable",
                     "method": "POST",
                     "description": "Enable payment method",
-                    "middleware": ["auth:sanctum", "super-admin"]
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ]
                 },
                 {
                     "route": "/super-admin/exchange-rates",
                     "method": "GET",
                     "description": "Get all exchange rates",
-                    "middleware": ["auth:sanctum", "super-admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ],
                     "response_body": {
                         "exchange_rates": "array:object"
                     }
@@ -722,7 +849,10 @@
                     "route": "/super-admin/exchange-rates",
                     "method": "POST",
                     "description": "Create exchange rate",
-                    "middleware": ["auth:sanctum", "super-admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ],
                     "request_body": {
                         "from_currency": "string",
                         "to_currency": "string",
@@ -733,7 +863,10 @@
                     "route": "/super-admin/exchange-rates/{id}",
                     "method": "POST",
                     "description": "Update exchange rate",
-                    "middleware": ["auth:sanctum", "super-admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ],
                     "request_body": {
                         "from_currency": "string",
                         "to_currency": "string",
@@ -744,19 +877,28 @@
                     "route": "/super-admin/exchange-rates/{id}",
                     "method": "DELETE",
                     "description": "Delete exchange rate",
-                    "middleware": ["auth:sanctum", "super-admin"]
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ]
                 },
                 {
                     "route": "/super-admin/transfer-fees",
                     "method": "GET",
                     "description": "Get all transfer fees",
-                    "middleware": ["auth:sanctum", "super-admin"]
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ]
                 },
                 {
                     "route": "/super-admin/transfer-fees",
                     "method": "POST",
                     "description": "Create transfer fee",
-                    "middleware": ["auth:sanctum", "super-admin"],
+                    "middleware": [
+                        "auth:sanctum",
+                        "super-admin"
+                    ],
                     "request_body": {
                         "currency": "string",
                         "fee": "decimal"
@@ -766,6 +908,3 @@
         }
     ]
 }
-
-
-

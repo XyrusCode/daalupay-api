@@ -37,6 +37,10 @@ return Application::configure(basePath: dirname(__DIR__))
             '/super-admin/transfer-fees',
             '/super-admin/receipts',
             '/super-admin/swaps',
+            '/forgot-password',
+            '/reset-password',
+            '/verify-email/*',
+            '/email/verification-notification',
 
         ]);
 

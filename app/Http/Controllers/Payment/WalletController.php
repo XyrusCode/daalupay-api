@@ -9,7 +9,8 @@ use DaaluPay\Models\Wallet;
 use DaaluPay\Models\Currency;
 use DaaluPay\Models\Receipt;
 use Illuminate\Support\Str;
-
+use DaaluPay\Models\Transaction;
+use DaaluPay\Models\User;
 class WalletController extends BaseController
 {
 
@@ -104,6 +105,59 @@ class WalletController extends BaseController
                 'receipt' => $validated['proof'],
                 'admin_id' => $admin->id,
                 'status' => 'pending',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            return $this->getResponse('success', $request->all(), 200);
+        }, true);
+    }
+
+    public function getWallet(Request $request, $uuid)
+    {
+        return $this->process(function () use ($request, $uuid) {
+            $wallet = Wallet::where('uuid', $uuid)->first();
+
+            $wallet->user = User::find($wallet->user_id);
+            $wallet->currency = Currency::find($wallet->currency_id)->code;
+
+            return $this->getResponse('success', $wallet, 200);
+        }, true);
+    }
+
+    public function sendMoney(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $validated = $request->validate([
+                'amount' => 'required|string',
+                'recipient_address' => 'required|string',
+                'currency' => 'required|string',
+            ]);
+
+            $currency = Currency::where('code', $validated['currency'])->first();
+
+            $user = $request->user();
+            $wallet = Wallet::where('uuid', $validated['recipient_address'])->first();
+
+            $userWallet = Wallet::where('user_id', $user->id)->where('currency_id', $currency->id)->first();
+
+            if (!$wallet) {
+                return $this->getResponse('error', 'Wallet not found', 404);
+            }
+
+            $userWallet->balance -= $validated['amount'];
+            $userWallet->save();
+
+            $wallet->balance += $validated['amount'];
+            $wallet->save();
+
+            $transaction = Transaction::create([
+                'uuid' => Str::uuid(),
+                'user_id' => $user->id,
+                'amount' => $validated['amount'],
+                'currency' => $validated['currency'],
+                'status' => 'pending',
+                'reference_number' => Str::uuid(),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
