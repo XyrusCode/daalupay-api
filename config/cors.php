@@ -21,7 +21,7 @@ return [
 
     // 'allowed_origins' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL'),],
+    'allowed_origins' => [env('FRONTEND_URL'), 'daalupay.internal', 'daalupay.com'],
 
     'allowed_origins_patterns' => [],
 
