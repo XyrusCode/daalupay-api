@@ -56,21 +56,15 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])
     ->name('login');
 
-Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])
-    ->middleware('guest')
-    ->name('password.email');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail']);
 
-Route::post('/reset-password', [AuthController::class, 'resetPassword'])
-    ->middleware('guest')
-    ->name('password.store');
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::get('/verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])
-    ->middleware(['auth', 'signed', 'throttle:6,1'])
-    ->name('verification.verify');
+    ->middleware(['auth', 'signed', 'throttle:6,1']);
 
 Route::post('/email/verification-notification', [AuthController::class, 'sendVerificationEmail'])
-    ->middleware(['auth', 'throttle:6,1'])
-    ->name('verification.send');
+    ->middleware(['auth', 'throttle:6,1']);
 
 Route::post('/logout', [AuthController::class, 'logout']);
 

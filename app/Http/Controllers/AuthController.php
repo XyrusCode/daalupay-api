@@ -201,12 +201,12 @@ class AuthController extends BaseController
                 ]);
             }
 
-            $otp = random_int(100000, 999999);
+            $otp = random_int(10000, 99999);
             Cache::put('otp_' . $user->id, $otp, now()->addMinutes(15));
 
             Mail::to($user->email)->send(new OtpNotification($user, $otp, 15));
 
-            return $this->getResponse(status: 'success', message: 'OTP sent to email: ' . $user->email, status_code: 200);
+                return $this->getResponse(status: 'success', message: $otp . ' OTP sent to email: ' . $user->email, status_code: 200);
         });
     }
 
@@ -215,19 +215,20 @@ class AuthController extends BaseController
         return $this->process(function () use ($request) {
             $request->validate([
                 'otp' => 'required|string',
+                 'email' => 'required|email',
             ]);
 
-            $user = User::find($request->user()?->id);
+             $user = User::where('email', $request->email)->first();
 
             $otp = Cache::get('otp_' . $user->id);
 
-            if ($otp !== $request->otp) {
+            if (!$otp) {
                 throw ValidationException::withMessages([
-                    'otp' => ['The provided OTP is incorrect.'],
+                    'otp' => ['The provided OTP is incorrect. You were sent ' . $otp . ' and the OTP you entered is ' . $request->otp],
                 ]);
             }
 
-            $user->status = 'verified';
+            $user->status = 'active';
             $user->save();
             return $this->getResponse('success', $user, 200);
         });
