@@ -4,60 +4,62 @@ namespace DaaluPay\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
-
-class OtpNotification extends Notification
+use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Queue\SerializesModels;
+use DaaluPay\Models\User;
+class OtpNotification extends Mailable
 {
     use Queueable;
+    use SerializesModels;
 
+    public User $user;
     protected $otp;
     protected $validityInMinutes;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(string $otp, int $validityInMinutes = 5)
+    public function __construct(User $user, string $otp, int $validityInMinutes = 5)
     {
+        $this->user = $user;
         $this->otp = $otp;
         $this->validityInMinutes = $validityInMinutes;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
+      /**
+     * Get the message envelope.
      */
-    public function via(object $notifiable): array
+    public function envelope(): Envelope
     {
-        return ['mail'];
+        return new Envelope(
+            subject: 'DaluuPay - OTP Verification',
+        );
     }
 
     /**
-     * Get the mail representation of the notification.
+     * Get the message content definition.
      */
-    public function toMail(object $notifiable): MailMessage
+    public function content(): Content
     {
-        return (new MailMessage)
-            ->subject('Your OTP Verification Code')
-            ->greeting('Hello!')
-            ->line('Your OTP verification code is:')
-            ->line($this->otp)
-            ->line("This code will expire in {$this->validityInMinutes} minutes.")
-            ->line('If you did not request this code, please ignore this email.');
+        return new Content(
+            view: 'emails.registration.request-otp',
+            with: [
+                'user' => $this->user,
+                'otp' => $this->otp,
+                'validityInMinutes' => $this->validityInMinutes,
+            ],
+        );
     }
 
     /**
-     * Get the array representation of the notification.
+     * Get the attachments for the message.
      *
-     * @return array<string, mixed>
+     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
-    public function toArray(object $notifiable): array
+    public function attachments(): array
     {
-        return [
-            'otp' => $this->otp,
-            'validity_minutes' => $this->validityInMinutes,
-            'expires_at' => now()->addMinutes($this->validityInMinutes),
-        ];
+        return [];
     }
 }
