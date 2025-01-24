@@ -55,7 +55,8 @@ return [
     |
     */
 
-    'url' => env('FRONTEND_URL', 'http://daluupay.internal:5173'),
+    'url' => env('APP_URL', 'http://api.daluupay.internal'),
+    'frontend_url' => env('FRONTEND_URL', 'http://daluupay.internal:5173'),
 
     /*
     |--------------------------------------------------------------------------

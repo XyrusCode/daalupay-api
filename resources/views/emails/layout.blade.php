@@ -8,7 +8,7 @@
 <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #ffffff;">
 
     {{-- Include Header --}}
-    @include('email.header')
+    @include('emails.header')
 
     {{-- Email Content --}}
     <table width="100%" cellpadding="0" cellspacing="0" style="padding: 20px;">
@@ -20,7 +20,7 @@
     </table>
 
     {{-- Include Footer --}}
-    @include('email.footer')
+    @include('emails.footer')
 
 </body>
 </html>

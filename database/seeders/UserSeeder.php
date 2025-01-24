@@ -26,9 +26,9 @@ class UserSeeder extends Seeder
         User::create([
             'id' => 1,
             'uuid' => Uuid::uuid4(),
-            'first_name' => 'Test',
-            'last_name' => 'User',
-            'email' => 'test@example.com',
+            'first_name' => 'Prince',
+            'last_name' => 'Shammah',
+            'email' => 'prince.shammah@walexbiz.com',
             'password' => Hash::make('password'),
             'gender' => 'male',
             'phone' => '08123456789',

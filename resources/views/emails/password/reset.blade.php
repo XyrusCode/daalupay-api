@@ -1,4 +1,4 @@
-@extends('email.layout')
+@extends('emails.layout')
 
 @section('title', 'Password Reset Request')
 

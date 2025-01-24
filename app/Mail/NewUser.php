@@ -41,7 +41,10 @@ class NewUser extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.new-user',
+            view: 'emails.user.new',
+            with: [
+                'user' => $this->user,
+            ],
         );
     }
 

@@ -2,7 +2,7 @@
     <tr>
         <td align="center" style="font-size: 12px; color: #888;">
             <p>&copy; {{ date('Y') }} Daalu Pay. All rights reserved.</p>
-            <p><a href="{{ url('/') }}" style="color: #007bff; text-decoration: none;">Visit our website</a></p>
+            <p><a href="{{ config('app.frontend_url') }}" style="color: #007bff; text-decoration: none;">Visit our website</a></p>
         </td>
     </tr>
 </table>
