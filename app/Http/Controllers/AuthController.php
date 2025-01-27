@@ -38,7 +38,20 @@ class AuthController extends BaseController
     public function login(LoginRequest $request): JsonResponse
     {
         return $this->process(function () use ($request) {
+            //validate request
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
+
             $request->authenticate();
+
+            //handle user not found in db
+            if (!$request->user()) {
+                throw ValidationException::withMessages([
+                    'email' => ['The provided credentials are incorrect.'],
+                ]);
+            }
 
             $request->session()->regenerate();
             $token = $request->user()->createToken('auth_token')->plainTextToken;
