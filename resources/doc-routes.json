@@ -368,6 +368,18 @@
                     }
                 },
                 {
+                    "route": "/user/deposits",
+                    "method": "POST",
+                    "description": "Create user deposit",
+                    "middleware": "auth:sanctum",
+                    "request_body": {
+                        "amount": "decimal",
+                        "currency": "string",
+                        "channel": "enum:alipay,flutterwave,paystack",
+                        "wallet_id": "integer"
+                    }
+                },
+                {
                     "route": "/user/transactions",
                     "method": "GET",
                     "description": "Get user transactions",
