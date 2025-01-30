@@ -128,15 +128,17 @@ class WalletController extends BaseController
     public function deleteWallet(Request $request)
     {
         return $this->process(function () use ($request) {
-            $id = $request->id;
+            $id = $request->route('id');
             $wallet = Wallet::where('id', $id)->first();
 
             if (!$wallet) {
                 return $this->getResponse('error', 'Wallet not found', 404);
             }
 
-            //  swap allbalance to wallet with currency 229
-            $nairaWallet = Wallet::where('currency_id', 229, 'user_id', $wallet->user_id)->first();
+            //  get all user wallets
+            $userWallets = Wallet::where('user_id', $wallet->user_id)->get();
+            // find the wallet with currency 229
+            $nairaWallet = $userWallets->where('currency_id', 229)->first();
 
             // convert all balance to naira
             $nairaWallet->balance += $wallet->balance;

@@ -301,13 +301,10 @@
                     }
                 },
                 {
-                    "route": "/user/wallets",
+                    "route": "/user/wallets/{id}",
                     "method": "DELETE",
                     "description": "Delete user wallet",
-                    "middleware": "auth:sanctum",
-                    "request_body": {
-                        "id": "integer"
-                    }
+                    "middleware": "auth:sanctum"
                 },
                 {
                     "route": "/user/wallets/{uuid}",

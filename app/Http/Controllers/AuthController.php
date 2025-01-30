@@ -389,6 +389,8 @@ class AuthController extends BaseController
         // save token to cache
         Cache::put('password_reset_token_' . $user->id, $token, now()->addMinutes(15));
 
+
+        
         Mail::to($user->email)->send(new MailPasswordReset($user, $token));
 
 
