@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-
+use DaaluPay\Models\User;
 class SuspendUser extends Mailable
 {
     use Queueable, SerializesModels;
@@ -16,7 +16,9 @@ class SuspendUser extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(
+        public User $user,
+    )
     {
         //
     }
@@ -37,7 +39,10 @@ class SuspendUser extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.user.suspension',
+            with: [
+                'user' => $this->user,
+            ],
         );
     }
 

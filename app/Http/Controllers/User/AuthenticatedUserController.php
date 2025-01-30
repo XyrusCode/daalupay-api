@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use DaaluPay\Models\Wallet;
 use Illuminate\Support\Facades\Hash;
 use DaaluPay\Models\Admin;
+use DaaluPay\Models\KYC;
+
 class AuthenticatedUserController extends BaseController
 {
     /**
@@ -103,4 +105,36 @@ class AuthenticatedUserController extends BaseController
             return $this->getResponse('success', $user, 200);
         }, true);
     }
+
+    public function createKyc(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $user = $request->user();
+
+            $validated = $request->validate([
+                'documentType' => 'required|string|max:255',
+                'documentFile' => 'required|file',
+                'documentNumber' => 'required|string|max:255',
+            ]);
+
+            $admin = Admin::inRandomOrder()->first();
+
+            $kyc = KYC::create([
+                'user_id' => $user->id,
+                'document_type' => $validated['documentType'],
+                'document_image' => $validated['documentFile'],
+                'document_number' => $validated['documentNumber'],
+                'admin_id' => $admin->id,
+                'status' => 'pending',
+                'created_at' => now(),
+                'updated_at' => now(),
+
+
+            ]);
+
+
+            return $this->getResponse(status: 'success', message: 'KYC created successfully', status_code: 200);
+        }, true);
+    }
 }
+

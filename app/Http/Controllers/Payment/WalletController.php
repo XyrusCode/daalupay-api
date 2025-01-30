@@ -125,6 +125,28 @@ class WalletController extends BaseController
         }, true);
     }
 
+    public function deleteWallet(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $id = $request->id;
+            $wallet = Wallet::where('id', $id)->first();
+
+            if (!$wallet) {
+                return $this->getResponse('error', 'Wallet not found', 404);
+            }
+
+            //  swap allbalance to wallet with currency 229
+            $nairaWallet = Wallet::where('currency_id', 229, 'user_id', $wallet->user_id)->first();
+
+            // convert all balance to naira
+            $nairaWallet->balance += $wallet->balance;
+            $nairaWallet->save();
+
+            $wallet->delete();
+            return $this->getResponse('success', $wallet, 200);
+        }, true);
+    }
+
     public function sendMoney(Request $request)
     {
         return $this->process(function () use ($request) {
@@ -165,4 +187,5 @@ class WalletController extends BaseController
             return $this->getResponse('success', $request->all(), 200);
         }, true);
     }
+
 }

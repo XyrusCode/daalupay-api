@@ -14,7 +14,7 @@ use DaaluPay\Notifications\SwapStatusUpdated;
 use Ramsey\Uuid\Uuid;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\Receipt;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class AdminController extends BaseController
 {
@@ -362,32 +362,40 @@ class AdminController extends BaseController
         }, true);
     }
 
-    public function getReceipts()
-    {
-        return $this->process(function () {
-            $receipts = Receipt::all();
+public function getReceipts()
+{
+    return $this->process(function () {
+        $receipts = Receipt::all();
 
-            //geet url for receipt
-            foreach ($receipts as $receipt) {
-                $receipt->receipt = Storage::url($receipt->receipt);
-            }
-            return $this->getResponse('success', $receipts, 200);
-        }, true);
-    }
+        foreach ($receipts as $receipt) {
+            // Generate a URL to access the receipt
+            $receipt->url = URL::to('/api/receipt/file/' . $receipt->id);
+        }
 
-    public function getReceipt($id)
-    {
-        return $this->process(function () use ($id) {
-            $receipt = Receipt::find($id);
-            return $this->getResponse('success', $receipt, 200);
-        }, true);
-    }
+        return $this->getResponse('success', $receipts, 200);
+    }, true);
+}
+
+public function getReceipt($id)
+{
+    return $this->process(function () use ($id) {
+        $receipt = Receipt::findOrFail($id);
+        $receipt->url = URL::to('/api/receipt/file/' . $receipt->id);
+
+        return $this->getResponse('success', $receipt, 200);
+    }, true);
+}
 
     public function approveReceipt($id)
     {
         return $this->process(function () use ($id) {
             $receipt = Receipt::find($id);
             $receipt->update(['status' => 'approved']);
+
+            $user = User::find($receipt->user_id);
+            $user->wallet->balance += $receipt->amount;
+            $user->wallet->save();
+
             return $this->getResponse('success', $receipt, 200);
         }, true);
     }

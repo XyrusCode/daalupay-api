@@ -7,7 +7,7 @@
     <p>We have received your password reset request.</p>
     <p>Here is your reset link:</p>
     <p>
-        <a href="{{ config('app.url') }}/password-reset/{{ $user->id }}/{{ $resetCode }}"
+        <a href="{{ config('app.frontend_url') }}/password-reset?userId={{ $user->uuid }}&token={{ $resetCode }}"
            style="display: inline-block; background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
             Reset Password
         </a>
@@ -18,3 +18,4 @@
     <p>Sincerely,</p>
     <p>{{ config('app.name') }}</p>
 @endsection
+

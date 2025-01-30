@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use DaaluPay\Exceptions\CustomException;
 use DaaluPay\Helpers\StatusCodeHelper;
+use DaaluPay\Models\Receipt;
 
 use function Sentry\captureException;
 
@@ -199,4 +200,42 @@ class BaseController extends Controller
     	function getQueryParam(Request $request, string $key, $default = null) {
 		return $request->getQueryParam($key, $default);
 	}
+
+    function getBlobFromDB(string $table, string $key) {
+        $receipt = DB::table($table)->where('id', $key)->first();
+        $file = $receipt->receipt;
+        // check if blob is null
+        if (!$file) {
+        $this->getResponse(status: 'error', status_code: 404, message: 'File not found');
+    }
+
+     // Determine the content type (modify accordingly)
+    $mimeType = $file->mime_type ?? 'application/octet-stream';
+
+    return response($file)
+        ->header('Content-Type', $mimeType)
+        ->header('Content-Disposition', 'inline; filename="' . $file->filename . '"');
+    }
+
+
+    public function serveReceipt($id)
+{
+    $receipt = Receipt::findOrFail($id);
+    $file = $receipt->receipt;
+
+    if (!$file) {
+        $this->getResponse(status: 'error', status_code: 404, message: 'File not found');
+    }
+
+        if (!$receipt) {
+        $this->getResponse(status: 'error', status_code: 404, message: 'Receipt not found');
+    }
+
+    $mimeType = $file->mime_type ?? 'application/octet-stream';
+
+    return response($file)
+        ->header('Content-Type', $mimeType)
+        ->header('Content-Disposition', 'inline; filename="' . ($receipt->filename ?? 'receipt') . '"');
 }
+}
+

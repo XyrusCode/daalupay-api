@@ -14,11 +14,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // CSRF token validation, except for the /transactions route
         $middleware->validateCsrfTokens(except: [
             '/transactions/*',
             '/login',
             '/logout',
+            '/forgot-password',
+            '/reset-password',
+            '/verify-email',
+            '/email/verification-notification',
             '/request-otp',
             '/verify-otp',
             '/user/*',
@@ -37,11 +40,6 @@ return Application::configure(basePath: dirname(__DIR__))
             '/super-admin/transfer-fees',
             '/super-admin/receipts',
             '/super-admin/swaps',
-            '/forgot-password',
-            '/reset-password',
-            '/verify-email/*',
-            '/email/verification-notification',
-
         ]);
 
         $middleware->trustHosts(at: ['daalupay.internal', 'daalupay.com']);

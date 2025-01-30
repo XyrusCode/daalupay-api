@@ -1,4 +1,4 @@
-?php
+<?php
 
 namespace DaaluPay\Mail;
 
@@ -8,17 +8,20 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use DaaluPay\Models\User;
+use DaaluPay\Models\Deposit;
 
-class OrderShipped extends Mailable
+class NewDeposit extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct()
-    {
-        //
+    public function __construct(
+        public User $user,
+        public Deposit $deposit,
+    ) {
     }
 
     /**
@@ -27,7 +30,7 @@ class OrderShipped extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Order Shipped',
+            subject: 'New Deposit',
         );
     }
 
@@ -37,7 +40,11 @@ class OrderShipped extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.deposit.new',
+            with: [
+                'deposit' => $this->deposit,
+                'user' => $this->user,
+            ],
         );
     }
 

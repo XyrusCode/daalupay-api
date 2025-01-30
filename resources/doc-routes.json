@@ -203,6 +203,17 @@
                     }
                 },
                 {
+                    "route": "/user/kyc",
+                    "method": "POST",
+                    "description": "Create user KYC",
+                    "middleware": "auth:sanctum",
+                    "request_body": {
+                        "documentType": "enum:passport,national_id,driver_license,voter_id,other",
+                        "documentFile": "file",
+                        "documentNumber": "string"
+                    }
+                },
+                {
                     "route": "/user",
                     "method": "POST",
                     "description": "Create user profile",
@@ -287,6 +298,15 @@
                             "createdAt": "timestamp",
                             "id": "integer"
                         }
+                    }
+                },
+                {
+                    "route": "/user/wallets",
+                    "method": "DELETE",
+                    "description": "Delete user wallet",
+                    "middleware": "auth:sanctum",
+                    "request_body": {
+                        "id": "integer"
                     }
                 },
                 {

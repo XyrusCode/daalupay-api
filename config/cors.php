@@ -19,13 +19,21 @@ return [
 
     'allowed_methods' => ['*'],
 
-    // 'allowed_origins' => ['*'],
-
-    'allowed_origins' => [env('FRONTEND_URL')],
+    'allowed_origins' => [env('FRONTEND_URL'), 'http://daalupay.internal:3000'],
 
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['*'],
+    'allowed_headers' => [
+        'Content-Type',
+        'X-Requested-With',
+        'Authorization',
+        'Accept',
+        'Origin',
+        'X-CSRF-TOKEN',
+        'x-Correlation-Id',
+        'x-Session-Id',
+        'x-Browser-Id',
+    ],
 
     'exposed_headers' => [],
 

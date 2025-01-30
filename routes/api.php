@@ -10,6 +10,7 @@ use DaaluPay\Http\Controllers\Payment\SwapController;
 use DaaluPay\Http\Controllers\Payment\WalletController;
 use DaaluPay\Http\Controllers\Admin\SuperAdminController;
 use DaaluPay\Http\Controllers\Admin\AdminController;
+use DaaluPay\Http\Controllers\BaseController;
 use DaaluPay\Http\Controllers\Payment\ExchangeController;
 use DaaluPay\Http\Controllers\User\AuthenticatedUserController;
 use DaaluPay\Http\Controllers\Payment\DepositController;
@@ -25,11 +26,23 @@ use DaaluPay\Http\Controllers\BlogPostController;
 |
 */
 
+// Tests
+Route::prefix('/test')->group(function () {
+    Route::prefix('/receipts')->group(function () {
+    Route::get('/', [AdminController::class, 'getReceipts']);
+    Route::get('/{id}', [AdminController::class, 'getReceipt']);
+    Route::post('/{id}/approve', [AdminController::class, 'approveReceipt']);
+    Route::post('/{id}/deny', [AdminController::class, 'denyReceipt']);
+});});
+
 // App Info
 Route::get('/', [MiscController::class, 'getAppInfo']);
 Route::get('/docs', [MiscController::class, 'getAppDocs']);
 
 Route::get('/artisan/{command}', [MiscController::class, 'runArtisanCommand']);
+
+Route::get('/receipt/file/{id}', [BaseController::class, 'serveReceipt']);
+
 
 // Database Routes
 Route::prefix('/db')->group(function () {
@@ -56,7 +69,8 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])
     ->name('login');
 
-Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail']);
+Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])
+    ->name('forgot-password');
 
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
@@ -84,6 +98,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::prefix('/wallets')->group(function () {
             Route::post('/', [WalletController::class, 'store']);
             Route::get('/', [WalletController::class, 'index']);
+            Route::delete('/', [WalletController::class, 'deleteWallet']);
             Route::post('/alipay/verify', [WalletController::class, 'verifyAlipay']);
             Route::get('/{uuid}', [WalletController::class, 'getWallet']);
             Route::post('/send', [WalletController::class, 'sendMoney']);
@@ -103,6 +118,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
         Route::prefix('/deposits')->group(function () {
             Route::post('/', [DepositController::class, 'store']);
+        });
+
+        Route::prefix('/kyc')->group(function () {
+            Route::post('/', [AuthenticatedUserController::class, 'createKyc']);
         });
 
         // Route::prefix('/withdrawals')->group(function () {
@@ -159,6 +178,8 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
     });
 
 });
+
+
 
 // Auth
 Route::post('/super-admin/login', [AuthController::class, 'superAdminLogin']);

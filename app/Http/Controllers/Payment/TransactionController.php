@@ -63,15 +63,9 @@ class TransactionController extends BaseController
             'user_id' => $user->id,
             'admin_id' => $admin->id, // Assign admin
              ]);
-
+ 
                     // Increment the admin's workload
             $admin->increment('transactions_assigned');
-
-            // Update the user's wallet balance
-            if ($transaction->type === 'withdrawal') {
-                $user->wallet->balance -= $transaction->amount;
-                $user->wallet->save();
-            }
 
             return $this->getResponse('success', $transaction, 201);
         }, true);

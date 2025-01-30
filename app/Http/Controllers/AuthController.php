@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Wallet;
 use DaaluPay\Mail\NewUser;
+use DaaluPay\Mail\PasswordReset as MailPasswordReset;
 use DaaluPay\Models\KYC;
 use DaaluPay\Models\Address;
 use DaaluPay\Models\Admin;
@@ -144,9 +145,7 @@ class AuthController extends BaseController
                 'address' => 'required|string|max:255',
                 'city' => 'required|string|max:255',
                 'zipCode' => 'required|string|max:255',
-                'dateOfBirth' => 'required|date',
-                'documentType' => 'required|string|max:255',
-                'documentFile' => 'required|file',
+                'dateOfBirth' => 'required|date'
             ]);
 
             $user = User::create([
@@ -191,7 +190,7 @@ class AuthController extends BaseController
             // Mail::to($user->email)->send(new NewUser($user));
 
             // generate and send otp for user for testing
-            $otp = random_int(100000, 999999);
+            $otp = random_int(10000, 99999);
             Cache::put('otp_' . $user->id, $otp, now()->addMinutes(15));
             $user->otp = $otp;
 
@@ -271,6 +270,14 @@ class AuthController extends BaseController
             ]);
 
             $user = User::where('email', $request->email)->first();
+
+            //handle user not found in db
+            if (!$user) {
+                throw ValidationException::withMessages([
+                    'email' => ['User not found in database.'],
+                ]);
+            }
+
             $user->load('wallets', 'transactions');
 
             if (! $user || ! Hash::check($request->password, $user->password)) {
@@ -335,32 +342,31 @@ class AuthController extends BaseController
     {
         $request->validate([
             'token' => ['required'],
-            'email' => ['required', 'email'],
+            'user_id' => ['required'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
         // database. Otherwise we will parse the error and return the response.
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user) use ($request) {
-                $user->forceFill([
-                    'password' => Hash::make($request->string('password')),
-                    'remember_token' => Str::random(60),
-                ])->save();
+        $user = User::where('uuid', $request->user_id)->first();
 
-                event(new PasswordReset($user));
-            }
-        );
+        // confirm token is valid from cache
+        $token = Cache::get('password_reset_token_' . $user->id);
 
-        if ($status != Password::PASSWORD_RESET) {
+        if (!$token) {
             throw ValidationException::withMessages([
-                'email' => [__($status)],
+                'token' => ['The provided token is incorrect.'],
             ]);
         }
 
-        return response()->json(['status' => __($status)]);
+        // delete token from cache
+        Cache::forget('password_reset_token_' . $user->id);
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return $this->getResponse(status: 'success', message: 'Password reset successful', status_code: 200);
     }
 
     /**
@@ -368,31 +374,25 @@ class AuthController extends BaseController
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function sendResetLinkEmail(Request $request): JsonResponse
+    public function sendResetLinkEmail(Request $request)
     {
         $request->validate([
             'email' => ['required', 'email'],
-        ]);
+        ]);;
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
-
-        dd($status);
 
         $user = User::where('email', $request->email)->first();
-        // Mail::to($user->email)->send(new PasswordReset($user, $status));
 
-        if ($status != Password::RESET_LINK_SENT) {
-            throw ValidationException::withMessages([
-                'email' => [__($status)],
-            ]);
-        }
+        // Generate a new password reset token
+        $token = Password::createToken($user);
 
-        return response()->json(['status' => __($status)]);
+        // save token to cache
+        Cache::put('password_reset_token_' . $user->id, $token, now()->addMinutes(15));
+
+        Mail::to($user->email)->send(new MailPasswordReset($user, $token));
+
+
+        return $this->getResponse(status: 'success', message: 'Password reset link sent to email: ' . $user->email, status_code: 200);
     }
 
     /**

@@ -8,7 +8,8 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-
+use DaaluPay\Models\Transaction;
+use DaaluPay\Models\User;
 class TransactionPending extends Mailable
 {
     use Queueable, SerializesModels;
@@ -16,9 +17,10 @@ class TransactionPending extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
-    {
-        //
+    public function __construct(
+        public User $user,
+        public Transaction $transaction,
+    ) {
     }
 
     /**
@@ -37,7 +39,11 @@ class TransactionPending extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.transaction.pending',
+            with: [
+                'transaction' => $this->transaction,
+                'user' => $this->user,
+            ],
         );
     }
 
