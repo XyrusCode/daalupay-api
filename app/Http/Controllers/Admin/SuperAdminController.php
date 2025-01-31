@@ -19,6 +19,66 @@ use Ramsey\Uuid\Uuid;
 class SuperAdminController extends BaseController
 {
 
+    function getPayStackBalance()
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.paystack.co/balance",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_HTTPHEADER => array(
+                "Authorization: Bearer " . env('PAYSTACK_SECRET_KEY'),
+                "Cache-Control: no-cache",
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            return $this->getResponse(status: false, message: 'Error fetching PayStack balance', status_code: 500);
+        }
+
+        return $this->getResponse(status: true, message: 'PayStack balance fetched successfully', data: $response);
+    }
+
+    function getFlutterWaveBalance()
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.flutterwave.com/v3/balances",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_HTTPHEADER => array(
+                "Authorization: Bearer " . env('FLUTTERWAVE_SECRET_KEY'),
+                "Cache-Control: no-cache",
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            return $this->getResponse(status: false, message: 'Error fetching FlutterWave balance', status_code: 500);
+        }
+
+        return $this->getResponse(status: true, message: 'FlutterWave balance fetched successfully', data: $response);
+    }
+
     public function stats()
     {
         return $this->process(function () {

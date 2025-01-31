@@ -30,7 +30,7 @@ use DaaluPay\Models\Admin;
 use DaaluPay\Models\SuperAdmin;
 use Illuminate\Support\Facades\Cache;
 use DaaluPay\Notifications\OtpNotification;
-
+use DaaluPay\Models\Currency;
 class AuthController extends BaseController
 {
     /**
@@ -157,27 +157,25 @@ class AuthController extends BaseController
                 'password' => Hash::make($request->password),
             ]);
 
-            $currencyCode = 'NGN';
-            $currencyId = DB::table('currencies')->where('code', $currencyCode)->first()->id;
+
+            $nairaCurrencyId = DB::table('currencies')->where('code', 'NGN')->first()->id;
+            $yuanCurrencyId = DB::table('currencies')->where('code', 'CNY')->first()->id;
 
 
             Wallet::create([
                 'uuid' => Str::uuid(),
                 'user_id' => $user->id,
-                'currency_id' => $currencyId,
+                'currency_id' => $nairaCurrencyId,
                 'balance' => 0,
             ]);
 
-            // KYC::create([
-            //     'user_id' => $user->id,
-            //     // random admin id
-            //     'admin_id' => 6, //Admin::inRandomOrder()->first()->id,
-            //     'status' => 'pending',
-            //     'type' => 'individual',
-            //     'document_type' => $request->documentType,
-            //     'document_number' => $request->documentNumber,
-            //     'document_image' => $request->documentFile,
-            // ]);
+            Wallet::create([
+                'uuid' => Str::uuid(),
+                'user_id' => $user->id,
+                'currency_id' => $yuanCurrencyId,
+                'balance' => 0,
+            ]);
+
 
             Address::create([
                 'user_id' => $user->id,
@@ -390,7 +388,7 @@ class AuthController extends BaseController
         Cache::put('password_reset_token_' . $user->id, $token, now()->addMinutes(15));
 
 
-        
+
         Mail::to($user->email)->send(new MailPasswordReset($user, $token));
 
 
@@ -434,10 +432,21 @@ class AuthController extends BaseController
             'zip_code' => $request->zip_code,
         ]);
 
+        // find nair and yuan currency id
+        $nairaCurrency = Currency::where('code', 'NGN')->first();
+        $yuanCurrency = Currency::where('code', 'CNY')->first();
+
         //Create a naira wallet for the user
         Wallet::create([
             'user_id' => $user->id,
-            'currency' => 'NGN',
+            'currency_id' => $nairaCurrency->id,
+            'balance' => 0,
+        ]);
+
+        // Create a cny wallet for the user
+        Wallet::create([
+            'user_id' => $user->id,
+            'currency_id' => $yuanCurrency->id,
             'balance' => 0,
         ]);
 

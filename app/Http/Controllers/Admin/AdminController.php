@@ -12,10 +12,10 @@ use DaaluPay\Models\Swap;
 use DaaluPay\Models\KYC;
 use DaaluPay\Notifications\SwapStatusUpdated;
 use Ramsey\Uuid\Uuid;
-use DaaluPay\Models\Admin;
+use DaaluPay\Models\Currency;
 use DaaluPay\Models\Receipt;
 use Illuminate\Support\Facades\URL;
-
+use DaaluPay\Models\Wallet;
 class AdminController extends BaseController
 {
 
@@ -393,8 +393,13 @@ public function getReceipt($id)
             $receipt->update(['status' => 'approved']);
 
             $user = User::find($receipt->user_id);
-            $user->wallet->balance += $receipt->amount;
-            $user->wallet->save();
+
+            // FInd User CNY Wallet
+             $yuanCurrency = Currency::where('code', 'CNY')->first();
+            $cnyWallet = Wallet::where('user_id', $user->id)->where('currency_id', $yuanCurrency->id)->first();
+
+            $cnyWallet->balance += $receipt->amount;
+            $cnyWallet->save();
 
             return $this->getResponse('success', $receipt, 200);
         }, true);
