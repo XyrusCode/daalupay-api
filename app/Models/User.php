@@ -183,4 +183,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(KYC::class);
     }
+
+    public function notificationTokens(): HasMany
+    {
+        return $this->hasMany(NotificationToken::class);
+    }
 }

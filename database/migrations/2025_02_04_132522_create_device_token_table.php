@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('blog_posts', function (Blueprint $table) {
+        Schema::create('device_token', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('content');
-            $table->string('featured_image');
-            $table->boolean('status');
-            $table->foreignId('author_id')->constrained('admins');
+            $table->string('token');
+            // 1 usser can have multiple device tokens
+            $table->foreignId('user_id')->constrained('users');
+            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->enum('device_type', ['ios', 'android', 'web']);
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('blog_posts');
+        Schema::dropIfExists('device_token');
     }
 };

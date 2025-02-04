@@ -265,6 +265,22 @@
                     }
                 },
                 {
+                    "route": "/user/notification-tokens",
+                    "method": "POST",
+                    "description": "Store user notification token",
+                    "middleware": "auth:sanctum",
+                    "request_body": {
+                        "token": "string",
+                        "device_type": "enum:ios,android,web"
+                    }
+                },
+                {
+                    "route": "/user/notification-tokens/{id}",
+                    "method": "DELETE",
+                    "description": "Delete user notification token",
+                    "middleware": "auth:sanctum"
+                },
+                {
                     "route": "/user/wallets",
                     "method": "GET",
                     "description": "Get user wallets",

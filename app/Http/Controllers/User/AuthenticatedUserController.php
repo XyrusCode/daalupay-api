@@ -13,6 +13,7 @@ use DaaluPay\Models\Wallet;
 use Illuminate\Support\Facades\Hash;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\KYC;
+use DaaluPay\Models\NotificationToken;
 
 class AuthenticatedUserController extends BaseController
 {
@@ -134,6 +135,35 @@ class AuthenticatedUserController extends BaseController
 
 
             return $this->getResponse(status: 'success', message: 'KYC created successfully', status_code: 200);
+        }, true);
+    }
+
+    public function storeNotificationToken(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $user = $request->user();
+            $validated = $request->validate([
+                'token' => 'required|string',
+                'device_type' => 'required|string',
+            ]);
+
+            NotificationToken::create([
+                'token' => $validated['token'],
+                'device_type' => $validated['device_type'],
+                'user_id' => $user->id,
+                'status' => 'active',
+            ]);
+            
+            return $this->getResponse('success', $user, 200);
+        }, true);
+    }
+
+    public function deleteNotificationToken(Request $request, $id)
+    {
+        return $this->process(function () use ($request, $id) {
+            $user = $request->user();
+            $user->notificationTokens()->find($id)->update(['status' => 'inactive']);
+            return $this->getResponse('success', $user, 200);
         }, true);
     }
 }

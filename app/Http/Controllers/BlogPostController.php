@@ -43,7 +43,7 @@ class BlogPostController extends BaseController
                 'title' => 'required|string|max:255',
                 'content' => 'required|string',
                 // 'featured_image' => 'required|file|mimes:jpeg,png,jpg|max:2048',
-                // 'isActive' => 'required|boolean',
+                'status' => 'required|boolean',
             ]);
 
             // $imagePath = $request->file('featured_image')->store('blog-images', 'public');
@@ -52,7 +52,7 @@ class BlogPostController extends BaseController
                 'title' => $validated['title'],
                 'content' => $validated['content'],
                 'featured_image' => '',
-                'isActive' => $validated['isActive'] ?? true,
+                'status' => $validated['status'],
                 'author_id' => $admin->id,
             ]);
 

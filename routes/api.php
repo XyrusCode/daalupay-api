@@ -94,6 +94,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('/stats', [AuthenticatedUserController::class, 'stats']);
         Route::post('/password', [AuthenticatedUserController::class, 'updatePassword']);
 
+        Route::prefix('/notification-tokens')->group(function () {
+            Route::post('/', [AuthenticatedUserController::class, 'storeNotificationToken']);
+            Route::delete('/{id}', [AuthenticatedUserController::class, 'deleteNotificationToken']);
+        });
+
 
         Route::prefix('/wallets')->group(function () {
             Route::post('/', [WalletController::class, 'store']);

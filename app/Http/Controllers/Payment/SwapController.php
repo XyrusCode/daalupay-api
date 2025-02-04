@@ -11,9 +11,15 @@ use DaaluPay\Models\Currency;
 use DaaluPay\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
-
+use DaaluPay\Services\FCMService;
 class SwapController extends BaseController
 {
+    protected $fcm;
+
+    public function __construct(FCMService $fcm)
+    {
+        $this->fcm = $fcm;
+    }
 
     public function index(Request $request)
     {
@@ -80,6 +86,11 @@ class SwapController extends BaseController
 
             // random admin
             $admin = Admin::inRandomOrder()->first();
+            // enabled tokens
+            $userDeviceTokens = $user->notificationTokens->where('status', 'active');
+            foreach ($userDeviceTokens as $userDeviceToken) {
+                $this->fcm->sendToDevice($userDeviceToken->token, 'Swap Approval', 'Your swap request has been approved');
+            }
             // ->notify(new SwapApprovalNotification($user, $request->amount, $request->from_currency, $request->to_currency, $request->from_amount, $request->to_amount, $request->rate));
 
             $transaction = Transaction::create([

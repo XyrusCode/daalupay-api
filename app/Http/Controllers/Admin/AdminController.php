@@ -390,6 +390,16 @@ public function getReceipt($id)
     {
         return $this->process(function () use ($id) {
             $receipt = Receipt::find($id);
+
+            if ($receipt->status === 'approved') {
+                return $this->getResponse(
+                    status: 'error',
+                    message: 'Receipt is already approved',
+                    status_code: 400
+                );
+            }
+
+
             $receipt->update(['status' => 'approved']);
 
             $user = User::find($receipt->user_id);
