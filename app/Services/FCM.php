@@ -2,62 +2,40 @@
 
 namespace DaaluPay\Services;
 
-// use Kreait\Firebase\Factory;
-// use Kreait\Firebase\Messaging;
 use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
+use Kreait\Firebase\Messaging\MulticastSendReport;
+
 class FCMService
 {
     protected $messaging;
 
     public function __construct()
     {
-        // $this->firebase = (new Factory)->withServiceAccount(config('firebase.credentials'))->create();
         $this->messaging = app('firebase.messaging');
     }
 
-    public function sendNotification($token, $title, $body)
+    public function sendNotification(string $token, string $title, string $body)
     {
-        $message = CloudMessage::fromArray([
-            'token' => $token,
-            'notification' => [
-                'title' => $title,
-                'body' => $body,
-            ],
-        ]);
-        $messaging = $this->messaging->send($message);
-        return $messaging;
+        $message = CloudMessage::withTarget('token', $token)
+            ->withNotification(Notification::create($title, $body));
+
+        return $this->messaging->send($message);
     }
 
-    public function sendNotificationToTopic($topic, $title, $body)
+    public function sendNotificationToTopic(string $topic, string $title, string $body)
     {
-        $tokens = $this->messaging->getTopicRegistrationTokens($topic);
-        $messaging = $this->messaging->sendEachForMulticast($tokens, $title, $body);
-        return $messaging;
+        $message = CloudMessage::withTarget('topic', $topic)
+            ->withNotification(Notification::create($title, $body));
+
+        return $this->messaging->send($message);
     }
 
-    public function sendNotificationToMultipleTokens($tokens, $title, $body)
+    public function sendNotificationToMultipleTokens(array $tokens, string $title, string $body): MulticastSendReport
     {
-        $messaging = $this->messaging->sendEachForMulticast($tokens, $title, $body);
-        return $messaging;
-    }
+        $message = CloudMessage::new()
+            ->withNotification(Notification::create($title, $body));
 
-    public function sendNotificationToAll($title, $body)
-    {
-        $tokens = $this->messaging->getTopicRegistrationTokens('all');
-        $messaging = $this->messaging->sendEachForMulticast($tokens, $title, $body);
-        return $messaging;
-    }
-
-    public function sendToDevice($token, $title, $body)
-    {
-        $message = CloudMessage::fromArray([
-            'token' => $token,
-            'notification' => [
-                'title' => $title,
-                'body' => $body,
-            ],
-        ]);
-        $messaging = $this->messaging->send($message);
-        return $messaging;
+        return $this->messaging->sendMulticast($message, $tokens);
     }
 }

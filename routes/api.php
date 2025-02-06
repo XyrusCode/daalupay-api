@@ -15,6 +15,9 @@ use DaaluPay\Http\Controllers\Payment\ExchangeController;
 use DaaluPay\Http\Controllers\User\AuthenticatedUserController;
 use DaaluPay\Http\Controllers\Payment\DepositController;
 use DaaluPay\Http\Controllers\BlogPostController;
+use DaaluPay\Http\Controllers\ChatsController;
+use DaaluPay\Http\Controllers\TestController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -35,6 +38,8 @@ Route::prefix('/test')->group(function () {
     Route::post('/{id}/deny', [AdminController::class, 'denyReceipt']);
 });});
 
+Route::get('/test-fcm', [TestController::class, 'testFcm']);
+
 // App Info
 Route::get('/', [MiscController::class, 'getAppInfo']);
 Route::get('/docs', [MiscController::class, 'getAppDocs']);
@@ -42,6 +47,12 @@ Route::get('/docs', [MiscController::class, 'getAppDocs']);
 Route::get('/artisan/{command}', [MiscController::class, 'runArtisanCommand']);
 
 Route::get('/receipt/file/{id}', [BaseController::class, 'serveReceipt']);
+
+// Blog Routes
+Route::prefix('/blog')->group(function () {
+    Route::get('/', [BlogPostController::class, 'getBlogPosts']);
+    Route::get('/{id}', [BlogPostController::class, 'getBlogPost']);
+});
 
 
 // Database Routes
@@ -86,6 +97,11 @@ Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/user/request-otp', [AuthController::class, 'requestOtp']);
 Route::post('/user/verify-otp', [AuthController::class, 'verifyOtp']);
 
+        Route::prefix('/messages')->group(function () {
+            Route::get('/', [ChatsController::class, 'index']);
+            Route::get('/{id}', [ChatsController::class, 'show']);
+            Route::post('/', [ChatsController::class, 'store']);
+        });
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::prefix('/user')->group(function () {

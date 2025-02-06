@@ -30,106 +30,136 @@ class SwapController extends BaseController
         }, true);
     }
 
-    public function store(Request $request)
-    {
-        return $this->process(function () use ($request) {
-            $user = $request->user();
+  public function store(Request $request)
+{
+    return $this->process(function () use ($request) {
+        $user = $request->user();
 
-            $request->validate([
-                'from_currency' => 'required|string',
-                'to_currency' => 'required|string',
-                'rate' => 'required|string',
-                'from_amount' => 'required|numeric|min:0',
-                'to_amount' => 'required|numeric|min:0',
-            ]);
+        // Validate incoming request data
+        $validated = $request->validate([
+            'from_currency' => 'required|string',
+            'to_currency'   => 'required|string',
+            'rate'          => 'required|numeric',
+            'from_amount'   => 'required|numeric|min:0',
+            'to_amount'     => 'required|numeric|min:0',
+            'fees'          => 'nullable|numeric|min:0',
+        ]);
 
-            $from_currency_id = DB::table('currencies')->where('code', $request->from_currency)->first()->id;
-            $to_currency_id = DB::table('currencies')->where('code', $request->to_currency)->first()->id;
+        // Retrieve currency IDs, and check if they exist
+        $fromCurrency = DB::table('currencies')
+            ->where('code', $validated['from_currency'])
+            ->first();
 
-            $from_wallet = $user->wallets()->where('currency_id', $from_currency_id)->first();
-            $to_wallet = $user->wallets()->where('currency_id', $to_currency_id)->first();
+        $toCurrency = DB::table('currencies')
+            ->where('code', $validated['to_currency'])
+            ->first();
 
-            if (!$from_wallet) {
-                return $this->getResponse(
-                    status: false,
-                    message: 'From wallet not found',
-                    data: null,
-                    status_code: 404
-                );
-            }
-
-            if (!$to_wallet) {
-                return $this->getResponse(
-                    status: false,
-                    message: 'To wallet not found',
-                    data: null,
-                    status_code: 404
-                );
-            }
-
-            if ($from_wallet->balance < $request->amount) {
-                return $this->getResponse(
-                    status: false,
-                    message: 'Insufficient balance',
-                    data: null,
-                    status_code: 422
-                );
-            }
-
-            // remove from_wallet balance from from_wallet
-            $from_wallet->balance -= $request->amount_to_swap;
-            $from_wallet->save();
-
-            // add to_wallet balance to to_wallet
-            $to_wallet->balance += $request->amount_to_receive;
-            $to_wallet->save();
-
-            // random admin
-            $admin = Admin::inRandomOrder()->first();
-            // enabled tokens
-            $userDeviceTokens = $user->notificationTokens->where('status', 'active');
-            foreach ($userDeviceTokens as $userDeviceToken) {
-                $this->fcm->sendToDevice($userDeviceToken->token, 'Swap Approval', 'Your swap request has been approved');
-            }
-            // ->notify(new SwapApprovalNotification($user, $request->amount, $request->from_currency, $request->to_currency, $request->from_amount, $request->to_amount, $request->rate));
-
-            $transaction = Transaction::create([
-                'uuid' => Uuid::uuid4(),
-                'reference_number' => Uuid::uuid4(),
-                'channel' => 'paystack',
-                'amount' => $request->to_amount + $request->fees,
-                'type' => 'swap',
-                'status' => 'pending',
-                'user_id' => $user->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            $transaction->save();
-
-            $swap = Swap::create([
-                'uuid' => Uuid::uuid4(),
-                'user_id' => $user->id,
-                'from_currency' => $request->from_currency,
-                'to_currency' => $request->to_currency,
-                'from_amount' => $request->from_amount,
-                'to_amount' => $request->to_amount,
-                'rate' => $request->rate,
-                'status' => 'pending',
-                'admin_id' => $admin->id,
-                'transaction_id' => $transaction->id,
-            ]);
-
-            $swap->save();
-
+        if (!$fromCurrency) {
             return $this->getResponse(
-                status: true,
-                message: 'Swap created successfully',
-                data: $swap,
-                status_code: 200
+                status: false,
+                message: 'From currency not found',
+                data: null,
+                status_code: 404
             );
-        }, true);
-    }
+        }
+
+        if (!$toCurrency) {
+            return $this->getResponse(
+                status: false,
+                message: 'To currency not found',
+                data: null,
+                status_code: 404
+            );
+        }
+
+        // Retrieve the wallets for the user for the specified currencies
+        $from_wallet = $user->wallets()->where('currency_id', $fromCurrency->id)->first();
+        $to_wallet   = $user->wallets()->where('currency_id', $toCurrency->id)->first();
+
+        if (!$from_wallet) {
+            return $this->getResponse(
+                status: false,
+                message: 'From wallet not found',
+                data: null,
+                status_code: 404
+            );
+        }
+
+        if (!$to_wallet) {
+            return $this->getResponse(
+                status: false,
+                message: 'To wallet not found',
+                data: null,
+                status_code: 404
+            );
+        }
+
+        // Check for sufficient balance in the from wallet
+        if ($from_wallet->balance < $validated['from_amount']) {
+            return $this->getResponse(
+                status: false,
+                message: 'Insufficient balance',
+                data: null,
+                status_code: 422
+            );
+        }
+
+        // Update wallet balances
+        $from_wallet->balance -= $validated['from_amount'];
+        $from_wallet->save();
+
+        $to_wallet->balance += $validated['to_amount'];
+        $to_wallet->save();
+
+        // Select a random admin
+        $admin = Admin::inRandomOrder()->first();
+
+        // Send notifications to all active user device tokens
+        $userDeviceTokens = $user->notificationTokens->where('status', 'active');
+        foreach ($userDeviceTokens as $userDeviceToken) {
+            $this->fcm->sendNotification(
+                $userDeviceToken->token,
+                'Swap Approval',
+                'Your swap request has been created'
+            );
+        }
+
+        // Create a new transaction record
+        $transaction = Transaction::create([
+            'uuid'             => Uuid::uuid4(),
+            'reference_number' => Uuid::uuid4(),
+            'channel'          => 'paystack',
+            'amount'           => $validated['to_amount'] + ($validated['fees'] ?? 0),
+            'type'             => 'swap',
+            'status'           => 'pending',
+            'user_id'          => $user->id,
+            'created_at'       => now(),
+            'updated_at'       => now(),
+        ]);
+
+        // Create the swap record
+        $swap = Swap::create([
+            'uuid'           => Uuid::uuid4(),
+            'user_id'        => $user->id,
+            'from_currency'  => $validated['from_currency'],
+            'to_currency'    => $validated['to_currency'],
+            'from_amount'    => $validated['from_amount'],
+            'to_amount'      => $validated['to_amount'],
+            'rate'           => $validated['rate'],
+            'status'         => 'pending',
+            'admin_id'       => $admin->id,
+            'transaction_id' => $transaction->id,
+        ]);
+
+        return $this->getResponse(
+            status: true,
+            message: 'Swap created successfully',
+            data: $swap,
+            status_code: 200
+        );
+    }, true);
+}
+
 
 
     public function show(Request $request, $swap_id)

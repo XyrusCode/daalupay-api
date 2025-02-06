@@ -22,6 +22,7 @@ class NewUser extends Mailable
      */
     public function __construct(
         public User $user,
+        public string $otp
     ) {
     }
 
@@ -44,6 +45,7 @@ class NewUser extends Mailable
             view: 'emails.user.new',
             with: [
                 'user' => $this->user,
+                'otp' => $this->otp
             ],
         );
     }

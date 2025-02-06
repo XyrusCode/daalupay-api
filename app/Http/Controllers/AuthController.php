@@ -12,9 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
-use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
@@ -24,13 +22,11 @@ use DaaluPay\Models\User;
 use DaaluPay\Models\Wallet;
 use DaaluPay\Mail\NewUser;
 use DaaluPay\Mail\PasswordReset as MailPasswordReset;
-use DaaluPay\Models\KYC;
 use DaaluPay\Models\Address;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\SuperAdmin;
 use Illuminate\Support\Facades\Cache;
 use DaaluPay\Notifications\OtpNotification;
-use DaaluPay\Models\Currency;
 class AuthController extends BaseController
 {
     /**
@@ -185,12 +181,13 @@ class AuthController extends BaseController
                 'zip_code' => $request->zipCode,
             ]);
 
-            // Mail::to($user->email)->send(new NewUser($user));
+
 
             // generate and send otp for user for testing
             $otp = random_int(10000, 99999);
             Cache::put('otp_' . $user->id, $otp, now()->addMinutes(15));
-            $user->otp = $otp;
+
+             Mail::to($user->email)->send(new NewUser($user, $otp));
 
             return $this->getResponse('success', $user, 200);
         });
@@ -395,69 +392,6 @@ class AuthController extends BaseController
         return $this->getResponse(status: 'success', message: 'Password reset link sent to email: ' . $user->email, status_code: 200);
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function store(Request $request): Response
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->string('password')),
-        ]);
-
-        KYC::create([
-            'user_id' => $user->id,
-            'status' => 'pending',
-            'type' => 'individual',
-            'document_type' => 'passport',
-            'document_number' => $request->document_number,
-            'document_image' => $request->document_image,
-        ]);
-
-        Address::create([
-            'user_id' => $user->id,
-            'address' => $request->address,
-            'city' => $request->city,
-            'state' => $request->state,
-            'country' => $request->country,
-            'zip_code' => $request->zip_code,
-        ]);
-
-        // find nair and yuan currency id
-        $nairaCurrency = Currency::where('code', 'NGN')->first();
-        $yuanCurrency = Currency::where('code', 'CNY')->first();
-
-        //Create a naira wallet for the user
-        Wallet::create([
-            'user_id' => $user->id,
-            'currency_id' => $nairaCurrency->id,
-            'balance' => 0,
-        ]);
-
-        // Create a cny wallet for the user
-        Wallet::create([
-            'user_id' => $user->id,
-            'currency_id' => $yuanCurrency->id,
-            'balance' => 0,
-        ]);
-
-        Mail::to($user->email)->send(new NewUser($user));
-
-        event(new Registered($user));
-
-        Auth::login($user);
-
-        return response()->noContent();
-    }
 
     /**
      * Get a token for a user.

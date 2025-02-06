@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\KYC;
 use DaaluPay\Models\NotificationToken;
+use DaaluPay\Services\FCMService;
 
 class AuthenticatedUserController extends BaseController
 {
@@ -153,7 +154,7 @@ class AuthenticatedUserController extends BaseController
                 'user_id' => $user->id,
                 'status' => 'active',
             ]);
-            
+
             return $this->getResponse('success', $user, 200);
         }, true);
     }
