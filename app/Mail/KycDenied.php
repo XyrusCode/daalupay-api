@@ -8,15 +8,13 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use DaaluPay\Models\User;
-use DaaluPay\Models\Transaction;
 
-class TransactionDenied extends Mailable
+class KycDenied extends Mailable
 {
     use Queueable, SerializesModels;
 
     public function __construct(
         public User $user,
-        public Transaction $transaction,
         public string $reason
     ) {
     }
@@ -24,18 +22,17 @@ class TransactionDenied extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Transaction Has Been Denied'
+            subject: 'KYC Submission Denied'
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.transaction.denied',
+            view: 'emails.kyc.denied',
             with: [
-                'user'        => $this->user,
-                'transaction' => $this->transaction,
-                'reason'      => $this->reason,
+                'user'   => $this->user,
+                'reason' => $this->reason,
             ],
         );
     }

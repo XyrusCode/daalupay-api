@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Fruitcake\Cors;
 use Sentry\Laravel\Integration;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -15,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->validateCsrfTokens(except: [
+            '/sanctum/csrf-cookie',
+            '/token',
             '/transactions/*',
             '/login',
             '/logout',
@@ -48,6 +51,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
+
+        //  $middleware->api(prepend: [
+        //     Cors::class
+        // ]);
 
         // $middleware->api(prepend: [
         //  \DaaluPay\Http\Middleware\LogUserActivity::class,

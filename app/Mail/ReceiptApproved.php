@@ -8,34 +8,32 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use DaaluPay\Models\User;
-use DaaluPay\Models\Transaction;
+use DaaluPay\Models\Receipt;
 
-class TransactionDenied extends Mailable
+class ReceiptApproved extends Mailable
 {
     use Queueable, SerializesModels;
 
     public function __construct(
         public User $user,
-        public Transaction $transaction,
-        public string $reason
+        public Receipt $receipt
     ) {
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Transaction Has Been Denied'
+            subject: 'Your Receipt Has Been Approved'
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.transaction.denied',
+            view: 'emails.receipt.approved',
             with: [
-                'user'        => $this->user,
-                'transaction' => $this->transaction,
-                'reason'      => $this->reason,
+                'user'    => $this->user,
+                'receipt' => $this->receipt,
             ],
         );
     }

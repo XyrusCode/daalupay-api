@@ -3,12 +3,12 @@
 namespace DaaluPay\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use DaaluPay\Models\User;
+
 class PasswordReset extends Mailable
 {
     use Queueable, SerializesModels;
@@ -18,7 +18,8 @@ class PasswordReset extends Mailable
      */
     public function __construct(
         public User $user,
-        public string $resetCode,
+        public string $resetToken,
+        public int $expiration = 60 // in minutes
     ) {
     }
 
@@ -28,7 +29,7 @@ class PasswordReset extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Password Reset',
+            subject: 'Reset Your DaaluPay Password'
         );
     }
 
@@ -38,18 +39,17 @@ class PasswordReset extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.password.reset',
+            view: 'emails.user.password_reset',
             with: [
-                'user' => $this->user,
-                'resetCode' => $this->resetCode,
+                'user'       => $this->user,
+                'resetToken' => $this->resetToken,
+                'expiration' => $this->expiration,
             ],
         );
     }
 
     /**
      * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
     public function attachments(): array
     {

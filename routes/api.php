@@ -50,7 +50,7 @@ Route::get('/receipt/file/{id}', [BaseController::class, 'serveReceipt']);
 
 // Blog Routes
 Route::prefix('/blog')->group(function () {
-    Route::get('/', [BlogPostController::class, 'getBlogPosts']);
+    Route::get('/', [BlogPostController::class, 'getPublicBlogPosts']);
     Route::get('/{id}', [BlogPostController::class, 'getBlogPost']);
 });
 

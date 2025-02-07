@@ -7,35 +7,30 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Transaction;
+use DaaluPay\Models\Admin;
 
-class TransactionDenied extends Mailable
+class AdminDeleted extends Mailable
 {
     use Queueable, SerializesModels;
 
     public function __construct(
-        public User $user,
-        public Transaction $transaction,
-        public string $reason
+        public Admin $admin
     ) {
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Transaction Has Been Denied'
+            subject: 'Admin Account Deleted'
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.transaction.denied',
+            view: 'emails.admin.deleted',
             with: [
-                'user'        => $this->user,
-                'transaction' => $this->transaction,
-                'reason'      => $this->reason,
+                'admin' => $this->admin,
             ],
         );
     }

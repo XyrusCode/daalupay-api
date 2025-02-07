@@ -8,34 +8,33 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use DaaluPay\Models\User;
-use DaaluPay\Models\Transaction;
 
-class TransactionDenied extends Mailable
+class NewMessage extends Mailable
 {
     use Queueable, SerializesModels;
 
     public function __construct(
-        public User $user,
-        public Transaction $transaction,
-        public string $reason
+        public User $recipient,
+        public string $senderName,
+        public string $messageExcerpt
     ) {
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Transaction Has Been Denied'
+            subject: 'You Have a New Message'
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.transaction.denied',
+            view: 'emails.messages.new_message',
             with: [
-                'user'        => $this->user,
-                'transaction' => $this->transaction,
-                'reason'      => $this->reason,
+                'recipient'      => $this->recipient,
+                'senderName'     => $this->senderName,
+                'messageExcerpt' => $this->messageExcerpt,
             ],
         );
     }

@@ -43,7 +43,7 @@ class BlogPostController extends BaseController
                 'title' => 'required|string|max:255',
                 'content' => 'required|string',
                 // 'featured_image' => 'required|file|mimes:jpeg,png,jpg|max:2048',
-                'status' => 'required|boolean',
+                'status' => 'required|string',
             ]);
 
             // $imagePath = $request->file('featured_image')->store('blog-images', 'public');
@@ -59,7 +59,7 @@ class BlogPostController extends BaseController
             return $this->getResponse(
                 status: true,
                 message: 'Blog post created successfully',
-                data: $blogPost,
+                data: $request->all(),
                 status_code: 201
             );
         });
@@ -73,13 +73,13 @@ class BlogPostController extends BaseController
             $validated = $request->validate([
                 'title' => 'required|string|max:255',
                 'content' => 'required|string',
-                'featured_image' => 'required|string|max:255',
-                'status' => 'required|string|in:draft,published',
+                // 'featured_image' => 'required|string|max:255',
+                'status' => 'required|string|in:true,false',
             ]);
 
             $blogPost->title = $validated['title'];
             $blogPost->content = $validated['content'];
-            $blogPost->featured_image = $validated['featured_image'];
+            $blogPost->featured_image = $validated['featured_image'] ?? '';
             $blogPost->status = $validated['status'];
             $blogPost->save();
 
@@ -97,6 +97,20 @@ class BlogPostController extends BaseController
         return $this->process(function () use ($id) {
             $blogPost = BlogPost::find($id);
             $blogPost->delete();
+        });
+    }
+
+    public function getPublicBlogPosts()
+    {
+        return $this->process(function () {
+            $blogPosts = BlogPost::where('status', 'true')->get();
+
+            return $this->getResponse(
+                status: true,
+                message: 'Blog posts fetched successfully',
+                data: $blogPosts,
+                status_code: 200
+            );
         });
     }
 }

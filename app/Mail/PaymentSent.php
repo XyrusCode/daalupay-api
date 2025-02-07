@@ -10,36 +10,46 @@ use Illuminate\Queue\SerializesModels;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Transaction;
 
-class TransactionDenied extends Mailable
+class PaymentSent extends Mailable
 {
     use Queueable, SerializesModels;
 
+    /**
+     * Create a new message instance.
+     */
     public function __construct(
         public User $user,
-        public Transaction $transaction,
-        public string $reason
+        public Transaction $transaction
     ) {
     }
 
+    /**
+     * Get the message envelope.
+     */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Transaction Has Been Denied'
+            subject: 'Your Payment Has Been Sent'
         );
     }
 
+    /**
+     * Get the message content definition.
+     */
     public function content(): Content
     {
         return new Content(
-            view: 'emails.transaction.denied',
+            view: 'emails.payment.sent',
             with: [
                 'user'        => $this->user,
                 'transaction' => $this->transaction,
-                'reason'      => $this->reason,
             ],
         );
     }
 
+    /**
+     * Get the attachments for the message.
+     */
     public function attachments(): array
     {
         return [];

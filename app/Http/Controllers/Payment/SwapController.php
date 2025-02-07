@@ -11,15 +11,15 @@ use DaaluPay\Models\Currency;
 use DaaluPay\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
-use DaaluPay\Services\FCMService;
+// use DaaluPay\Services\FCMService;
 class SwapController extends BaseController
 {
-    protected $fcm;
+    // protected $fcm;
 
-    public function __construct(FCMService $fcm)
-    {
-        $this->fcm = $fcm;
-    }
+    // public function __construct(FCMService $fcm)
+    // {
+    //     $this->fcm = $fcm;
+    // }
 
     public function index(Request $request)
     {
@@ -111,18 +111,24 @@ class SwapController extends BaseController
         $to_wallet->balance += $validated['to_amount'];
         $to_wallet->save();
 
+        $admin= null;
         // Select a random admin
+        if(config('app.test_mode')){
+            $admin = Admin::where('id', 6)->first();
+        } else {
+
         $admin = Admin::inRandomOrder()->first();
+        }
 
         // Send notifications to all active user device tokens
-        $userDeviceTokens = $user->notificationTokens->where('status', 'active');
-        foreach ($userDeviceTokens as $userDeviceToken) {
-            $this->fcm->sendNotification(
-                $userDeviceToken->token,
-                'Swap Approval',
-                'Your swap request has been created'
-            );
-        }
+        // $userDeviceTokens = $user->notificationTokens->where('status', 'active');
+        // foreach ($userDeviceTokens as $userDeviceToken) {
+        //     $this->fcm->sendNotification(
+        //         $userDeviceToken->token,
+        //         'Swap Approval',
+        //         'Your swap request has been created'
+        //     );
+        // }
 
         // Create a new transaction record
         $transaction = Transaction::create([

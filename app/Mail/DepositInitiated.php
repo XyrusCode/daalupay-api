@@ -8,34 +8,32 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use DaaluPay\Models\User;
-use DaaluPay\Models\Transaction;
+use DaaluPay\Models\Deposit;
 
-class TransactionDenied extends Mailable
+class DepositInitiated extends Mailable
 {
     use Queueable, SerializesModels;
 
     public function __construct(
         public User $user,
-        public Transaction $transaction,
-        public string $reason
+        public Deposit $deposit
     ) {
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Transaction Has Been Denied'
+            subject: 'Deposit Initiated'
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.transaction.denied',
+            view: 'emails.deposit.deposit_initiated',
             with: [
-                'user'        => $this->user,
-                'transaction' => $this->transaction,
-                'reason'      => $this->reason,
+                'user'    => $this->user,
+                'deposit' => $this->deposit,
             ],
         );
     }

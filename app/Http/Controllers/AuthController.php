@@ -181,8 +181,6 @@ class AuthController extends BaseController
                 'zip_code' => $request->zipCode,
             ]);
 
-
-
             // generate and send otp for user for testing
             $otp = random_int(10000, 99999);
             Cache::put('otp_' . $user->id, $otp, now()->addMinutes(15));

@@ -119,7 +119,14 @@ class AuthenticatedUserController extends BaseController
                 'documentNumber' => 'required|string|max:255',
             ]);
 
-            $admin = Admin::inRandomOrder()->first();
+                    $admin= null;
+        // Select a random admin
+        if(config('app.test_mode')){
+            $admin = Admin::where('id', 6)->first();
+        } else {
+
+        $admin = Admin::inRandomOrder()->first();
+        }
 
             $kyc = KYC::create([
                 'user_id' => $user->id,

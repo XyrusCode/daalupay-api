@@ -11,6 +11,7 @@ use DaaluPay\Models\Receipt;
 use Illuminate\Support\Str;
 use DaaluPay\Models\Transaction;
 use DaaluPay\Models\User;
+
 class WalletController extends BaseController
 {
 
@@ -69,7 +70,14 @@ class WalletController extends BaseController
             $receipt = $request->file('receipt')->store('receipts', 'public');
 
             $user = $request->user();
-            $admin = Admin::inRandomOrder()->first();
+            $admin = null;
+            // Select a random admin
+            if (config('app.test_mode')) {
+                $admin = Admin::where('id', 6)->first();
+            } else {
+
+                $admin = Admin::inRandomOrder()->first();
+            }
 
             $receipt = Receipt::create([
                 'user_id' => $user->id,
@@ -81,7 +89,14 @@ class WalletController extends BaseController
                 'updated_at' => now(),
             ]);
 
-            $admin = Admin::inRandomOrder()->first();
+            $admin = null;
+            // Select a random admin
+            if (config('app.test_mode')) {
+                $admin = Admin::where('id', 6)->first();
+            } else {
+
+                $admin = Admin::inRandomOrder()->first();
+            }
 
             return $this->getResponse('success', $request->all(), 200);
         }, true);
@@ -92,7 +107,14 @@ class WalletController extends BaseController
     {
         return $this->process(function () use ($request) {
             $user = $request->user();
-            $admin = Admin::inRandomOrder()->first();
+            $admin = null;
+            // Select a random admin
+            if (config('app.test_mode')) {
+                $admin = Admin::where('id', 6)->first();
+            } else {
+
+                $admin = Admin::inRandomOrder()->first();
+            }
 
             $validated = $request->validate([
                 'amount' => 'required|string',
@@ -189,5 +211,4 @@ class WalletController extends BaseController
             return $this->getResponse('success', $request->all(), 200);
         }, true);
     }
-
 }

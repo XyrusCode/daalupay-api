@@ -7,16 +7,14 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Transaction;
+use DaaluPay\Models\Admin;
 
-class TransactionDenied extends Mailable
+class AdminSuspended extends Mailable
 {
     use Queueable, SerializesModels;
 
     public function __construct(
-        public User $user,
-        public Transaction $transaction,
+        public Admin $admin,
         public string $reason
     ) {
     }
@@ -24,18 +22,17 @@ class TransactionDenied extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Transaction Has Been Denied'
+            subject: 'Admin Account Suspended'
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.transaction.denied',
+            view: 'emails.admin.suspended',
             with: [
-                'user'        => $this->user,
-                'transaction' => $this->transaction,
-                'reason'      => $this->reason,
+                'admin'  => $this->admin,
+                'reason' => $this->reason,
             ],
         );
     }
