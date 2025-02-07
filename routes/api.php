@@ -13,6 +13,7 @@ use DaaluPay\Http\Controllers\Admin\AdminController;
 use DaaluPay\Http\Controllers\BaseController;
 use DaaluPay\Http\Controllers\Payment\ExchangeController;
 use DaaluPay\Http\Controllers\User\AuthenticatedUserController;
+use DaaluPay\Http\Controllers\User\UserPreferenceController;
 use DaaluPay\Http\Controllers\Payment\DepositController;
 use DaaluPay\Http\Controllers\BlogPostController;
 use DaaluPay\Http\Controllers\ChatsController;
@@ -145,9 +146,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::post('/', [AuthenticatedUserController::class, 'createKyc']);
         });
 
-        // Route::prefix('/withdrawals')->group(function () {
-        //     Route::post('/', [WithdrawalController::class, 'store']);
-        // });
+       // Routes for user preferences
+        Route::get('/preferences', [UserPreferenceController::class, 'show']);
+        Route::put('/preferences', [UserPreferenceController::class, 'update']);;
 
         // transfer fee
         Route::get('/transfer-fee', [ExchangeController::class, 'transferFee']);
