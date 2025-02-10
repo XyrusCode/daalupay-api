@@ -3,6 +3,7 @@
 namespace DaaluPay\Http\Controllers\Payment;
 
 use DaaluPay\Http\Controllers\BaseController;
+use DaaluPay\Mail\TransactionPending;
 use DaaluPay\Models\Admin;
 use Illuminate\Http\Request;
 use DaaluPay\Models\Swap;
@@ -10,6 +11,7 @@ use DaaluPay\Notifications\SwapApprovalNotification;
 use DaaluPay\Models\Currency;
 use DaaluPay\Models\Transaction;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Ramsey\Uuid\Uuid;
 // use DaaluPay\Services\FCMService;
 class SwapController extends BaseController
@@ -156,6 +158,8 @@ class SwapController extends BaseController
             'admin_id'       => $admin->id,
             'transaction_id' => $transaction->id,
         ]);
+
+        Mail::to($user->email)->send(new TransactionPending($user, $swap));
 
         return $this->getResponse(
             status: true,

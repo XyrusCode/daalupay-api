@@ -3,6 +3,14 @@
 namespace DaaluPay\Http\Controllers\Admin;
 
 use DaaluPay\Http\Controllers\BaseController;
+use DaaluPay\Mail\KycApproved;
+use DaaluPay\Mail\KycDenied;
+use DaaluPay\Mail\ReceiptApproved;
+use DaaluPay\Mail\ReceiptDenied;
+use DaaluPay\Mail\SwapCompleted;
+use DaaluPay\Mail\TransactionDenied;
+use DaaluPay\Mail\UserReactivated;
+use DaaluPay\Mail\UserSuspended;
 use DaaluPay\Models\Address;
 use Illuminate\Http\Request;
 use DaaluPay\Models\User;
@@ -16,6 +24,9 @@ use DaaluPay\Models\Currency;
 use DaaluPay\Models\Receipt;
 use Illuminate\Support\Facades\URL;
 use DaaluPay\Models\Wallet;
+use DaaluPay\Notifications\SwapApproved;
+use Illuminate\Support\Facades\Mail;
+
 class AdminController extends BaseController
 {
 
@@ -129,12 +140,22 @@ class AdminController extends BaseController
         return $this->process(function () use ($request) {
             $user = User::find($request->user_id);
 
+            if ($user->status === 'suspended') {
+                return $this->getResponse(
+                    status: 'error',
+                    message: 'User is already suspended',
+                    status_code: 400
+                );
+            }
+
             $user->status = 'suspended';
             $user->save();
 
             $suspension = Suspension::create([
                 'user_id' => $user->id,
             ]);
+
+            Mail::to($user->email)->send(new UserSuspended($user, $request->reason));
 
             return $this->getResponse('success', $suspension, 200);
         }, true);
@@ -154,7 +175,7 @@ class AdminController extends BaseController
 
             $user = User::find($swap->user_id);
 
-            $user->notify(new SwapStatusUpdated('approved'));
+            Mail::to($user->email)->send(new SwapCompleted($user, $swap));
 
             return $this->getResponse(
                 data: $swap,
@@ -177,7 +198,7 @@ class AdminController extends BaseController
 
             $user = User::find($swap->user_id);
 
-            $user->notify(new SwapStatusUpdated('denied', $reason));
+            Mail::to($user->email)->send(new TransactionDenied($user, $swap, $reason));
 
             return $this->getResponse(
                 data: $swap,
@@ -214,6 +235,8 @@ class AdminController extends BaseController
                 'status' => 'approved'
             ]);
 
+            Mail::to($user->email)->send(new KycApproved($user));
+
             return $this->getResponse(
                 status: 'success',
                 data: $user,
@@ -232,6 +255,8 @@ class AdminController extends BaseController
                 'status' => 'rejected',
                 'reason' => $request->reason,
             ]);
+
+            Mail::to($user->email)->send(new KycDenied($user, $request->reason));
 
             return $this->getResponse(
                 status: 'success',
@@ -283,6 +308,8 @@ class AdminController extends BaseController
                 ]);
             }
 
+            Mail::to($user->email)->send(new UserSuspended($user, $request->reason));
+
             return $this->getResponse(
                 data: $user,
                 message: 'User suspended successfully'
@@ -312,6 +339,8 @@ class AdminController extends BaseController
                 $suspension->update(['status' => 'ended']);
                 $suspension->update(['reactivation_reason' => $request->reason]);
             }
+
+            Mail::to($user->email)->send(new UserReactivated($user));
 
             return $this->getResponse(
                 data: $user,
@@ -411,15 +440,21 @@ public function getReceipt($id)
             $cnyWallet->balance += $receipt->amount;
             $cnyWallet->save();
 
+            Mail::to($user->email)->send(new ReceiptApproved($user, $receipt));
+
             return $this->getResponse('success', $receipt, 200);
         }, true);
     }
 
-    public function denyReceipt($id)
+    public function denyReceipt(Request $request, string $id)
     {
-        return $this->process(function () use ($id) {
+        return $this->process(function () use ($request, $id) {
             $receipt = Receipt::find($id);
             $receipt->update(['status' => 'rejected']);
+
+             $user = User::find($receipt->user_id);
+
+            Mail::to($user->email)->send(new ReceiptDenied($user,$receipt, $request->reason));
             return $this->getResponse('success', $receipt, 200);
         }, true);
     }

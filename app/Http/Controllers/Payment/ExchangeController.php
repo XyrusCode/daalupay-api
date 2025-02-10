@@ -68,7 +68,7 @@ class ExchangeController extends BaseController
     {
         return $this->process(function () use ($request) {
             $from = $request->query('from');
-            $to = $request->query('to');
+            // $to = $request->query('to');
 
             if (!$from) {
                 return $this->getResponse(status: false, message: 'From currency is required');

@@ -15,6 +15,7 @@ use DaaluPay\Models\Admin;
 use DaaluPay\Models\KYC;
 use DaaluPay\Models\NotificationToken;
 use DaaluPay\Services\FCMService;
+use Illuminate\Support\Facades\DB;
 
 class AuthenticatedUserController extends BaseController
 {
@@ -170,8 +171,12 @@ class AuthenticatedUserController extends BaseController
     {
         return $this->process(function () use ($request, $id) {
             $user = $request->user();
-            $user->notificationTokens()->find($id)->update(['status' => 'inactive']);
-            return $this->getResponse('success', $user, 200);
+            $token = DB::table('device_token')->where('token', $id)->first();
+            if (!$token) {
+                return $this->getResponse('error', null, 404, 'Token not found');
+            }
+            DB::table('device_token')->where('token', $id)->update(['status' => 'inactive']);
+            return $this->getResponse(status_code:200, data: $user, status: 'success');
         }, true);
     }
 }

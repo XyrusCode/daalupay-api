@@ -2,9 +2,11 @@
 
 namespace DaaluPay\Http\Controllers;
 
+use DaaluPay\Mail\NewBlogPost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DaaluPay\Models\BlogPost;
+use Illuminate\Support\Facades\Mail;
 
 class BlogPostController extends BaseController
 {
@@ -56,6 +58,8 @@ class BlogPostController extends BaseController
                 'author_id' => $admin->id,
             ]);
 
+            Mail::to($admin->email)->send(new NewBlogPost( $blogPost));
+
             return $this->getResponse(
                 status: true,
                 message: 'Blog post created successfully',
@@ -99,6 +103,22 @@ class BlogPostController extends BaseController
             $blogPost->delete();
         });
     }
+
+        public function updateStatus($id)
+    {
+        return $this->process(function () use ($id) {
+            $blogPost = BlogPost::find($id);
+
+            if ($blogPost->status == 'true') {
+                $blogPost->update(['status' => 'false']);
+            } else {
+                $blogPost->update(['status' => 'true']);
+            }
+        });
+    }
+
+
+
 
     public function getPublicBlogPosts()
     {

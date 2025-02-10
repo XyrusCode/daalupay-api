@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Wallet;
 use DaaluPay\Mail\NewUser;
+use DaaluPay\Mail\PasswordChanged;
 use DaaluPay\Mail\PasswordReset as MailPasswordReset;
 use DaaluPay\Models\Address;
 use DaaluPay\Models\Admin;
@@ -353,6 +354,8 @@ class AuthController extends BaseController
             ]);
         }
 
+        Mail::to($user->email)->send(new PasswordChanged($user));
+
         // delete token from cache
         Cache::forget('password_reset_token_' . $user->id);
 
@@ -382,9 +385,8 @@ class AuthController extends BaseController
         // save token to cache
         Cache::put('password_reset_token_' . $user->id, $token, now()->addMinutes(15));
 
-
-
-        Mail::to($user->email)->send(new MailPasswordReset($user, $token));
+        // Send the password reset link to the user's email
+        Mail::to($user->email)->send(new MailPasswordReset($user, $token, 15));
 
 
         return $this->getResponse(status: 'success', message: 'Password reset link sent to email: ' . $user->email, status_code: 200);

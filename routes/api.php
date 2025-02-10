@@ -198,6 +198,7 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
             Route::get('/{id}', [BlogPostController::class, 'getBlogPost']);
             Route::post('/', [BlogPostController::class, 'createBlogPost']);
             Route::post('/{id}', [BlogPostController::class, 'updateBlogPost']);
+            Route::patch('/{id}/toggle', [BlogPostController::class, 'updateStatus']);
             Route::delete('/{id}', [BlogPostController::class, 'deleteBlogPost']);
         });
     });

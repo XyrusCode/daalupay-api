@@ -3,6 +3,8 @@
 namespace DaaluPay\Http\Controllers\Admin;
 
 use DaaluPay\Http\Controllers\BaseController;
+use DaaluPay\Mail\AdminReactivated;
+use DaaluPay\Mail\AdminSuspended;
 use Illuminate\Http\Request;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\Currency;
@@ -14,6 +16,7 @@ use DaaluPay\Models\Swap;
 use DaaluPay\Models\TransferFee;
 use Illuminate\Support\Facades\DB;
 use DaaluPay\Models\Wallet;
+use Illuminate\Support\Facades\Mail;
 use Ramsey\Uuid\Uuid;
 
 class SuperAdminController extends BaseController
@@ -198,6 +201,8 @@ class SuperAdminController extends BaseController
 
             $admin->update(['status' => 'suspended']);
 
+            Mail::to($admin->email)->send(new AdminSuspended($admin, 'Your account has been suspended'));
+
             return $this->getResponse(
                 data: $admin,
                 message: 'Admin suspended successfully'
@@ -219,6 +224,8 @@ class SuperAdminController extends BaseController
             }
 
             $admin->update(['status' => 'active']);
+
+            Mail::to($admin->email)->send(new AdminReactivated($admin));
 
             return $this->getResponse(
                 data: $admin,

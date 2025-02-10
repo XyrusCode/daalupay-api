@@ -11,6 +11,9 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Kreait\Firebase\Exception\FirebaseException;
+use Kreait\Firebase\Exception\MessagingException;
+use DaaluPay\Services\FCMService;
 use DaaluPay\Exceptions\CustomException;
 use DaaluPay\Helpers\StatusCodeHelper;
 use DaaluPay\Models\Receipt;
@@ -126,7 +129,7 @@ class BaseController extends Controller
             $e instanceof ValidationException => $this->getResponse(
                 status: 'error',
                 status_code: 422,
-                message: 'Validation error: ' . $e->getMessage()
+                message: 'Incorrect Credentails: ' . $e->getMessage()
             ),
             $e instanceof CustomException => $this->getResponse(
                 status: 'error',
@@ -237,5 +240,55 @@ class BaseController extends Controller
         ->header('Content-Type', $mimeType)
         ->header('Content-Disposition', 'inline; filename="' . ($receipt->filename ?? 'receipt') . '"');
 }
-}
 
+public function sendFCMNotification(Request $request, $messageTitle, $messageBody)
+{
+           /** @var FCMService $fcm */
+        $fcm = app(FCMService::class);
+
+        $user = $request->user();
+
+
+
+        try {
+            // Attempt to send the notification
+                    // Send notifications to all active user device tokens
+        $userDeviceTokens = $user->notificationTokens->where('status', 'active');
+        foreach ($userDeviceTokens as $userDeviceToken) {
+            $fcm->sendNotification(
+                $userDeviceToken->token,
+                $messageTitle,
+                $messageBody
+            );
+        }
+
+            // Return a success response with the result (if any)
+            return $this->getResponse(
+                status: 'success',
+                message: 'Notification sent successfully',
+
+            );
+        } catch (MessagingException $e) {
+            // Catches errors specific to messaging (e.g. invalid token, unregistered token, etc.)
+            return $this->getResponse(
+                status: 'error',
+                status_code: 422,
+                message: 'Messaging error: ' . $e->getMessage()
+            );
+        } catch (FirebaseException $e) {
+            // Catches general Firebase exceptions
+            return $this->getResponse(
+                status: 'error',
+                status_code: 500,
+                message: 'Firebase error: ' . $e->getMessage()
+            );
+        } catch (\Exception $e) {
+            // Catches any other exceptions
+            return $this->getResponse(
+                status: 'error',
+                status_code: 500,
+                message: 'Unexpected error: ' . $e->getMessage()
+            );
+        }
+}
+}

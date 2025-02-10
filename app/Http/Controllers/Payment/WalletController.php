@@ -3,6 +3,7 @@
 namespace DaaluPay\Http\Controllers\Payment;
 
 use DaaluPay\Http\Controllers\BaseController;
+use DaaluPay\Mail\WalletCreated;
 use DaaluPay\Models\Admin;
 use Illuminate\Http\Request;
 use DaaluPay\Models\Wallet;
@@ -11,6 +12,7 @@ use DaaluPay\Models\Receipt;
 use Illuminate\Support\Str;
 use DaaluPay\Models\Transaction;
 use DaaluPay\Models\User;
+use Illuminate\Support\Facades\Mail;
 
 class WalletController extends BaseController
 {
@@ -53,6 +55,8 @@ class WalletController extends BaseController
                 'currency_id' => $currencyModel->id,
                 'balance' => $balance,
             ]);
+
+            Mail::to($user->email)->send(new WalletCreated($user, $wallet));
 
             return $this->getResponse('success', $wallet, 200);
         }, true);

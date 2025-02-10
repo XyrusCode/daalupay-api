@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\Transaction;
+use DaaluPay\Models\Swap;
 use DaaluPay\Models\User;
 class TransactionPending extends Mailable
 {
@@ -19,7 +19,7 @@ class TransactionPending extends Mailable
      */
     public function __construct(
         public User $user,
-        public Transaction $transaction,
+        public Swap $transaction,
     ) {
     }
 
