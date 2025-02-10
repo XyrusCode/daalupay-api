@@ -17,3 +17,10 @@ yarn-error.log
 /.idea
 /.vscode
 /.zed
+.env
+.env.backup
+.env.local
+.env.prod
+.env.dev
+.htaccess
+.user.ini
