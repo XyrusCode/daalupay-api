@@ -37,7 +37,10 @@ Route::prefix('/test')->group(function () {
     Route::get('/{id}', [AdminController::class, 'getReceipt']);
     Route::post('/{id}/approve', [AdminController::class, 'approveReceipt']);
     Route::post('/{id}/deny', [AdminController::class, 'denyReceipt']);
+
+
 });});
+Route::get('/test-email', [TestController::class, 'sendEmail']);
 
 Route::get('/test-fcm', [TestController::class, 'testFcm']);
 

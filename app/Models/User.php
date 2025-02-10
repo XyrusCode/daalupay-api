@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use DaaluPay\Models\Address;
 use DaaluPay\Models\KYC;
+use DaaluPay\ModelsUserPreference;
 
 use OpenApi\Annotations as OA;
 
@@ -200,5 +201,13 @@ public function messages()
   return $this->hasMany(Message::class);
 }
 
+/**
+ * A user can have one preference
+ *
+ * @return \Illuminate\Database\Eloquent\Relations\HasMany
+ */
+public function preference()    {
+    return $this->hasOne(UserPreference::class);
+}
 
 }

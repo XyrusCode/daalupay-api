@@ -6,21 +6,37 @@ use Illuminate\Http\Request;
 use Kreait\Firebase\Exception\FirebaseException;
 use Kreait\Firebase\Exception\MessagingException;
 use DaaluPay\Services\FCMService;
+use DaaluPay\Models\User;
+use Illuminate\Support\Facades\Mail;
+use DaaluPay\Mail\NewUser;
 
 class TestController extends BaseController
 {
+
+        public function sendEmail()
+    {
+        $user = User::findOrFail(1);
+        try {
+            Mail::to($user->email)->send(new NewUser($user, 'secondArgument'));
+            return response()->json(['message' => 'Email sent successfully for user ' . $user->first_name . ' ' . $user->last_name]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Email not sent!', 'error' => $e->getMessage()]);
+        }
+    }
+
     /**
      * Send a test FCM notification.
      *
      * Pass the device token as a query parameter (?token=YOUR_DEVICE_TOKEN)
      * or use a default token for testing.
      */
-    public function testFcm(Request $request, string $token)
+    public function testFcm(Request $request)
     {
+        $token = 'd8n_x-Y1QdO2Z6u866Po7_:APA91bH0G9DgY00RbquJJqo1klf16GfadOqx2Vn80jcfIJrFEJ3FbxKxF8QSINHj1r98u0FGj5MrSIaGAvhZ05ahUI-BBsKwMCz-WBYXgYlirv197xeC6GY';
         // Use a device token provided in the query string or replace this with a valid test token
         $token = $request->query('token', $token);
         $title = 'Test Notification';
-        $body  = 'This is a test notification from Firebase.';
+        $body  = 'This is a test notification from Firebase at '. now()->toDateTimeString();
 
         /** @var FCMService $fcm */
         $fcm = app(FCMService::class);

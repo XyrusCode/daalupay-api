@@ -14,7 +14,7 @@ class TestsController extends BaseController
     {
         $user = User::findOrFail(1);
         try {
-            Mail::to($user->email)->send(new NewUser($user));
+            Mail::to($user->email)->send(new NewUser($user, 'secondArgument'));
             return response()->json(['message' => 'Email sent successfully for user ' . $user->first_name . ' ' . $user->last_name]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Email not sent!', 'error' => $e->getMessage()]);
