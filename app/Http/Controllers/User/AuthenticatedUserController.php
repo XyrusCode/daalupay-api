@@ -156,14 +156,14 @@ class AuthenticatedUserController extends BaseController
                 'device_type' => 'required|string',
             ]);
 
-            NotificationToken::create([
+           $token =  NotificationToken::create([
                 'token' => $validated['token'],
                 'device_type' => $validated['device_type'],
                 'user_id' => $user->id,
                 'status' => 'active',
             ]);
 
-            return $this->getResponse('success', $user, 200);
+            return $this->getResponse('success', $token, 200);
         }, true);
     }
 
@@ -176,7 +176,7 @@ class AuthenticatedUserController extends BaseController
                 return $this->getResponse('error', null, 404, 'Token not found');
             }
             DB::table('device_token')->where('token', $id)->update(['status' => 'inactive']);
-            return $this->getResponse(status_code:200, data: $user, status: 'success');
+            return $this->getResponse(status_code:200, data: $token, status: 'success');
         }, true);
     }
 }
