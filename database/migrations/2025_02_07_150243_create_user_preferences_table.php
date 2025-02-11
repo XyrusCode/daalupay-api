@@ -21,7 +21,6 @@ class CreateUserPreferencesTable extends Migration
             $table->decimal('daily_transaction_limit', 10, 2)->default(0.00);
             $table->decimal('transaction_total_today', 10, 2)->default(0.00);
             $table->date('last_transaction_date')->nullable();
-            $table->enum('kyc_status', ['not_started', 'pending', 'verified', 'rejected'])->default('not_started');
             $table->boolean('two_fa_enabled')->default(false);
             $table->timestamps();
 

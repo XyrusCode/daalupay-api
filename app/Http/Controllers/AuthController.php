@@ -336,14 +336,15 @@ class AuthController extends BaseController
     {
         $request->validate([
             'token' => ['required'],
-            'user_id' => ['required'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'email' => ['required'],
+            'password' => ['required'],
+            'password_confirmation' => ['required'],
         ]);
 
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
         // database. Otherwise we will parse the error and return the response.
-        $user = User::where('uuid', $request->user_id)->first();
+        $user = User::where('email', $request->email)->first();
 
         // confirm token is valid from cache
         $token = Cache::get('password_reset_token_' . $user->id);
@@ -380,7 +381,7 @@ class AuthController extends BaseController
         $user = User::where('email', $request->email)->first();
 
         // Generate a new password reset token
-        $token = Password::createToken($user);
+        $token = Str::random(60);
 
         // save token to cache
         Cache::put('password_reset_token_' . $user->id, $token, now()->addMinutes(15));

@@ -19,7 +19,7 @@ class TransactionPending extends Mailable
      */
     public function __construct(
         public User $user,
-        public Swap $transaction,
+        public Swap $swap,
     ) {
     }
 
@@ -41,7 +41,7 @@ class TransactionPending extends Mailable
         return new Content(
             view: 'emails.transaction.pending',
             with: [
-                'transaction' => $this->transaction,
+                'transaction' => $this->swap,
                 'user' => $this->user,
             ],
         );

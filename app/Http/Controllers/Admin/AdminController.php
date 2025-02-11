@@ -126,6 +126,16 @@ class AdminController extends BaseController
         return $this->process(function () use ($request, $user_id) {
             $user = User::find($user_id);
 
+            if (!$user) {
+                $message = 'User does not exist';
+                return $this->getResponse('failure', null, 404, $message);
+            }
+
+            $user->update($request->all());
+
+            $user->save();
+
+
             return $this->getResponse('success', $user, 200);
         }, true);
     }

@@ -10,12 +10,14 @@ use DaaluPay\Http\Controllers\Payment\SwapController;
 use DaaluPay\Http\Controllers\Payment\WalletController;
 use DaaluPay\Http\Controllers\Admin\SuperAdminController;
 use DaaluPay\Http\Controllers\Admin\AdminController;
+use DaaluPay\Http\Controllers\AdminChatController;
 use DaaluPay\Http\Controllers\BaseController;
 use DaaluPay\Http\Controllers\Payment\ExchangeController;
 use DaaluPay\Http\Controllers\User\AuthenticatedUserController;
 use DaaluPay\Http\Controllers\User\UserPreferenceController;
 use DaaluPay\Http\Controllers\Payment\DepositController;
 use DaaluPay\Http\Controllers\BlogPostController;
+use DaaluPay\Http\Controllers\ChatController;
 use DaaluPay\Http\Controllers\ChatsController;
 use DaaluPay\Http\Controllers\TestController;
 
@@ -155,6 +157,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
         // transfer fee
         Route::get('/transfer-fee', [ExchangeController::class, 'transferFee']);
+
+         Route::post('/chats', [ChatController::class, 'createChat']);
+    Route::get('/chats/{chatId}/messages', [ChatController::class, 'getMessages']);
+    Route::post('/chats/{chatId}/messages', [ChatController::class, 'sendMessage']);
+
     });
 });
 
@@ -201,6 +208,12 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
             Route::patch('/{id}/toggle', [BlogPostController::class, 'updateStatus']);
             Route::delete('/{id}', [BlogPostController::class, 'deleteBlogPost']);
         });
+
+         Route::get('/admin/chats/pending', [AdminChatController::class, 'getPendingChats']);
+    Route::post('/admin/chats/{chatId}/assign', [AdminChatController::class, 'assignChat']);
+    Route::post('/admin/chats/{chatId}/messages', [AdminChatController::class, 'sendAdminMessage']);
+    Route::post('/admin/chats/{chatId}/close', [AdminChatController::class, 'closeChat']);
+
     });
 
 });
