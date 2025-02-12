@@ -116,7 +116,7 @@ class AuthenticatedUserController extends BaseController
 
             $validated = $request->validate([
                 'documentType' => 'required|string|max:255',
-                'documentFile' => 'required|file',
+                'documentFile' => 'required|string',
                 'documentNumber' => 'required|string|max:255',
             ]);
 

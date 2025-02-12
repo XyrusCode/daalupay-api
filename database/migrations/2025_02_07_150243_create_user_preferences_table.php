@@ -18,7 +18,7 @@ class CreateUserPreferencesTable extends Migration
             $table->boolean('notify_sms')->default(false);
             $table->boolean('notify_push')->default(true);
             $table->enum('theme', ['light', 'dark'])->default('light');
-            $table->decimal('daily_transaction_limit', 10, 2)->default(0.00);
+            $table->enum('daily_transaction_limit',['500000', 'unlimited'])->default('500000');
             $table->decimal('transaction_total_today', 10, 2)->default(0.00);
             $table->date('last_transaction_date')->nullable();
             $table->boolean('two_fa_enabled')->default(false);

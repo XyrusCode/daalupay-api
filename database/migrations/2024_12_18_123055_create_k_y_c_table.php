@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('type', ['individual', 'company'])->default('individual');
             $table->enum('document_type', ['passport', 'national_id', 'driver_license', 'voter_id', 'other'])->default('passport');
             $table->string('document_number');
-            $table->binary('document_image');
+            $table->string('document_image');
             $table->timestamps();
             $table->softDeletes();
         });

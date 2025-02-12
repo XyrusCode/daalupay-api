@@ -406,10 +406,7 @@ public function getReceipts()
     return $this->process(function () {
         $receipts = Receipt::all();
 
-        foreach ($receipts as $receipt) {
-            // Generate a URL to access the receipt
-            $receipt->url = URL::to('/api/receipt/file/' . $receipt->id);
-        }
+
 
         return $this->getResponse('success', $receipts, 200);
     }, true);
@@ -419,7 +416,6 @@ public function getReceipt($id)
 {
     return $this->process(function () use ($id) {
         $receipt = Receipt::findOrFail($id);
-        $receipt->url = URL::to('/api/receipt/file/' . $receipt->id);
 
         return $this->getResponse('success', $receipt, 200);
     }, true);

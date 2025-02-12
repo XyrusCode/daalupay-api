@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->string('amount');
-            $table->binary('receipt');
+            $table->string('receipt');
             $table->foreignId('admin_id')->constrained('admins');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->text('notes')->nullable();

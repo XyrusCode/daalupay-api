@@ -122,7 +122,7 @@ class WalletController extends BaseController
 
             $validated = $request->validate([
                 'amount' => 'required|string',
-                'proof' => 'required|file|mimes:jpeg,png,jpg|max:2048',
+                'proof' =>'required|string',
             ]);
 
             Receipt::create([
