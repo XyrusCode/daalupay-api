@@ -18,7 +18,6 @@ use DaaluPay\Http\Controllers\User\UserPreferenceController;
 use DaaluPay\Http\Controllers\Payment\DepositController;
 use DaaluPay\Http\Controllers\BlogPostController;
 use DaaluPay\Http\Controllers\ChatController;
-use DaaluPay\Http\Controllers\ChatsController;
 use DaaluPay\Http\Controllers\TestController;
 
 /*
@@ -103,11 +102,6 @@ Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/user/request-otp', [AuthController::class, 'requestOtp']);
 Route::post('/user/verify-otp', [AuthController::class, 'verifyOtp']);
 
-        Route::prefix('/messages')->group(function () {
-            Route::get('/', [ChatsController::class, 'index']);
-            Route::get('/{id}', [ChatsController::class, 'show']);
-            Route::post('/', [ChatsController::class, 'store']);
-        });
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::prefix('/user')->group(function () {
@@ -153,7 +147,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
        // Routes for user preferences
         Route::get('/preferences', [UserPreferenceController::class, 'show']);
-        Route::put('/preferences', [UserPreferenceController::class, 'update']);;
+        Route::post('/preferences', [UserPreferenceController::class, 'update']);;
 
         // transfer fee
         Route::get('/transfer-fee', [ExchangeController::class, 'transferFee']);
@@ -209,10 +203,10 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
             Route::delete('/{id}', [BlogPostController::class, 'deleteBlogPost']);
         });
 
-         Route::get('/admin/chats/pending', [AdminChatController::class, 'getPendingChats']);
-    Route::post('/admin/chats/{chatId}/assign', [AdminChatController::class, 'assignChat']);
-    Route::post('/admin/chats/{chatId}/messages', [AdminChatController::class, 'sendAdminMessage']);
-    Route::post('/admin/chats/{chatId}/close', [AdminChatController::class, 'closeChat']);
+         Route::get('/chats/pending', [AdminChatController::class, 'getPendingChats']);
+    Route::post('/chats/{chatId}/assign', [AdminChatController::class, 'assignChat']);
+    Route::post('/chats/{chatId}/messages', [AdminChatController::class, 'sendAdminMessage']);
+    Route::post('/chats/{chatId}/close', [AdminChatController::class, 'closeChat']);
 
     });
 

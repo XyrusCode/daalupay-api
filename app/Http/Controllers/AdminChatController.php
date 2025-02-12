@@ -2,6 +2,7 @@
 
 namespace DaaluPay\Http\Controllers;
 
+use DaaluPay\Models\Admin;
 use DaaluPay\Models\Chat;
 use DaaluPay\Models\Message;
 use Illuminate\Http\Request;
@@ -10,23 +11,62 @@ use Illuminate\Support\Facades\Auth;
 class AdminChatController extends BaseController
 {
     // Get all pending chats
-    public function getPendingChats()
+    public function getPendingChats(Request $request)
     {
-        return response()->json(Chat::where('status', 'pending')->get());
+        return $this->process(function () use ($request) {
+
+            // get pending or active chats
+            $pendingChats = Chat::where('status', 'pending')->get();
+            $activeChats = Chat::where('status', 'active', )->get();
+            //merge the two collections
+
+            $chats = $pendingChats->merge($activeChats);
+               return $this->getResponse(
+                status: true,
+                message: 'Chat session created successfully',
+                data: Chat::where('status', 'pending')->get(),
+                status_code: 200
+            );
+        });
     }
 
     // Assign chat to an agent
     public function assignChat($chatId)
     {
-        $chat = Chat::findOrFail($chatId);
-        $chat->update(['agent_id' => Auth::id(), 'status' => 'active']);
+        return $this->process(function () use ($chatId) {
+            $admin = Admin::where('role', 'support')->inRandomOrder()->first();
+            $chat = Chat::findOrFail($chatId);
+            $chat->update(['agent_id' => $admin->id, 'status' => 'active']);
 
-        return response()->json($chat);
+            return $this->getResponse(
+                status: true,
+                message: 'Chat assigned to an agent',
+                data: $chat,
+                status_code: 200
+            );
+        });
     }
 
     // Admin sends a message
     public function sendAdminMessage(Request $request, $chatId)
     {
+        return $this->process(function () use ($request,$chatId) {
+            $request->validate(['message' => 'required|string']);
+
+            $message = Message::create([
+                'chat_id' => $chatId,
+                'sender_id' => Auth::id(),
+                'message' => $request->message,
+                'sent_from' => 'agent'
+            ]);
+
+            return $this->getResponse(
+                status: true,
+                message: 'Message sent',
+                data: $message,
+                status_code: 200
+            );
+        });
         $request->validate(['message' => 'required|string']);
 
         $message = Message::create([
@@ -35,16 +75,22 @@ class AdminChatController extends BaseController
             'message' => $request->message,
         ]);
 
-        return response()->json($message);
     }
 
     // Close a chat
     public function closeChat($chatId)
     {
-        $chat = Chat::findOrFail($chatId);
-        $chat->update(['status' => 'closed']);
+        return $this->process(function () use ($chatId) {
+            $chat = Chat::findOrFail($chatId);
+            $chat->update(['status' => 'closed']);
 
-        return response()->json(['message' => 'Chat closed']);
+            return $this->getResponse(
+                status: true,
+                message: 'Chat closed',
+                status_code: 200
+            );
+        });
+
     }
 }
 
