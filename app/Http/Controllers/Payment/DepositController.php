@@ -10,6 +10,7 @@ use DaaluPay\Models\Transaction;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use DaaluPay\Mail\NewDeposit;
+
 class DepositController extends BaseController
 {
 
@@ -17,7 +18,24 @@ class DepositController extends BaseController
     {
         return $this->process(function () use ($request) {
             $user = $request->user();
-              // create a transaction
+
+            // check if transaction limit in preferences is unlimeted, if not check if exceeded
+            if ($user->preferences->daily_transaction_limit != 'unlimited') {
+                // if last transaction date more than 24 hours ago, reset transaction total today
+                if ($user->preferences->last_transaction_date->diffInHours(now()) >= 24) {
+                    $user->preferences->update([
+                        'transaction_total_today' => 0,
+                        'last_transaction_date'   => now(),
+                    ]);
+                }
+
+
+                if ($user->preferences->transaction_total_today + $request['amount'] > $user->preferences->daily_transaction_limit) {
+                    return $this->getResponse('error', 'Transaction limit exceeded', 400);
+                }
+            }
+
+            // create a transaction
             $transaction = Transaction::create([
                 'uuid' => Str::uuid(),
                 'user_id' => $user->id,
@@ -44,6 +62,11 @@ class DepositController extends BaseController
             $wallet = Wallet::where('id', $deposit->wallet_id)->first();
             $wallet->balance += $deposit->amount;
             $wallet->save();
+
+            $user->preferences->update([
+                'transaction_total_today' => $user->preferences->transaction_total_today + $request['amount'],
+                'last_transaction_date'   => now(),
+            ]);
 
             Mail::to($user->email)->send(new NewDeposit($user, $deposit));
 

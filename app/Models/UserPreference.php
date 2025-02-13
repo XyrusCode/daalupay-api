@@ -2,11 +2,15 @@
 
 namespace Daalupay\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use DaaluPay\Models\BaseModel;
+use DaaluPay\Models\User;
 
-class UserPreference extends Model
+class UserPreference extends BaseModel
 {
-    // Define the table if it doesn't follow Laravel's naming conventions.
+    use HasFactory;
+
     protected $table = 'user_preferences';
 
     /**
@@ -27,8 +31,9 @@ class UserPreference extends Model
 
     /**
      * Relationship: each preference record belongs to a user.
+     * @return BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

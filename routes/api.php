@@ -213,7 +213,6 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
 });
 
 
-
 // Auth
 Route::post('/super-admin/login', [AuthController::class, 'superAdminLogin']);
 

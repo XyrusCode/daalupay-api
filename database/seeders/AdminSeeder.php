@@ -17,8 +17,41 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create 5 admins
-        for ($i = 1; $i <= 5; $i++) {
+
+
+        // create a known admin
+        Admin::create([
+            'id' => 1,
+            'uuid' => Uuid::uuid4(),
+            'first_name' => 'Known',
+            'last_name' => 'Admin',
+            'email' => 'admin@daalupay.com',
+            'role' => 'processor',
+            'password' => Hash::make('password'),
+        ]);
+
+        Admin::create([
+            'id' => 2,
+            'uuid' => Uuid::uuid4(),
+            'first_name' => 'Blogger',
+            'last_name' => 'Admin',
+            'role' => 'blogger',
+            'email' => 'blogger@daalupay.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        Admin::create([
+            'id' => 3,
+            'uuid' => Uuid::uuid4(),
+            'first_name' => 'Support',
+            'last_name' => 'Admin',
+            'email' => 'support@daalupay.com',
+            'role' => 'support',
+            'password' => Hash::make('password'),
+        ]);
+
+                // Create 5 admins
+        for ($i = 4; $i <= 5; $i++) {
             $firstName = Faker::create()->firstName;
             $lastName = Faker::create()->lastName;
             Admin::create([
@@ -30,19 +63,9 @@ class AdminSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'phone' => Faker::create()->phoneNumber,
                 'status' => 'active',
-                'role' => 'processor',
+                'role' => $i % 2 === 0 ? 'processor' : 'support',
             ]);
         }
-
-        // create a known admin
-        Admin::create([
-            'id' => 6,
-            'uuid' => Uuid::uuid4(),
-            'first_name' => 'Known',
-            'last_name' => 'Admin',
-            'email' => 'admin@daalupay.com',
-            'password' => Hash::make('password'),
-        ]);
 
         SuperAdmin::create([
             'id' => 1,

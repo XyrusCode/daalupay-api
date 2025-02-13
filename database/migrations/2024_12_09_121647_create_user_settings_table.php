@@ -12,11 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_settings', function (Blueprint $table) {
-             $table->id()->primary();
+            $table->id()->primary();
             $table->uuid('uuid')->unique();
             $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             // 2fa settings
-            $table->boolean('two_factor_enabled')->default(false);
+            $table->enum(
+                'two_factor_enabled',
+                ['true', 'false']
+            )->default('true');
             $table->string('two_factor_method')->nullable();
             $table->string('two_factor_phone')->nullable();
             $table->string('two_factor_email')->nullable();

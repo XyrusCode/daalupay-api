@@ -37,7 +37,18 @@ class AdminController extends BaseController
             // last 5 transactions assigned to admin
             // $transactions = Transaction::where('admin_id', auth('admin')->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
             // last 5 swaps assigned to admin
-            $swaps = Swap::where('admin_id', $admin_id)->orderBy('created_at', 'desc')->take(5)->get();
+            $swaps = Swap::where('admin_id', $admin_id)->orderBy('created_at', 'desc')->take(5)->with('user')->get();
+            $swaps = $swaps->filter(function ($swap) {
+                return $swap->user !== null;
+            })->map(function ($swap) {
+                $user = $swap->user;
+                $swap->user->fullName = $user->firstName && $user->lastName
+                    ? $user->firstName . ' ' . $user->lastName
+                    : $user->email;
+
+
+                return $swap;
+            })->values();
             // last 5 users assigned to admin
             // $users = User::where('admin_id', auth('admin')->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
             // $kycs = KYC::where('admin_id', $admin_id)->orderBy('created_at', 'desc')->take(5)->get();
@@ -241,9 +252,15 @@ class AdminController extends BaseController
                 'verified_by' => $request->user()->id,
             ]);
 
+            // set transaction limit to unlimited
+            $user->preferences->update([
+                'daily_transaction_limit' => 'unlimited',
+            ]);
+
             KYC::where('user_id', $user->id)->update([
                 'status' => 'approved'
             ]);
+
 
             Mail::to($user->email)->send(new KycApproved($user));
 
@@ -401,25 +418,25 @@ class AdminController extends BaseController
         }, true);
     }
 
-public function getReceipts()
-{
-    return $this->process(function () {
-        $receipts = Receipt::all();
+    public function getReceipts()
+    {
+        return $this->process(function () {
+            $receipts = Receipt::all();
 
 
 
-        return $this->getResponse('success', $receipts, 200);
-    }, true);
-}
+            return $this->getResponse('success', $receipts, 200);
+        }, true);
+    }
 
-public function getReceipt($id)
-{
-    return $this->process(function () use ($id) {
-        $receipt = Receipt::findOrFail($id);
+    public function getReceipt($id)
+    {
+        return $this->process(function () use ($id) {
+            $receipt = Receipt::findOrFail($id);
 
-        return $this->getResponse('success', $receipt, 200);
-    }, true);
-}
+            return $this->getResponse('success', $receipt, 200);
+        }, true);
+    }
 
     public function approveReceipt($id)
     {
@@ -440,7 +457,7 @@ public function getReceipt($id)
             $user = User::find($receipt->user_id);
 
             // FInd User CNY Wallet
-             $yuanCurrency = Currency::where('code', 'CNY')->first();
+            $yuanCurrency = Currency::where('code', 'CNY')->first();
             $cnyWallet = Wallet::where('user_id', $user->id)->where('currency_id', $yuanCurrency->id)->first();
 
             $cnyWallet->balance += $receipt->amount;
@@ -458,12 +475,10 @@ public function getReceipt($id)
             $receipt = Receipt::find($id);
             $receipt->update(['status' => 'rejected']);
 
-             $user = User::find($receipt->user_id);
+            $user = User::find($receipt->user_id);
 
-            Mail::to($user->email)->send(new ReceiptDenied($user,$receipt, $request->reason));
+            Mail::to($user->email)->send(new ReceiptDenied($user, $receipt, $request->reason));
             return $this->getResponse('success', $receipt, 200);
         }, true);
     }
-
-
 }

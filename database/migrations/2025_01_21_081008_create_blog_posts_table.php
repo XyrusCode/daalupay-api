@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('content');
             $table->string('featured_image');
-            $table->boolean('status');
+            $table->enum('status', ['true', 'false'])->default('true');
             $table->foreignId('author_id')->constrained('admins');
             $table->timestamps();
         });

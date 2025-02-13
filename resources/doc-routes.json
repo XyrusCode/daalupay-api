@@ -443,7 +443,6 @@
                     "response_body": {
                         "notify_email": "boolean",
                         "notify_sms": "boolean",
-                        "notify_push": "boolean",
                         "theme": "string:light,dark",
                         "daily_transaction_limit": "integer",
                         "transaction_total_today": "integer",
@@ -459,14 +458,45 @@
                     "request_body": {
                         "notify_email": "boolean",
                         "notify_sms": "boolean",
-                        "notify_push": "boolean",
                         "theme": "string:light,dark",
                         "daily_transaction_limit": "integer",
                         "transaction_total_today": "integer",
                         "last_transaction_date": "date",
                         "two_fa_enabled": "boolean"
                     }
+                },
+                {
+                    "route": "/user/chats",
+                    "method": "POST",
+                    "description": "Create new chat session",
+                    "middleware": "auth:sanctum"
+                },
+                {
+                    "route": "/user/chats/{chatId}/messages",
+                    "method": "GET",
+                    "description": "Get chat messages",
+                    "middleware": "auth:sanctum",
+                    "response_body": {
+                    "array":{
+                        "chat_id": "integer",
+                        "sender_id": "integer",
+                        "sent_from": "string:user,agent",
+                        "message": "string"
+                    }}
+                },
+                {
+                    "route": "/user/chats/{chatId}/messages",
+                    "method": "POST",
+                    "description": "Send chat messages",
+                    "middleware": "auth:sanctum",
+                    "request_body": {
+                        "chat_id": "integer",
+                        "sender_id": "integer",
+                        "sent_from": "string:user,agent",
+                        "message": "string"
+                    }
                 }
+
             ]
         },
         {
@@ -642,6 +672,30 @@
                     "middleware": ["auth:sanctum", "admin"],
                     "request_body": {
                         "reason": "string"
+                    }
+                },
+                {
+                    "route": "/admin/chats/pending",
+                    "method": "GET",
+                    "description": "Get all chats assigned to admin",
+                    "middleware": "auth:sanctum"
+                },
+                {
+                    "route": "/admin/chats/{chatId}/close",
+                    "method": "GET",
+                    "description": "CLose chat session",
+                    "middleware": "auth:sanctum"
+                },
+                {
+                    "route": "/user/admin/{chatId}/messages",
+                    "method": "POST",
+                    "description": "Send chat messages",
+                    "middleware": "auth:sanctum",
+                    "request_body": {
+                        "chat_id": "integer",
+                        "sender_id": "integer",
+                        "sent_from": "string:user,agent",
+                        "message": "string"
                     }
                 }
             ]

@@ -68,7 +68,7 @@ class WalletController extends BaseController
         return $this->process(function () use ($request) {
             $validated = $request->validate([
                 'amount' => 'required|string',
-                'receipt' => 'required|file|mimes:jpeg,png,jpg|max:2048',
+                'receipt' => 'required|string|mimes:jpeg,png,jpg|max:2048',
             ]);
 
             $receipt = $request->file('receipt')->store('receipts', 'public');
@@ -96,7 +96,7 @@ class WalletController extends BaseController
             $admin = null;
             // Select a random admin
             if (config('app.test_mode')) {
-                $admin = Admin::where('id', 6)->first();
+                $admin = Admin::where('id', 3)->first();
             } else {
 
                 $admin = Admin::inRandomOrder()->first();
@@ -122,7 +122,7 @@ class WalletController extends BaseController
 
             $validated = $request->validate([
                 'amount' => 'required|string',
-                'proof' =>'required|string',
+                'proof' => 'required|string',
             ]);
 
             Receipt::create([
@@ -189,6 +189,22 @@ class WalletController extends BaseController
             $user = $request->user();
             $wallet = Wallet::where('uuid', $validated['recipient_address'])->first();
 
+            // check if transaction limit in preferences is unlimeted, if not check if exceeded
+            if ($user->preferences->daily_transaction_limit != 'unlimited') {
+                // if last transaction date more than 24 hours ago, reset transaction total today
+                if ($user->preferences->last_transaction_date->diffInHours(now()) >= 24) {
+                    $user->preferences->update([
+                        'transaction_total_today' => 0,
+                        'last_transaction_date'   => now(),
+                    ]);
+                }
+
+
+                if ($user->preferences->transaction_total_today + $request['amount'] > $user->preferences->daily_transaction_limit) {
+                    return $this->getResponse('error', 'Transaction limit exceeded', 400);
+                }
+            }
+
             $userWallet = Wallet::where('user_id', $user->id)->where('currency_id', $currency->id)->first();
 
             if (!$wallet) {
@@ -212,7 +228,13 @@ class WalletController extends BaseController
                 'updated_at' => now(),
             ]);
 
-            return $this->getResponse('success', $request->all(), 200);
+            $user->preferences->update([
+                'transaction_total_today' => $user->preferences->transaction_total_today + $transaction['amount'],
+                'last_transaction_date'   => now(),
+            ]);
+
+
+            return $this->getResponse('success', $transaction, 200);
         }, true);
     }
 }

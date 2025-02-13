@@ -7,6 +7,8 @@ use DaaluPay\Mail\AdminReactivated;
 use DaaluPay\Mail\AdminSuspended;
 use Illuminate\Http\Request;
 use DaaluPay\Models\Admin;
+use DaaluPay\Models\BlogPost;
+use DaaluPay\Models\Chat;
 use DaaluPay\Models\Currency;
 use DaaluPay\Models\PaymentMethod;
 use DaaluPay\Models\ExchangeRate;
@@ -268,6 +270,27 @@ class SuperAdminController extends BaseController
         return $this->process(function () use ($request) {
             $id = $request->route('id');
             $admin = Admin::find($id);
+
+            // Reassign transactions to another admin
+            // get another admin of the same role
+            $newAdmin = Admin::where('role', $admin->role)->where('id', '!=', $admin->id)->first();
+
+            // use switch to reassign transactions for processor, chats for support and blog posts for blogger
+            switch ($admin->type) {
+                case 'processor':
+                    Transaction::where('admin_id', $id)->update(['admin_id' => $newAdmin->id]);
+                    break;
+                case 'support':
+                    Chat::where('admin_id', $id)->update(['agent_id' => $newAdmin->id]);
+
+                    break;
+                case 'blogger':
+                    BlogPost::where('author_id', $id)->update(['author_id' => $newAdmin->id]);
+                    break;
+            }
+
+            $swaps = Swap::where('admin_id', $id)->get();
+
             $admin->delete();
             return $this->getResponse(status: true, message: 'Admin deleted successfully');
         });

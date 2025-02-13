@@ -2,15 +2,17 @@
 
 namespace Database\Seeders;
 
-use DaaluPay\Models\Address;
-use DaaluPay\Models\KYC;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use DaaluPay\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Faker\Factory as Faker;
 use Ramsey\Uuid\Uuid;
+use DaaluPay\Models\User;
 use DaaluPay\Models\Admin;
+use DaaluPay\Models\Address;
+use DaaluPay\Models\KYC;
+use Daalupay\Models\UserPreference;
+
 class UserSeeder extends Seeder
 {
     /**
@@ -60,6 +62,18 @@ class UserSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
+        // UserPreference::create([
+        //     'user_id' => 1,
+        //     'notify_email'            => 'true',
+        //     'notify_sms'              => 'true',
+        //     'theme'                   => 'light',
+        //     'daily_transaction_limit' => '500000',
+        //     'transaction_total_today' => '20000',
+        //     'last_transaction_date' => now(),
+        //     'kyc_status'              => 'pending',
+        //     'two_fa_enabled'          => 'true',
+        // ]);
+
         // Create 5 test users if not already created
         for ($i = 2; $i <= 6; $i++) {
             $firstName = Faker::create()->firstName;
@@ -102,6 +116,19 @@ class UserSeeder extends Seeder
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+
+                // UserPreference::create([
+                //     'user_id' => $i,
+                //     'notify_email' => 'true',
+                //     'notify_sms' => 'true',
+                //     'theme' => 'dark',
+                //     'daily_transaction_limit' => '500000',
+                //     'transaction_total_today' => '0',
+                //     'last_transaction_date' => null,
+                //     'two_fa_enabled' => 'false',
+                //     'created_at' => now(),
+                //     'updated_at' => now(),
+                // ]);
             }
         }
     }

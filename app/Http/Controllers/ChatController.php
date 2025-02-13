@@ -17,9 +17,10 @@ class ChatController extends BaseController
         return $this->process(function () use ($request) {
             // get admin of type support in random order
             $admin = Admin::where('role', 'support')->inRandomOrder()->first();
+            $user = Auth::user();
 
             $chat = Chat::create([
-                'user_id' => Auth::id(),
+                'user_id' => $user->id,
                 'status' => 'pending',
                 'agent_id' => $admin->id,
             ]);
@@ -61,6 +62,7 @@ class ChatController extends BaseController
             $message = Message::create([
                 'chat_id' => $chatId,
                 'sender_id' => Auth::id(),
+                'sent_from' => 'user',
                 'message' => $request->message,
             ]);
 

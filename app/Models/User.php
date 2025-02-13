@@ -78,7 +78,7 @@ class User extends Authenticatable
     use Notifiable;
     use HasApiTokens;
     use SoftDeletes;
-    
+
 
     /**
      * The data type of the auto-incrementing ID.
@@ -209,7 +209,7 @@ public function messages()
  *
  * @return \Illuminate\Database\Eloquent\Relations\HasMany
  */
-public function preference()    {
+public function preferences()    {
     return $this->hasOne(UserPreference::class);
 }
 
