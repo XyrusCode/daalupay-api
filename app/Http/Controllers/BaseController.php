@@ -248,8 +248,6 @@ public function sendFCMNotification(Request $request, $messageTitle, $messageBod
 
         $user = $request->user();
 
-
-
         try {
             // Attempt to send the notification
                     // Send notifications to all active user device tokens

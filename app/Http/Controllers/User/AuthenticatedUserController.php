@@ -120,14 +120,14 @@ class AuthenticatedUserController extends BaseController
                 'documentNumber' => 'required|string|max:255',
             ]);
 
-                    $admin= null;
-        // Select a random admin
-        if(config('app.test_mode')){
-            $admin = Admin::where('id', 6)->first();
-        } else {
+            $admin = null;
+            // Select a random admin
+            if (config('app.test_mode')) {
+                $admin = Admin::where('id', 6)->first();
+            } else {
 
-        $admin = Admin::inRandomOrder()->first();
-        }
+                $admin = Admin::inRandomOrder()->first();
+            }
 
             $kyc = KYC::create([
                 'user_id' => $user->id,
@@ -156,12 +156,15 @@ class AuthenticatedUserController extends BaseController
                 'device_type' => 'required|string',
             ]);
 
-           $token =  NotificationToken::create([
+            $token =  NotificationToken::create([
                 'token' => $validated['token'],
                 'device_type' => $validated['device_type'],
                 'user_id' => $user->id,
                 'status' => 'active',
             ]);
+
+            // turn on notify_push in user preferences
+            $user->preferences->update(['notify_push' => "true"]);
 
             return $this->getResponse('success', $token, 200);
         }, true);
@@ -176,8 +179,11 @@ class AuthenticatedUserController extends BaseController
                 return $this->getResponse('error', null, 404, 'Token not found');
             }
             DB::table('device_token')->where('token', $id)->update(['status' => 'inactive']);
-            return $this->getResponse(status_code:200, data: $token, status: 'success');
+
+            // turn off notify_push in user preferences
+            $user->preferences->update(['notify_push' => "false"]);
+
+            return $this->getResponse(status_code: 200, data: $token, status: 'success');
         }, true);
     }
 }
-
