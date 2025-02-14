@@ -112,13 +112,8 @@ class WalletController extends BaseController
         return $this->process(function () use ($request) {
             $user = $request->user();
             $admin = null;
-            // Select a random admin
-            if (config('app.test_mode')) {
-                $admin = Admin::where('id', 6)->first();
-            } else {
-
-                $admin = Admin::inRandomOrder()->first();
-            }
+            // Select a random admin of role processor
+            $admin = Admin::where('role', 'processor')->inRandomOrder()->first();
 
             $validated = $request->validate([
                 'amount' => 'required|string',
