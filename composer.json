@@ -2,7 +2,7 @@
     "name": "daalupay/api",
     "type": "project",
     "description": "The API for the DaaluPay Project.",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
