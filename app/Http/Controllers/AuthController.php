@@ -26,8 +26,10 @@ use DaaluPay\Mail\PasswordReset as MailPasswordReset;
 use DaaluPay\Models\Address;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\SuperAdmin;
+use Daalupay\Models\UserPreference;
 use Illuminate\Support\Facades\Cache;
 use DaaluPay\Notifications\OtpNotification;
+
 class AuthController extends BaseController
 {
     /**
@@ -182,11 +184,25 @@ class AuthController extends BaseController
                 'zip_code' => $request->zipCode,
             ]);
 
+            UserPreference::create([
+                'user_id' => $user->id,
+                'notify_email' => 'true',
+                'notify_sms' => 'false',
+                'notify_push' => 'true',
+                'theme' => 'light',
+                'daily_transaction_limit' => '500000',
+                'transaction_total_today' => 0,
+                'last_transaction_date' => '',
+                'two_fa_enabled' => 'true',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
             // generate and send otp for user for testing
             $otp = random_int(10000, 99999);
             Cache::put('otp_' . $user->id, $otp, now()->addMinutes(15));
 
-             Mail::to($user->email)->send(new NewUser($user, $otp));
+            Mail::to($user->email)->send(new NewUser($user, $otp));
 
             return $this->getResponse('success', $user, 200);
         });
@@ -212,7 +228,7 @@ class AuthController extends BaseController
 
             Mail::to($user->email)->send(new OtpNotification($user, $otp, 15));
 
-                return $this->getResponse(status: 'success', message: $otp . ' OTP sent to email: ' . $user->email, status_code: 200);
+            return $this->getResponse(status: 'success', message: $otp . ' OTP sent to email: ' . $user->email, status_code: 200);
         });
     }
 
@@ -221,10 +237,10 @@ class AuthController extends BaseController
         return $this->process(function () use ($request) {
             $request->validate([
                 'otp' => 'required|string',
-                 'email' => 'required|email',
+                'email' => 'required|email',
             ]);
 
-             $user = User::where('email', $request->email)->first();
+            $user = User::where('email', $request->email)->first();
 
             $otp = Cache::get('otp_' . $user->id);
 

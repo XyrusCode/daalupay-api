@@ -29,6 +29,11 @@ class UserPreference extends BaseModel
         'two_fa_enabled',
     ];
 
+    protected $casts = [
+        'last_transaction_date' => 'datetime',
+    ];
+
+
     /**
      * Relationship: each preference record belongs to a user.
      * @return BelongsTo

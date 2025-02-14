@@ -191,8 +191,15 @@ class WalletController extends BaseController
 
             // check if transaction limit in preferences is unlimeted, if not check if exceeded
             if ($user->preferences->daily_transaction_limit != 'unlimited') {
+                $lastTransactionDate = $user->preferences->last_transaction_date;
+
+                // Bypass the check if the user has never made a transaction (last_transaction_date is null)
+                if (!$lastTransactionDate) {
+                    return; // Allow transaction since there's no previous record
+                }
+
                 // if last transaction date more than 24 hours ago, reset transaction total today
-                if ($user->preferences->last_transaction_date->diffInHours(now()) >= 24) {
+                if ($lastTransactionDate && $lastTransactionDate->diffInHours(now()) >= 24) {
                     $user->preferences->update([
                         'transaction_total_today' => 0,
                         'last_transaction_date'   => now(),
