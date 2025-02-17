@@ -12,6 +12,7 @@ use DaaluPay\Mail\TransactionDenied;
 use DaaluPay\Mail\UserReactivated;
 use DaaluPay\Mail\UserSuspended;
 use DaaluPay\Models\Address;
+use DaaluPay\Models\AlipayPayment;
 use Illuminate\Http\Request;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Transaction;
@@ -432,27 +433,36 @@ class AdminController extends BaseController
     public function getReceipt($id)
     {
         return $this->process(function () use ($id) {
-            $receipt = Receipt::findOrFail($id);
+            $receipt = AlipayPayment::findOrFail($id);
 
             return $this->getResponse('success', $receipt, 200);
         }, true);
     }
 
-    public function approveReceipt($id)
+    public function approveReceipt(Request $request, string $id)
     {
-        return $this->process(function () use ($id) {
-            $receipt = Receipt::find($id);
+        return $this->process(function () use ($request, $id) {
+            $receipt = AlipayPayment::find($id);
+
+            //check if request has proof of payment
+            if (!$request->has('proof_of_payment')) {
+                return $this->getResponse(
+                    status: 'error',
+                    message: 'Proof of payment is required',
+                    status_code: 400
+                );
+            }
 
             if ($receipt->status === 'approved') {
                 return $this->getResponse(
                     status: 'error',
-                    message: 'Receipt is already approved',
+                    message: 'Payment is already approved',
                     status_code: 400
                 );
             }
 
 
-            $receipt->update(['status' => 'approved']);
+            $receipt->update(['status' => 'completed']);
 
             $user = User::find($receipt->user_id);
 
@@ -460,7 +470,7 @@ class AdminController extends BaseController
             $yuanCurrency = Currency::where('code', 'CNY')->first();
             $cnyWallet = Wallet::where('user_id', $user->id)->where('currency_id', $yuanCurrency->id)->first();
 
-            $cnyWallet->balance += $receipt->amount;
+            $cnyWallet->balance -= $receipt->amount;
             $cnyWallet->save();
 
             Mail::to($user->email)->send(new ReceiptApproved($user, $receipt));
@@ -472,7 +482,7 @@ class AdminController extends BaseController
     public function denyReceipt(Request $request, string $id)
     {
         return $this->process(function () use ($request, $id) {
-            $receipt = Receipt::find($id);
+            $receipt = AlipayPayment::find($id);
             $receipt->update(['status' => 'rejected']);
 
             $user = User::find($receipt->user_id);

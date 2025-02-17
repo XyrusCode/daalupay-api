@@ -5,9 +5,11 @@ namespace DaaluPay\Http\Controllers\Payment;
 use DaaluPay\Http\Controllers\BaseController;
 use DaaluPay\Mail\WalletCreated;
 use DaaluPay\Models\Admin;
+use DaaluPay\Models\AlipayPayment;
 use Illuminate\Http\Request;
 use DaaluPay\Models\Wallet;
 use DaaluPay\Models\Currency;
+use DaaluPay\Models\PaymentMethod;
 use DaaluPay\Models\Receipt;
 use Illuminate\Support\Str;
 use DaaluPay\Models\Transaction;
@@ -177,12 +179,17 @@ class WalletController extends BaseController
                 'amount' => 'required|string',
                 'recipient_address' => 'required|string',
                 'currency' => 'required|string',
+                'document_type' => 'required|enum:alipay_id,barcode',
             ]);
 
             $currency = Currency::where('code', $validated['currency'])->first();
 
+            // if code is 'NGN' throw error, not allowed
+            if ($currency->code == 'NGN') {
+                return $this->getResponse('error', 'Cannot send NGN', 400);
+            }
+
             $user = $request->user();
-            $wallet = Wallet::where('uuid', $validated['recipient_address'])->first();
 
             // check if transaction limit in preferences is unlimeted, if not check if exceeded
             if ($user->preferences->daily_transaction_limit != 'unlimited') {
@@ -190,7 +197,9 @@ class WalletController extends BaseController
 
                 // Bypass the check if the user has never made a transaction (last_transaction_date is null)
                 if (!$lastTransactionDate) {
-                    return; // Allow transaction since there's no previous record
+                    $user->preferences->update([
+                        'last_transaction_date'   => now(),
+                    ]);
                 }
 
                 // if last transaction date more than 24 hours ago, reset transaction total today
@@ -207,25 +216,26 @@ class WalletController extends BaseController
                 }
             }
 
-            $userWallet = Wallet::where('user_id', $user->id)->where('currency_id', $currency->id)->first();
-
-            if (!$wallet) {
-                return $this->getResponse('error', 'Wallet not found', 404);
-            }
-
-            $userWallet->balance -= $validated['amount'];
-            $userWallet->save();
-
-            $wallet->balance += $validated['amount'];
-            $wallet->save();
-
             $transaction = Transaction::create([
                 'uuid' => Str::uuid(),
                 'user_id' => $user->id,
+                'channel' => 'alipay',
                 'amount' => $validated['amount'],
                 'currency' => $validated['currency'],
                 'status' => 'pending',
                 'reference_number' => Str::uuid(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $payment = AlipayPayment::create([
+                'user_id' => $user->id,
+                'amount' => $validated['amount'],
+                'status' => 'pending',
+                'recipient_alipay_id' => $validated['recipient_address'],
+                'transaction_id' => $transaction->id,
+                'document_type' => $validated['document_type'],
+                'proof_of_payment' => '',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -236,7 +246,27 @@ class WalletController extends BaseController
             ]);
 
 
-            return $this->getResponse('success', $transaction, 200);
+            return $this->getResponse('success', $payment, 200);
         }, true);
+    }
+
+    public function getAlipayTranfers(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $user = $request->user();
+            $alipayTransfers = AlipayPayment::where('user_id', $user->id)->get();
+            return $this->getResponse('success', $alipayTransfers, 200);
+        }, true);
+    }
+
+    public function
+    getPaymentMethods(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $paymentMethods = PaymentMethod::query();
+            // fiter where status is enabled
+            $activeMethods = $paymentMethods->where('status', 'enabled')->get();
+            return $this->getResponse(status: true, message: 'Payment methods fetched successfully', data: $activeMethods);
+        });
     }
 }

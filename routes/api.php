@@ -114,6 +114,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::delete('/{id}', [AuthenticatedUserController::class, 'deleteNotificationToken']);
         });
 
+        Route::get('/payment-methods', [WalletController::class, 'getPaymentMethods']);
+
 
         Route::prefix('/wallets')->group(function () {
             Route::post('/', [WalletController::class, 'store']);

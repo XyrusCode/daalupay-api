@@ -329,12 +329,13 @@
                 {
                     "route": "/user/wallets/send",
                     "method": "POST",
-                    "description": "Send money to a wallet",
+                    "description": "Send money to an Alipay Address",
                     "middleware": "auth:sanctum",
                     "request_body": {
                         "amount": "string",
                         "recipient_address": "string",
-                        "currency": "string"
+                        "currency": "string",
+                        "document_type": "enum:barcode,alipay_id"
                     },
                     "response_body": {
                         "message": "string"
@@ -352,6 +353,25 @@
                     },
                     "response_body": {
                         "message": "string"
+                    }
+                },
+                {
+                    "route": "/user/alipay",
+                    "method": "GET",
+                    "description": "Get user Alipay transfers",
+                    "middleware": "auth:sanctum",
+                    "response_body": {
+                        "data": [
+                            {
+                                "amount": "string",
+                                "recipient_address": "string",
+                                "currency": "string",
+                                "document_type": "enum:barcode,alipay_id",
+                                "status": "string",
+                                "proof_of_payment": "string",
+                                "created_at": "timestamp"
+                            }
+                        ]
                     }
                 },
                 {
@@ -663,7 +683,17 @@
                     "route": "/admin/receipts/{id}/approve",
                     "method": "POST",
                     "description": "Approve receipt",
-                    "middleware": ["auth:sanctum", "admin"]
+                    "middleware": ["auth:sanctum", "admin"],
+                    "request_body": {
+                        "amount": "string",
+                        "recipient_address": "string",
+                        "currency": "string",
+                        "document_type": "enum:barcode,alipay_id",
+                        "status": "approved",
+                        "proof_of_payment": "string",
+                        "created_at": "timestamp",
+                        "updated_at": "timestamp"
+                    }
                 },
                 {
                     "route": "/admin/receipts/{id}/deny",

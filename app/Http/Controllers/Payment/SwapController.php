@@ -37,7 +37,9 @@ class SwapController extends BaseController
 
                 // Bypass the check if the user has never made a transaction (last_transaction_date is null)
                 if (!$lastTransactionDate) {
-                    return; // Allow transaction since there's no previous record
+                    $user->preferences->update([
+                        'last_transaction_date'   => now(),
+                    ]);
                 }
 
                 // if last transaction date more than 24 hours ago, reset transaction total today

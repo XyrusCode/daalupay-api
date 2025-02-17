@@ -17,13 +17,12 @@ class ReceiptApproved extends Mailable
     public function __construct(
         public User $user,
         public Receipt $receipt
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Receipt Has Been Approved'
+            subject: 'Your Payment Has Been Approved'
         );
     }
 
