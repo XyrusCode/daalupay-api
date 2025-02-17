@@ -422,7 +422,7 @@ class AdminController extends BaseController
     public function getReceipts()
     {
         return $this->process(function () {
-            $receipts = Receipt::all();
+            $receipts = AlipayPayment::all();
 
 
 
