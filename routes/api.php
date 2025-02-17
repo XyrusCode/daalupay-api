@@ -34,13 +34,12 @@ use DaaluPay\Http\Controllers\TestController;
 // Tests
 Route::prefix('/test')->group(function () {
     Route::prefix('/receipts')->group(function () {
-    Route::get('/', [AdminController::class, 'getReceipts']);
-    Route::get('/{id}', [AdminController::class, 'getReceipt']);
-    Route::post('/{id}/approve', [AdminController::class, 'approveReceipt']);
-    Route::post('/{id}/deny', [AdminController::class, 'denyReceipt']);
-
-
-});});
+        Route::get('/', [AdminController::class, 'getReceipts']);
+        Route::get('/{id}', [AdminController::class, 'getReceipt']);
+        Route::post('/{id}/approve', [AdminController::class, 'approveReceipt']);
+        Route::post('/{id}/deny', [AdminController::class, 'denyReceipt']);
+    });
+});
 Route::get('/test-email', [TestController::class, 'sendEmail']);
 
 Route::get('/test-fcm', [TestController::class, 'testFcm']);
@@ -145,17 +144,16 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::post('/', [AuthenticatedUserController::class, 'createKyc']);
         });
 
-       // Routes for user preferences
+        // Routes for user preferences
         Route::get('/preferences', [UserPreferenceController::class, 'show']);
         Route::post('/preferences', [UserPreferenceController::class, 'update']);;
 
         // transfer fee
         Route::get('/transfer-fee', [ExchangeController::class, 'transferFee']);
 
-         Route::post('/chats', [ChatController::class, 'createChat']);
-    Route::get('/chats/{chatId}/messages', [ChatController::class, 'getMessages']);
-    Route::post('/chats/{chatId}/messages', [ChatController::class, 'sendMessage']);
-
+        Route::post('/chats', [ChatController::class, 'createChat']);
+        Route::get('/chats/{chatId}/messages', [ChatController::class, 'getMessages']);
+        Route::post('/chats/{chatId}/messages', [ChatController::class, 'sendMessage']);
     });
 });
 
@@ -203,13 +201,11 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
             Route::delete('/{id}', [BlogPostController::class, 'deleteBlogPost']);
         });
 
-         Route::get('/chats/pending', [AdminChatController::class, 'getPendingChats']);
-    Route::post('/chats/{chatId}/assign', [AdminChatController::class, 'assignChat']);
-    Route::post('/chats/{chatId}/messages', [AdminChatController::class, 'sendAdminMessage']);
-    Route::post('/chats/{chatId}/close', [AdminChatController::class, 'closeChat']);
-
+        Route::get('/chats/pending', [AdminChatController::class, 'getPendingChats']);
+        Route::post('/chats/{chatId}/assign', [AdminChatController::class, 'assignChat']);
+        Route::post('/chats/{chatId}/messages', [AdminChatController::class, 'sendAdminMessage']);
+        Route::post('/chats/{chatId}/close', [AdminChatController::class, 'closeChat']);
     });
-
 });
 
 
@@ -220,42 +216,41 @@ Route::middleware(['auth:sanctum,super_admin'])->group(function () {
 
     Route::prefix('/super-admin')->group(function () {
 
-    Route::get('/stats', [SuperAdminController::class, 'stats']);
+        Route::get('/stats', [SuperAdminController::class, 'stats']);
 
-    Route::prefix('/admins')->group(function () {
-        Route::get('/', [SuperAdminController::class, 'getAllAdmins']);
-        Route::post('/', [SuperAdminController::class, 'addAdmin']);
-        Route::get('/{id}', [SuperAdminController::class, 'getAdmin']);
-        Route::post('/{id}/suspend', [SuperAdminController::class, 'suspendAdmin']);
-        Route::post('/{id}/unsuspend', [SuperAdminController::class, 'reactivateAdmin']);
+        Route::prefix('/admins')->group(function () {
+            Route::get('/', [SuperAdminController::class, 'getAllAdmins']);
+            Route::post('/', [SuperAdminController::class, 'addAdmin']);
+            Route::get('/{id}', [SuperAdminController::class, 'getAdmin']);
+            Route::post('/{id}/update', [SuperAdminController::class, 'updateAdmin']);
+            Route::post('/{id}/suspend', [SuperAdminController::class, 'suspendAdmin']);
+            Route::post('/{id}/unsuspend', [SuperAdminController::class, 'reactivateAdmin']);
 
-        Route::post('/{id}/delete', [SuperAdminController::class, 'deleteAdmin']);
-    });
+            Route::post('/{id}/delete', [SuperAdminController::class, 'deleteAdmin']);
+        });
 
-    Route::prefix('/currencies')->group(function () {
-        Route::get('/', [SuperAdminController::class, 'getAllCurrencies']);
-        Route::post('/{id}/disable', [SuperAdminController::class, 'disableCurrency']);
-        Route::post('/{id}/enable', [SuperAdminController::class, 'enableCurrency']);
-    });
+        Route::prefix('/currencies')->group(function () {
+            Route::get('/', [SuperAdminController::class, 'getAllCurrencies']);
+            Route::post('/{id}/disable', [SuperAdminController::class, 'disableCurrency']);
+            Route::post('/{id}/enable', [SuperAdminController::class, 'enableCurrency']);
+        });
 
-    Route::prefix('/payment-methods')->group(function () {
-        Route::get('/', [SuperAdminController::class, 'getAllPaymentMethods']);
-        Route::post('/{id}/disable', [SuperAdminController::class, 'disablePaymentMethod']);
-        Route::post('/{id}/enable', [SuperAdminController::class, 'enablePaymentMethod']);
-    });
+        Route::prefix('/payment-methods')->group(function () {
+            Route::get('/', [SuperAdminController::class, 'getAllPaymentMethods']);
+            Route::post('/{id}/disable', [SuperAdminController::class, 'disablePaymentMethod']);
+            Route::post('/{id}/enable', [SuperAdminController::class, 'enablePaymentMethod']);
+        });
 
-    Route::prefix('/exchange-rates')->group(function () {
-        Route::get('/', [SuperAdminController::class, 'getAllExchangeRates']);
-        Route::post('/', [SuperAdminController::class, 'setExchangeRate']);
-        Route::post('/{id}', [SuperAdminController::class, 'updateExchangeRate']);
-        Route::delete('/{id}', [SuperAdminController::class, 'deleteExchangeRate']);
-    });
+        Route::prefix('/exchange-rates')->group(function () {
+            Route::get('/', [SuperAdminController::class, 'getAllExchangeRates']);
+            Route::post('/', [SuperAdminController::class, 'setExchangeRate']);
+            Route::post('/{id}', [SuperAdminController::class, 'updateExchangeRate']);
+            Route::delete('/{id}', [SuperAdminController::class, 'deleteExchangeRate']);
+        });
 
-    Route::prefix('/transfer-fees')->group(function () {
-        Route::get('/', [SuperAdminController::class, 'getTransferFees']);
-        Route::put('/', [SuperAdminController::class, 'setTransferFee']);
-    });
-
+        Route::prefix('/transfer-fees')->group(function () {
+            Route::get('/', [SuperAdminController::class, 'getTransferFees']);
+            Route::put('/', [SuperAdminController::class, 'setTransferFee']);
+        });
     });
 });
-

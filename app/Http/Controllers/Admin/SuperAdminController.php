@@ -5,6 +5,7 @@ namespace DaaluPay\Http\Controllers\Admin;
 use DaaluPay\Http\Controllers\BaseController;
 use DaaluPay\Mail\AdminReactivated;
 use DaaluPay\Mail\AdminSuspended;
+use DaaluPay\Mail\AdminUpdated;
 use Illuminate\Http\Request;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\BlogPost;
@@ -18,6 +19,7 @@ use DaaluPay\Models\Swap;
 use DaaluPay\Models\TransferFee;
 use Illuminate\Support\Facades\DB;
 use DaaluPay\Models\Wallet;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Ramsey\Uuid\Uuid;
 
@@ -174,6 +176,37 @@ class SuperAdminController extends BaseController
             return $this->getResponse(
                 data: $admin,
                 message: 'Admin retrieved successfully'
+            );
+        });
+    }
+
+    public function updateAdmin(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $id = $request->route('id');
+            $admin = Admin::find($id);
+
+            if (!$admin) {
+                return $this->getResponse(
+                    status: 'error',
+                    message: 'Admin not found',
+                    status_code: 404
+                );
+            }
+
+            $newDetails = $request->all();
+            // if passwod in details, hash before setiing
+            if (isset($newDetails['password'])) {
+                $newDetails['password'] = Hash::make($newDetails['password']);
+            }
+
+            $admin->update($newDetails);
+
+            Mail::to($admin->email)->send(new AdminUpdated($admin));
+
+            return $this->getResponse(
+                data: $admin,
+                message: 'Admin updated successfully'
             );
         });
     }

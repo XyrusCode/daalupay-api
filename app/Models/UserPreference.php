@@ -20,7 +20,6 @@ class UserPreference extends BaseModel
         'user_id',
         'notify_email',
         'notify_sms',
-        'notify_push',
         'theme',
         'daily_transaction_limit',
         'transaction_total_today',

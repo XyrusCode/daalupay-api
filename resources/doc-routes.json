@@ -477,12 +477,13 @@
                     "description": "Get chat messages",
                     "middleware": "auth:sanctum",
                     "response_body": {
-                    "array":{
-                        "chat_id": "integer",
-                        "sender_id": "integer",
-                        "sent_from": "string:user,agent",
-                        "message": "string"
-                    }}
+                        "array": {
+                            "chat_id": "integer",
+                            "sender_id": "integer",
+                            "sent_from": "string:user,agent",
+                            "message": "string"
+                        }
+                    }
                 },
                 {
                     "route": "/user/chats/{chatId}/messages",
@@ -496,7 +497,6 @@
                         "message": "string"
                     }
                 }
-
             ]
         },
         {
@@ -787,6 +787,13 @@
                             "status": "string"
                         }
                     }
+                },
+                {
+                    "route": "/super-admin/admins/{id}/update",
+                    "method": "POST",
+                    "description": "Update admin by id",
+                    "middleware": ["auth:sanctum", "super-admin"],
+                    "request_body": "admin Object"
                 },
                 {
                     "route": "/super-admin/admins/{id}",

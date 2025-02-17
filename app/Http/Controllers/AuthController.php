@@ -188,11 +188,10 @@ class AuthController extends BaseController
                 'user_id' => $user->id,
                 'notify_email' => 'true',
                 'notify_sms' => 'false',
-                'notify_push' => 'true',
                 'theme' => 'light',
                 'daily_transaction_limit' => '500000',
                 'transaction_total_today' => 0,
-                'last_transaction_date' => '',
+                'last_transaction_date' => now(),
                 'two_fa_enabled' => 'true',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -200,7 +199,7 @@ class AuthController extends BaseController
 
             // generate and send otp for user for testing
             $otp = random_int(10000, 99999);
-            Cache::put('otp_' . $user->id, $otp, now()->addMinutes(15));
+            Cache::put('otp_' . $user->id, $otp, now()->addMinutes(5));
 
             Mail::to($user->email)->send(new NewUser($user, $otp));
 
@@ -224,11 +223,13 @@ class AuthController extends BaseController
             }
 
             $otp = random_int(10000, 99999);
-            Cache::put('otp_' . $user->id, $otp, now()->addMinutes(15));
+            Cache::put('otp_' . $user->id, $otp, now()->addMinutes(5));
 
-            Mail::to($user->email)->send(new OtpNotification($user, $otp, 15));
+            $otpInCache = Cache::get('otp_' . $user->id);
 
-            return $this->getResponse(status: 'success', message: $otp . ' OTP sent to email: ' . $user->email, status_code: 200);
+            Mail::to($user->email)->send(new OtpNotification($user, $otp, 5));
+
+            return $this->getResponse(status: 'success', message: 'OTP sent to email: ' . $user->email, status_code: 200);
         });
     }
 
@@ -242,19 +243,38 @@ class AuthController extends BaseController
 
             $user = User::where('email', $request->email)->first();
 
-            $otp = Cache::get('otp_' . $user->id);
-
-            if (!$otp) {
+            if (!$user) {
                 throw ValidationException::withMessages([
-                    'otp' => ['The provided OTP is incorrect. You were sent ' . $otp . ' and the OTP you entered is ' . $request->otp],
+                    'email' => ['No user found with the provided email address.'],
                 ]);
             }
 
+            $otp = Cache::get('otp_' . $user->id);
+
+            // Ensure the OTP from the cache and request are treated as strings
+            $otpFromCache = (string) $otp;  // Cast cache OTP to string
+            $otpFromRequest = (string) $request->otp;  // Cast request OTP to string
+
+            // Remove any leading/trailing whitespace from both
+            $otpFromCache = trim($otpFromCache);
+            $otpFromRequest = trim($otpFromRequest);
+
+            // Check if OTP exists and matches
+            if ($otpFromCache !== $otpFromRequest) {
+                throw ValidationException::withMessages([
+                    'otp' => ['The provided OTP is incorrect or has expired.'],
+                ]);
+            }
+
+
+            // Mark the user as active and save
             $user->status = 'active';
             $user->save();
+
             return $this->getResponse('success', $user, 200);
         });
     }
+
 
     /**
      * Destroy an authenticated session.

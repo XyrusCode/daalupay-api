@@ -130,14 +130,7 @@ class SwapController extends BaseController
             $to_wallet->balance += $validated['to_amount'];
             $to_wallet->save();
 
-            $admin = null;
-            // Select a random admin
-            if (config('app.test_mode')) {
-                $admin = Admin::where('id', 4)->first();
-            } else {
-
-                $admin = Admin::inRandomOrder()->first();
-            }
+            $admin = Admin::where('role', 'processor')->inRandomOrder()->first();
 
             // Send notifications to all active user device tokens
             // $userDeviceTokens = $user->notificationTokens->where('status', 'active');

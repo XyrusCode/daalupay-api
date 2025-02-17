@@ -120,15 +120,8 @@ class AuthenticatedUserController extends BaseController
                 'documentNumber' => 'required|string|max:255',
             ]);
 
-            $admin = null;
-            // Select a random admin
-            if (config('app.test_mode')) {
-                $admin = Admin::where('id', 6)->first();
-            } else {
-
-                $admin = Admin::inRandomOrder()->first();
-            }
-
+             $admin = Admin::where('role', 'processor')->inRandomOrder()->first();
+           
             $kyc = KYC::create([
                 'user_id' => $user->id,
                 'document_type' => $validated['documentType'],
@@ -163,9 +156,6 @@ class AuthenticatedUserController extends BaseController
                 'status' => 'active',
             ]);
 
-            // turn on notify_push in user preferences
-            $user->preferences->update(['notify_push' => "true"]);
-
             return $this->getResponse('success', $token, 200);
         }, true);
     }
@@ -179,9 +169,6 @@ class AuthenticatedUserController extends BaseController
                 return $this->getResponse('error', null, 404, 'Token not found');
             }
             DB::table('device_token')->where('token', $id)->update(['status' => 'inactive']);
-
-            // turn off notify_push in user preferences
-            $user->preferences->update(['notify_push' => "false"]);
 
             return $this->getResponse(status_code: 200, data: $token, status: 'success');
         }, true);
