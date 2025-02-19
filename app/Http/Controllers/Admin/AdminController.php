@@ -442,7 +442,7 @@ class AdminController extends BaseController
     public function approveReceipt(Request $request, string $id)
     {
         return $this->process(function () use ($request, $id) {
-            $receipt = AlipayPayment::find($id);
+            $alipayPayment = AlipayPayment::find($id);
 
             //check if request has proof of payment
             if (!$request->has('proof_of_payment')) {
@@ -453,7 +453,7 @@ class AdminController extends BaseController
                 );
             }
 
-            if ($receipt->status === 'approved') {
+            if ($alipayPayment->status === 'approved') {
                 return $this->getResponse(
                     status: 'error',
                     message: 'Payment is already approved',
@@ -462,20 +462,20 @@ class AdminController extends BaseController
             }
 
 
-            $receipt->update(['status' => 'completed']);
+            $alipayPayment->update(['status' => 'completed']);
 
-            $user = User::find($receipt->user_id);
+            $user = User::find($alipayPayment->user_id);
 
             // FInd User CNY Wallet
             $yuanCurrency = Currency::where('code', 'CNY')->first();
             $cnyWallet = Wallet::where('user_id', $user->id)->where('currency_id', $yuanCurrency->id)->first();
 
-            $cnyWallet->balance -= $receipt->amount;
+            $cnyWallet->balance -= $alipayPayment->amount;
             $cnyWallet->save();
 
-            Mail::to($user->email)->send(new ReceiptApproved($user, $receipt));
+            Mail::to($user->email)->send(new ReceiptApproved($user, $alipayPayment));
 
-            return $this->getResponse('success', $receipt, 200);
+            return $this->getResponse('success', $alipayPayment, 200);
         }, true);
     }
 
