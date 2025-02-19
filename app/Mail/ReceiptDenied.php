@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use DaaluPay\Models\User;
-use DaaluPay\Models\Receipt;
+use DaaluPay\Models\AlipayPayment;
 
 class ReceiptDenied extends Mailable
 {
@@ -16,15 +16,14 @@ class ReceiptDenied extends Mailable
 
     public function __construct(
         public User $user,
-        public Receipt $receipt,
+        public AlipayPayment $alipayPayment,
         public string $reason
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Receipt Has Been Denied'
+            subject: 'Your Payment Has Been Denied'
         );
     }
 
@@ -34,7 +33,7 @@ class ReceiptDenied extends Mailable
             view: 'emails.receipt.denied',
             with: [
                 'user'    => $this->user,
-                'receipt' => $this->receipt,
+                'alipayPayment' => $this->alipayPayment,
                 'reason'  => $this->reason,
             ],
         );

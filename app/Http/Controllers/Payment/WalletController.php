@@ -258,6 +258,18 @@ class WalletController extends BaseController
             return $this->getResponse('success', $alipayTransfers, 200);
         }, true);
     }
+    public function getAlipayTranfersById(Request $request, $id)
+    {
+        return $this->process(function () use ($request, $id) {
+            $alipayTransfer = AlipayPayment::find($id);
+
+            if (!$alipayTransfer) {
+                return $this->getResponse('failure', null, 404, 'Alipay Receipt not found');
+            }
+
+            return $this->getResponse('success', $alipayTransfer, 200);
+        }, true);
+    }
 
     public function
     getPaymentMethods(Request $request)

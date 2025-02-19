@@ -375,6 +375,23 @@
                     }
                 },
                 {
+                    "route": "/user/alipay/{id}",
+                    "method": "GET",
+                    "description": "Get user Alipay transfer by id",
+                    "middleware": "auth:sanctum",
+                    "response_body": {
+                        "data": {
+                            "amount": "string",
+                            "recipient_address": "string",
+                            "currency": "string",
+                            "document_type": "enum:barcode,alipay_id",
+                            "status": "string",
+                            "proof_of_payment": "string",
+                            "created_at": "timestamp"
+                        }
+                    }
+                },
+                {
                     "route": "/user/swaps",
                     "method": "GET",
                     "description": "Get user currency swaps",

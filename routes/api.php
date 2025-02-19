@@ -120,9 +120,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::post('/', [WalletController::class, 'store']);
             Route::get('/', [WalletController::class, 'index']);
             Route::delete('/{id}', [WalletController::class, 'deleteWallet']);
-            Route::post('/alipay/verify', [WalletController::class, 'verifyAlipay']);
             Route::get('/{uuid}', [WalletController::class, 'getWallet']);
             Route::post('/send', [WalletController::class, 'sendMoney']);
+        });
+
+        Route::prefix('/alipay')->group(function () {
+            Route::get('/', [WalletController::class, 'getAlipayTranfers']);
+            Route::get('/{id}', [WalletController::class, 'getAlipayTranfersById']);
+            Route::post('/verify', [WalletController::class, 'verifyAlipay']);
         });
 
         Route::prefix('/transactions')->group(function () {
