@@ -2,6 +2,7 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\AlipayPayment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -16,7 +17,7 @@ class ReceiptApproved extends Mailable
 
     public function __construct(
         public User $user,
-        public Receipt $receipt
+        public AlipayPayment $alipayPayment
     ) {}
 
     public function envelope(): Envelope
@@ -32,7 +33,7 @@ class ReceiptApproved extends Mailable
             view: 'emails.receipt.approved',
             with: [
                 'user'    => $this->user,
-                'receipt' => $this->receipt,
+                'alipayPayment' => $this->alipayPayment,
             ],
         );
     }

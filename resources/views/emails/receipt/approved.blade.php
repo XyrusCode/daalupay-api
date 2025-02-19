@@ -4,7 +4,7 @@
 
 @section('content')
     <h1>Hello, {{ $user->name }}</h1>
-    <p>Your request to send money to Alipay (ID: {{ $receipt->recipient_alipay_id }}) has been approved.</p>
+    <p>Your request to send money to Alipay (ID: {{ $alipayPayment->recipient_alipay_id }}) has been approved.</p>
     find attached your receipt.
     <p>Amount: {{ $receipt->amount }}</p>
     <p>Recipient Alipay ID: {{ $receipt->recipient_alipay_id }}</p>

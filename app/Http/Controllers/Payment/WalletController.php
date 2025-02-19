@@ -179,7 +179,7 @@ class WalletController extends BaseController
                 'amount' => 'required|string',
                 'recipient_address' => 'required|string',
                 'currency' => 'required|string',
-                'document_type' => 'required|enum:alipay_id,barcode',
+                'document_type' => 'required|string',
             ]);
 
             $currency = Currency::where('code', $validated['currency'])->first();

@@ -89,8 +89,7 @@ Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])
 
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
-Route::get('/verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])
-    ->middleware(['auth', 'signed', 'throttle:6,1']);
+Route::get('/verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])->middleware(['auth', 'signed', 'throttle:6,1']);
 
 Route::post('/email/verification-notification', [AuthController::class, 'sendVerificationEmail'])
     ->middleware(['auth', 'throttle:6,1']);
