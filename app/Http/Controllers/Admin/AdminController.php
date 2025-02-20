@@ -13,6 +13,7 @@ use DaaluPay\Mail\UserReactivated;
 use DaaluPay\Mail\UserSuspended;
 use DaaluPay\Models\Address;
 use DaaluPay\Models\AlipayPayment;
+use DaaluPay\Models\BlogPost;
 use Illuminate\Http\Request;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Transaction;
@@ -38,26 +39,38 @@ class AdminController extends BaseController
             // last 5 transactions assigned to admin
             // $transactions = Transaction::where('admin_id', auth('admin')->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
             // last 5 swaps assigned to admin
-            $swaps = Swap::where('admin_id', $admin_id)->orderBy('created_at', 'desc')->take(5)->with('user')->get();
-            $swaps = $swaps->filter(function ($swap) {
-                return $swap->user !== null;
-            })->map(function ($swap) {
-                $user = $swap->user;
-                $swap->user->fullName = $user->firstName && $user->lastName
-                    ? $user->firstName . ' ' . $user->lastName
-                    : $user->email;
+            // if admin os of role 'processor'
+            $stats = [];
+            if (auth('admin')->user()->role === 'processor') {
+
+                $swaps = Swap::where('admin_id', $admin_id)->orderBy('created_at', 'desc')->take(5)->with('user')->get();
+                $swaps = $swaps->filter(function ($swap) {
+                    return $swap->user !== null;
+                })->map(function ($swap) {
+                    $user = $swap->user;
+                    $swap->user->fullName = $user->firstName && $user->lastName
+                        ? $user->firstName . ' ' . $user->lastName
+                        : $user->email;
 
 
-                return $swap;
-            })->values();
-            // last 5 users assigned to admin
-            // $users = User::where('admin_id', auth('admin')->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
-            // $kycs = KYC::where('admin_id', $admin_id)->orderBy('created_at', 'desc')->take(5)->get();
-            $stats = [
-                // 'transactions' => $transactions,
-                'swaps' => $swaps,
-                // 'kycs' => $kycs,
-            ];
+                    return $swap;
+                })->values();
+                // last 5 users assigned to admin
+                // $users = User::where('admin_id', auth('admin')->user()->id)->orderBy('created_at', 'desc')->take(5)->get();
+                // $kycs = KYC::where('admin_id', $admin_id)->orderBy('created_at', 'desc')->take(5)->get();
+                $stats = [
+                    // 'transactions' => $transactions,
+                    'swaps' => $swaps,
+                    // 'kycs' => $kycs,
+                ];
+            } else {
+                // get blog stats
+                $stats = [
+                    'blogPosts' => BlogPost::count(),
+                    'activeBlogPosts' => BlogPost::where('status', 'true')->count(),
+                ];
+            }
+
 
             return $this->getResponse(status: true, message: 'Admin dashboard fetched where admin is ' . $admin_id, data: $stats);
         }, true);

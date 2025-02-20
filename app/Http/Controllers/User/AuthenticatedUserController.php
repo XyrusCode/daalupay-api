@@ -109,6 +109,41 @@ class AuthenticatedUserController extends BaseController
         }, true);
     }
 
+    public function updatePin(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $user = Auth::user();
+
+            $request->validate([
+                'pin' => ['required', 'string', 'max:4'],
+            ]);
+
+            // Update the user's pin
+            $user->pin = Hash::make($request->pin);
+            $user->save();
+
+            return $this->getResponse('success', $user, 200);
+        }, true);
+    }
+
+    public function verifyPin(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            $user = Auth::user();
+
+            $request->validate([
+                'pin' => ['required', 'string', 'min:4'],
+            ]);
+
+
+            if (!Hash::check($request->pin, $user->pin)) {
+                return $this->getResponse('error', null, 400, 'Pin is incorrect');
+            }
+
+            return $this->getResponse('success', $user, 200);
+        }, true);
+    }
+
     public function createKyc(Request $request)
     {
         return $this->process(function () use ($request) {
@@ -120,8 +155,8 @@ class AuthenticatedUserController extends BaseController
                 'documentNumber' => 'required|string|max:255',
             ]);
 
-             $admin = Admin::where('role', 'processor')->inRandomOrder()->first();
-           
+            $admin = Admin::where('role', 'processor')->inRandomOrder()->first();
+
             $kyc = KYC::create([
                 'user_id' => $user->id,
                 'document_type' => $validated['documentType'],

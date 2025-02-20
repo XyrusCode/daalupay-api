@@ -107,6 +107,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('/', [AuthenticatedUserController::class, 'update']);
         Route::get('/stats', [AuthenticatedUserController::class, 'stats']);
         Route::post('/password', [AuthenticatedUserController::class, 'updatePassword']);
+        Route::post('/pin', [AuthenticatedUserController::class, 'updatePin']);
+        Route::post('/pin/verify', [AuthenticatedUserController::class, 'verifyPin']);
 
         Route::prefix('/notification-tokens')->group(function () {
             Route::post('/', [AuthenticatedUserController::class, 'storeNotificationToken']);

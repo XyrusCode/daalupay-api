@@ -2,6 +2,7 @@
 
 namespace DaaluPay\Http\Controllers;
 
+use DaaluPay\Exceptions\NotFoundException;
 use DaaluPay\Http\Controllers\BaseController;
 use DaaluPay\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
@@ -184,18 +185,21 @@ class AuthController extends BaseController
                 'zip_code' => $request->zipCode,
             ]);
 
-            UserPreference::create([
-                'user_id' => $user->id,
-                'notify_email' => 'true',
-                'notify_sms' => 'false',
-                'theme' => 'light',
-                'daily_transaction_limit' => '500000',
-                'transaction_total_today' => 0,
-                'last_transaction_date' => now(),
-                'two_fa_enabled' => 'true',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            if (!config('app.test_mode')) {
+
+                UserPreference::create([
+                    'user_id' => $user->id,
+                    'notify_email' => 'true',
+                    'notify_sms' => 'false',
+                    'theme' => 'light',
+                    'daily_transaction_limit' => '500000',
+                    'transaction_total_today' => 0,
+                    'last_transaction_date' => now(),
+                    'two_fa_enabled' => 'true',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
 
             // generate and send otp for user for testing
             $otp = random_int(10000, 99999);
@@ -371,33 +375,50 @@ class AuthController extends BaseController
     public function resetPassword(Request $request): JsonResponse
     {
         $request->validate([
-            'token' => ['required'],
-            'email' => ['required'],
-            'password' => ['required'],
+            'token'                 => ['required'],
+            'user_id' => ['required'],
+            'password'              => ['required'],
             'password_confirmation' => ['required'],
         ]);
+
+        $userId = $request->user_id;  // Cast request UserID to string
+        // remove any leading/trailing whitespace
+        $userId = trim($userId);
 
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
         // database. Otherwise we will parse the error and return the response.
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('uuid', $userId)->first();
+        // if user not found return error
+        if (!$user) {
+            throw new NotFoundException('User not found');
+        }
 
         // confirm token is valid from cache
         $token = Cache::get('password_reset_token_' . $user->id);
 
         if (!$token) {
-            throw ValidationException::withMessages([
-                'token' => ['The provided token is incorrect.'],
+            throw new NotFoundException(
+                'Token not found for this user, initate another passwword reset request.'
+            );
+        }
+
+        if ($token !== $request->token) {
+            throw new ValidationException([
+                'token' => ['Invalid token'],
             ]);
         }
 
-        Mail::to($user->email)->send(new PasswordChanged($user));
+        // if token is valid, send email to user
+        if ($token === $request->token) {
 
-        // delete token from cache
-        Cache::forget('password_reset_token_' . $user->id);
+            Cache::forget('password_reset_token_' . $user->id);
 
-        $user->password = Hash::make($request->password);
-        $user->save();
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            Mail::to($user->email)->send(new PasswordChanged($user));
+        }
 
         return $this->getResponse(status: 'success', message: 'Password reset successful', status_code: 200);
     }

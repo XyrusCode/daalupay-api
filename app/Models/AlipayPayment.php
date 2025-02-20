@@ -14,6 +14,9 @@ class AlipayPayment extends Model
         'amount',
         'status',
         'recipient_alipay_id',
+        'recipient_name',
+        'recipient_email',
+        'description',
         'transaction_id',
         'document_type',
         'proof_of_payment',
@@ -28,5 +31,4 @@ class AlipayPayment extends Model
     {
         return $this->belongsTo(User::class);
     }
-
 }

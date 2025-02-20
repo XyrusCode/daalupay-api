@@ -334,6 +334,9 @@
                     "request_body": {
                         "amount": "string",
                         "recipient_address": "string",
+                        "recipient_name": "string",
+                        "recipient_email": "string",
+                        "description": "string",
                         "currency": "string",
                         "document_type": "enum:barcode,alipay_id"
                     },
@@ -363,11 +366,14 @@
                     "response_body": {
                         "data": [
                             {
+                                "user_id": "integer",
                                 "amount": "string",
                                 "recipient_address": "string",
-                                "currency": "string",
+                                "recipient_name": "string",
+                                "recipient_email": "string",
+                                "description": "string",
                                 "document_type": "enum:barcode,alipay_id",
-                                "status": "string",
+                                "status": "string: pending,approved,rejected, completed",
                                 "proof_of_payment": "string",
                                 "created_at": "timestamp"
                             }

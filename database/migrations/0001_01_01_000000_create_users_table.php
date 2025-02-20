@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-             $table->id()->primary();
+            $table->id()->primary();
             $table->uuid('uuid')->unique();
             $table->string('first_name');
             $table->string('last_name');
@@ -23,6 +23,7 @@ return new class extends Migration
             $table->enum('kyc_status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('pin')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
@@ -43,7 +44,6 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
-
     }
 
     /**

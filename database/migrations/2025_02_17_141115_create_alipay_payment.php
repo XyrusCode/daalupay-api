@@ -17,6 +17,9 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->enum('status', ['pending', 'completed', 'rejected']);
             $table->string('recipient_alipay_id');
+            $table->string('recipient_name');
+            $table->string('recipient_email');
+            $table->text('description');
             $table->foreignId('transaction_id')->nullable()->constrained()->onDelete('set null');
             $table->string('document_type');
             $table->string('proof_of_payment');

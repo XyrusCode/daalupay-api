@@ -100,6 +100,7 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
+        'pin',
         'status',
         'kyc_status',
     ];
@@ -110,6 +111,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
+        'pin',
         'password',
         'remember_token',
     ];
@@ -194,23 +196,23 @@ class User extends Authenticatable
     }
 
 
-/**
- * A user can have many messages
- *
- * @return \Illuminate\Database\Eloquent\Relations\HasMany
- */
-public function messages()
-{
-  return $this->hasMany(Message::class);
-}
+    /**
+     * A user can have many messages
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
 
-/**
- * A user can have one preference
- *
- * @return \Illuminate\Database\Eloquent\Relations\HasMany
- */
-public function preferences()    {
-    return $this->hasOne(UserPreference::class);
-}
-
+    /**
+     * A user can have one preference
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function preferences()
+    {
+        return $this->hasOne(UserPreference::class);
+    }
 }

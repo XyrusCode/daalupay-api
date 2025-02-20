@@ -125,13 +125,6 @@ class SwapController extends BaseController
                 );
             }
 
-            // Update wallet balances
-            $from_wallet->balance -= $validated['from_amount'];
-            $from_wallet->save();
-
-            $to_wallet->balance += $validated['to_amount'];
-            $to_wallet->save();
-
             $admin = Admin::where('role', 'processor')->inRandomOrder()->first();
 
             // Send notifications to all active user device tokens
