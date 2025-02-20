@@ -248,6 +248,7 @@ class AdminController extends BaseController
             $swap->update([
                 'status' => 'approved'
             ]);
+            $swap->save();
 
             Mail::to($user->email)->send(new SwapCompleted($user, $swap));
 
