@@ -413,8 +413,14 @@ class AuthController extends BaseController
             'email' => ['required', 'email'],
         ]);;
 
-
         $user = User::where('email', $request->email)->first();
+
+        // if user does not exist
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided email is incorrect.'],
+            ]);
+        }
 
         // Generate a new password reset token
         $token = Str::random(60);
