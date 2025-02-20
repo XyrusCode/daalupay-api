@@ -178,6 +178,9 @@ class WalletController extends BaseController
             $validated = $request->validate([
                 'amount' => 'required|string',
                 'recipient_address' => 'required|string',
+                'recipient_name' => 'required|string',
+                'recipient_email' => 'required|string',
+                'description' => 'required|string',
                 'currency' => 'required|string',
                 'document_type' => 'required|string',
             ]);
@@ -233,7 +236,9 @@ class WalletController extends BaseController
                 'amount' => $validated['amount'],
                 'status' => 'pending',
                 'recipient_alipay_id' => $validated['recipient_address'],
-                'transaction_id' => $transaction->id,
+                'recipient_name' => $validated['recipient_name'],
+                'recipient_email' => $validated['recipient_email'],
+                'description' => $validated['description'],
                 'document_type' => $validated['document_type'],
                 'proof_of_payment' => '',
                 'created_at' => now(),
