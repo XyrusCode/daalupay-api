@@ -462,7 +462,10 @@ class AdminController extends BaseController
             }
 
 
-            $alipayPayment->update(['status' => 'completed']);
+            $alipayPayment->update([
+                'proof_of_payment' => $request->proof_of_payment,
+                'status' => 'completed'
+            ]);
 
             $user = User::find($alipayPayment->user_id);
 
