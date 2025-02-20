@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use DaaluPay\Models\User;
-use DaaluPay\Models\Transaction;
+use DaaluPay\Models\AlipayPayment;
 
 class PaymentReceived extends Mailable
 {
@@ -19,9 +19,8 @@ class PaymentReceived extends Mailable
      */
     public function __construct(
         public User $user,
-        public Transaction $transaction
-    ) {
-    }
+        public AlipayPayment $transaction
+    ) {}
 
     /**
      * Get the message envelope.

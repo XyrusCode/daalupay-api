@@ -26,7 +26,8 @@ use DaaluPay\Models\Currency;
 use DaaluPay\Models\Receipt;
 use Illuminate\Support\Facades\URL;
 use DaaluPay\Models\Wallet;
-use DaaluPay\Notifications\SwapApproved;
+use DaaluPay\Mail\PaymentReceived;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class AdminController extends BaseController
@@ -203,12 +204,50 @@ class AdminController extends BaseController
             $id = $request->route('id');
             $swap = Swap::find($id);
 
+            $user = User::find($swap->user_id);
+
+            // update user wallet
+            // Retrieve currency IDs, and check if they exist
+            $fromCurrency = DB::table('currencies')
+                ->where('code', $swap->from_currency)
+                ->first();
+
+            $toCurrency = DB::table('currencies')
+                ->where('code', $swap->to_currency)
+                ->first();
+
+            if (!$fromCurrency) {
+                return $this->getResponse(
+                    status: false,
+                    message: 'From currency not found',
+                    data: null,
+                    status_code: 404
+                );
+            }
+
+            if (!$toCurrency) {
+                return $this->getResponse(
+                    status: false,
+                    message: 'To currency not found',
+                    data: null,
+                    status_code: 404
+                );
+            }
+
+            // Retrieve the wallets for the user for the specified currencies
+            $from_wallet = $user->wallets()->where('currency_id', $fromCurrency->id)->first();
+            $to_wallet   = $user->wallets()->where('currency_id', $toCurrency->id)->first();
+
+            // Update wallet balances
+            $from_wallet->balance -= $swap->from_amount;
+            $from_wallet->save();
+
+            $to_wallet->balance += $swap->to_amount;
+            $to_wallet->save();
 
             $swap->update([
                 'status' => 'approved'
             ]);
-
-            $user = User::find($swap->user_id);
 
             Mail::to($user->email)->send(new SwapCompleted($user, $swap));
 
@@ -490,6 +529,7 @@ class AdminController extends BaseController
             $cnyWallet->save();
 
             Mail::to($user->email)->send(new ReceiptApproved($user, $alipayPayment));
+            Mail::to($user->email)->send(new PaymentReceived($user, $alipayPayment));
 
             return $this->getResponse('success', $alipayPayment, 200);
         }, true);
