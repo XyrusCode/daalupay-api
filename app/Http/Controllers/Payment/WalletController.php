@@ -240,6 +240,7 @@ class WalletController extends BaseController
                 'recipient_email' => $validated['recipient_email'],
                 'description' => $validated['description'],
                 'document_type' => $validated['document_type'],
+                'transaction_id' => $transaction->id,
                 'proof_of_payment' => '',
                 'created_at' => now(),
                 'updated_at' => now(),

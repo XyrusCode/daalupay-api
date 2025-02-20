@@ -121,6 +121,24 @@
                     }
                 },
                 {
+                    "route": "/pin",
+                    "method": "POST",
+                    "description": "Create a secuirty pin",
+                    "middleware": [],
+                    "request_body": {
+                        "pin": "string"
+                    }
+                },
+                {
+                    "route": "/pin/verify",
+                    "method": "POST",
+                    "description": "Verify already created or existing pin",
+                    "middleware": [],
+                    "request_body": {
+                        "pin": "string"
+                    }
+                },
+                {
                     "route": "/forgot-password",
                     "method": "POST",
                     "description": "Send password reset link",
