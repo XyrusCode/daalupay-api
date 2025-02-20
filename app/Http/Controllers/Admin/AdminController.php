@@ -250,6 +250,12 @@ class AdminController extends BaseController
             ]);
             $swap->save();
 
+            $transaction = Transaction::where('id', $swap->transaction_id)->first();
+            $transaction->update([
+                'status' => 'completed'
+            ]);
+            $transaction->save();
+
             Mail::to($user->email)->send(new SwapCompleted($user, $swap));
 
             return $this->getResponse(
@@ -519,6 +525,7 @@ class AdminController extends BaseController
                 'proof_of_payment' => $request->proof_of_payment,
                 'status' => 'completed'
             ]);
+            $alipayPayment->save();
 
             $user = User::find($alipayPayment->user_id);
 
@@ -528,6 +535,12 @@ class AdminController extends BaseController
 
             $cnyWallet->balance -= $alipayPayment->amount;
             $cnyWallet->save();
+
+            $transaction = Transaction::where('id', $alipayPayment->transaction_id)->first();
+            $transaction->update([
+                'status' => 'completed'
+            ]);
+            $transaction->save();
 
             Mail::to($user->email)->send(new ReceiptApproved($user, $alipayPayment));
             Mail::to($user->email)->send(new PaymentReceived($user, $alipayPayment));
