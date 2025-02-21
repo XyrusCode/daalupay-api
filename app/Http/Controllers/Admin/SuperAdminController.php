@@ -92,7 +92,19 @@ class SuperAdminController extends BaseController
 
 
             $users = User::get();
-            $swaps = Swap::get();
+            $swaps = Swap::with('user')->get();
+
+            $swaps = $swaps->filter(function ($swap) {
+                return $swap->user !== null;
+            })->map(function ($swap) {
+                $user = $swap->user;
+                $swap->user->fullName = $user->firstName && $user->lastName
+                    ? $user->firstName . ' ' . $user->lastName
+                    : $user->email;
+
+
+                return $swap;
+            })->values();
 
             $ngnCode = Currency::where('code', 'NGN')->first();
 

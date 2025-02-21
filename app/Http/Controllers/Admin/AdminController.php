@@ -501,6 +501,10 @@ class AdminController extends BaseController
     public function approveReceipt(Request $request, string $id)
     {
         return $this->process(function () use ($request, $id) {
+            $request->validate([
+                'proof_of_payment' => 'required'
+            ]);
+
             $alipayPayment = AlipayPayment::find($id);
 
             //check if request has proof of payment
@@ -552,6 +556,10 @@ class AdminController extends BaseController
     public function denyReceipt(Request $request, string $id)
     {
         return $this->process(function () use ($request, $id) {
+            $request->validate([
+                'reason' => 'required'
+            ]);
+
             $receipt = AlipayPayment::find($id);
             $receipt->update(['status' => 'rejected']);
 
