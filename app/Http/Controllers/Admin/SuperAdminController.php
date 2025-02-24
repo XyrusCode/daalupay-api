@@ -345,13 +345,12 @@ class SuperAdminController extends BaseController
     public function getAllCurrencies(Request $request)
     {
         return $this->process(function () use ($request) {
-            $currencies = Currency::query();
+            // Create a subquery to get the minimum id for each currency code
+            $subQuery = Currency::selectRaw('MIN(id) as id')
+                ->groupBy('code');
 
-            // if ($request->filled('status')) {
-            //     $currencies->where('status', $request->input('status'));
-            // }
-
-            $currencies = $currencies->get();
+            // Retrieve full records matching those ids
+            $currencies = Currency::whereIn('id', $subQuery)->get();
 
             return $this->getResponse(
                 data: $currencies,
