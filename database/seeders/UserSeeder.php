@@ -50,6 +50,7 @@ class UserSeeder extends Seeder
             'document_type' => 'passport',
             'document_number' => Faker::create()->randomNumber(8, true),
             'document_image' => Faker::create()->imageUrl(),
+            'passport_image' => Faker::create()->imageUrl(),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
