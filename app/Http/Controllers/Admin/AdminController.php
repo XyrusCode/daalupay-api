@@ -27,6 +27,7 @@ use DaaluPay\Models\Receipt;
 use Illuminate\Support\Facades\URL;
 use DaaluPay\Models\Wallet;
 use DaaluPay\Mail\PaymentReceived;
+use DaaluPay\Models\Withdrawal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -196,103 +197,6 @@ class AdminController extends BaseController
             return $this->getResponse('success', $suspension, 200);
         }, true);
     }
-
-    public function approveTransaction(Request $request)
-    {
-        return $this->process(function () use ($request) {
-            // get id from route
-            $id = $request->route('id');
-            $swap = Swap::find($id);
-
-            $user = User::find($swap->user_id);
-
-            // update user wallet
-            // Retrieve currency IDs, and check if they exist
-            $fromCurrency = DB::table('currencies')
-                ->where('code', $swap->from_currency)
-                ->first();
-
-            $toCurrency = DB::table('currencies')
-                ->where('code', $swap->to_currency)
-                ->first();
-
-            if (!$fromCurrency) {
-                return $this->getResponse(
-                    status: false,
-                    message: 'From currency not found',
-                    data: null,
-                    status_code: 404
-                );
-            }
-
-            if (!$toCurrency) {
-                return $this->getResponse(
-                    status: false,
-                    message: 'To currency not found',
-                    data: null,
-                    status_code: 404
-                );
-            }
-
-            // Retrieve the wallets for the user for the specified currencies
-            $from_wallet = $user->wallets()->where('currency_id', $fromCurrency->id)->first();
-            $to_wallet   = $user->wallets()->where('currency_id', $toCurrency->id)->first();
-
-            // Update wallet balances
-            $from_wallet->balance -= $swap->from_amount;
-            $from_wallet->save();
-
-            $to_wallet->balance += $swap->to_amount;
-            $to_wallet->save();
-
-            $swap->update([
-                'status' => 'approved'
-            ]);
-            $swap->save();
-
-            $transaction = Transaction::where('id', $swap->transaction_id)->first();
-            $transaction->update([
-                'status' => 'completed'
-            ]);
-            $transaction->save();
-
-            Mail::to($user->email)->send(new SwapCompleted($user, $swap));
-
-            return $this->getResponse(
-                data: $swap,
-                message: 'Swap approved successfully'
-            );
-        }, true);
-    }
-
-    public function denyTransaction(Request $request)
-    {
-        return $this->process(function () use ($request) {
-            // get id from route
-            $id = $request->route('id');
-            $reason = $request->reason;
-            $swap = Swap::find($id);
-
-            $swap->update([
-                'status' => 'rejected'
-            ]);
-
-            $user = User::find($swap->user_id);
-
-            Mail::to($user->email)->send(new TransactionDenied($user, $swap, $reason));
-
-            return $this->getResponse(
-                data: $swap,
-                message: 'Swap rejected successfully'
-            );
-            return $this->getResponse(
-                status: 'error',
-                message: 'Transaction is not pending approval',
-                status_code: 400
-            );
-        });
-    }
-
 
     public function approveUserVerification(Request $request)
     {
@@ -568,5 +472,98 @@ class AdminController extends BaseController
             Mail::to($user->email)->send(new ReceiptDenied($user, $receipt, $request->reason));
             return $this->getResponse('success', $receipt, 200);
         }, true);
+    }
+
+    public function getWithdrawals()
+    {
+        return $this->process(function () {
+            $withdrawals = Withdrawal::all();
+
+
+
+            return $this->getResponse('success', $withdrawals, 200);
+        }, true);
+    }
+
+    public function getWithdrawal($id)
+    {
+        return $this->process(function () use ($id) {
+            $withdrawal = Withdrawal::findOrFail($id);
+
+            return $this->getResponse('success', $withdrawal, 200);
+        }, true);
+    }
+
+    public function approveWithdrawal(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            // get id from route
+            $id = $request->route('id');
+            $withdrawal = Withdrawal::find($id);
+
+            $request->validate([
+                'proof_of_payment' => 'required'
+            ]);
+
+
+            //check if request has proof of payment
+            if (!$request->has('proof_of_payment')) {
+                return $this->getResponse(
+                    status: 'error',
+                    message: 'Proof of payment is required',
+                    status_code: 400
+                );
+            }
+
+            $user = User::find($withdrawal->user_id);
+
+            $withdrawal->update([
+                'proof_of_payment' => $request->proof_of_payment,
+                'status' => 'approved',
+                'approved_at' => now(),
+                'completed_at' => now(),
+                'processed_at' => now()
+            ]);
+            $withdrawal->save();
+
+            $transaction = Transaction::where('id', $withdrawal->transaction_id)->first();
+            $transaction->update([
+                'status' => 'completed',
+
+            ]);
+            $transaction->save();
+
+            Mail::to($user->email)->send(new SwapCompleted($user, $withdrawal));
+
+            return $this->getResponse(
+                data: $withdrawal,
+                message: 'Withdrawal approved successfully'
+            );
+        }, true);
+    }
+
+    public function denyWithdrawal(Request $request)
+    {
+        return $this->process(function () use ($request) {
+            // get id from route
+            $id = $request->route('id');
+            $reason = $request->reason;
+            $withdrawal = Withdrawal::find($id);
+
+            $withdrawal->update([
+                'status' => 'rejected',
+                'declined_at' => now(),
+                'cancelled_at' => now(),
+            ]);
+
+            $user = User::find($withdrawal->user_id);
+
+            Mail::to($user->email)->send(new TransactionDenied($user, $withdrawal, $reason));
+
+            return $this->getResponse(
+                data: $withdrawal,
+                message: 'Withdrawal rejected successfully'
+            );
+        });
     }
 }

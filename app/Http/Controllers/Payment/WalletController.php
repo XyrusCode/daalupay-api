@@ -78,12 +78,9 @@ class WalletController extends BaseController
             $user = $request->user();
             $admin = null;
             // Select a random admin
-            if (config('app.test_mode')) {
-                $admin = Admin::where('id', 6)->first();
-            } else {
 
                 $admin = Admin::inRandomOrder()->first();
-            }
+
 
             $receipt = Receipt::create([
                 'user_id' => $user->id,

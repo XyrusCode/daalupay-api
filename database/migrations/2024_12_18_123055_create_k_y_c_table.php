@@ -18,6 +18,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->text('reason')->nullable();
             $table->enum('type', ['individual', 'company'])->default('individual');
+            $table->string('passport_photo');
             $table->enum('document_type', ['passport', 'national_id', 'driver_license', 'voter_id', 'other'])->default('passport');
             $table->string('document_number');
             $table->string('document_image');

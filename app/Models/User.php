@@ -170,6 +170,26 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the withdrawals for the user.
+     *
+     * @return HasMany
+     */
+    public function withdrawals(): HasMany
+    {
+        return $this->hasMany(Withdrawal::class);
+    }
+
+    /**
+     * Get the bank accounts for the user.
+     *
+     * @return HasMany
+     */
+    public function bankAccounts(): HasMany
+    {
+        return $this->hasMany(UserBankAccount::class);
+    }
+
+    /**
      * Get the swaps for the user.
      *
      * @return HasMany

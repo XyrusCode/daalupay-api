@@ -7,7 +7,7 @@ use DaaluPay\Mail\TransactionPending;
 use DaaluPay\Models\Admin;
 use Illuminate\Http\Request;
 use DaaluPay\Models\Swap;
-use DaaluPay\Notifications\SwapApprovalNotification;
+use DaaluPay\Mail\SwapCompleted;
 use DaaluPay\Models\Currency;
 use DaaluPay\Models\Transaction;
 use Illuminate\Support\Facades\DB;
@@ -125,7 +125,14 @@ class SwapController extends BaseController
                 );
             }
 
-            $admin = Admin::where('role', 'processor')->inRandomOrder()->first();
+            $from_wallet->balance -= $validated['from_amount'];
+            $from_wallet->save();
+
+            $to_wallet->balance += $validated['to_amount'];
+            $to_wallet->save();
+
+
+
 
             // Send notifications to all active user device tokens
             // $userDeviceTokens = $user->notificationTokens->where('status', 'active');
@@ -136,6 +143,7 @@ class SwapController extends BaseController
             //         'Your swap request has been created'
             //     );
             // }
+            $admin = Admin::inRandomOrder()->first();
 
             // Create a new transaction record
             $transaction = Transaction::create([
@@ -144,7 +152,7 @@ class SwapController extends BaseController
                 'channel'          => 'paystack',
                 'amount'           => $validated['to_amount'] + ($validated['fees'] ?? 0),
                 'type'             => 'swap',
-                'status'           => 'pending',
+                'status'           => 'completed',
                 'user_id'          => $user->id,
                 'created_at'       => now(),
                 'updated_at'       => now(),
@@ -159,7 +167,7 @@ class SwapController extends BaseController
                 'from_amount'    => $validated['from_amount'],
                 'to_amount'      => $validated['to_amount'],
                 'rate'           => $validated['rate'],
-                'status'         => 'pending',
+                'status'         => 'approved',
                 'admin_id'       => $admin->id,
                 'transaction_id' => $transaction->id,
             ]);
@@ -170,7 +178,7 @@ class SwapController extends BaseController
                 'last_transaction_date'   => now(),
             ]);
 
-            Mail::to($user->email)->send(new TransactionPending($user, $swap));
+            Mail::to($user->email)->send(new SwapCompleted($user, $swap));
 
             return $this->getResponse(
                 status: true,

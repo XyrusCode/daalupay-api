@@ -11,6 +11,7 @@ use DaaluPay\Models\User;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\Address;
 use DaaluPay\Models\KYC;
+use DaaluPay\Models\UserBankAccount;
 use Daalupay\Models\UserPreference;
 
 class UserSeeder extends Seeder
@@ -30,7 +31,7 @@ class UserSeeder extends Seeder
             'uuid' => Uuid::uuid4(),
             'first_name' => 'Prince',
             'last_name' => 'Shammah',
-            'email' => 'prince.shammah@walexbiz.com',
+            'email' => 'prince.shammah@walexbizhost.com',
             'password' => Hash::make('password'),
             'gender' => 'male',
             'phone' => '08123456789',
@@ -58,6 +59,15 @@ class UserSeeder extends Seeder
             'town' => Faker::create()->city,
             'state' => Faker::create()->state,
             'country' => Faker::create()->country,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        UserBankAccount::create([
+            'user_id' => 1,
+            'account_number' => Faker::create()->bankAccountNumber,
+            'account_name' => 'Prince Shammah',
+            'name' => 'Walexbizhost',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -113,6 +123,15 @@ class UserSeeder extends Seeder
                     'document_type' => 'passport',
                     'document_number' => Faker::create()->randomNumber(8, true),
                     'document_image' => Faker::create()->imageUrl(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                UserBankAccount::create([
+                    'user_id' => $i,
+                    'account_number' => Faker::create()->bankAccountNumber,
+                    'account_name' => $firstName . ' ' . $lastName,
+                    'name' => Faker::create()->company,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

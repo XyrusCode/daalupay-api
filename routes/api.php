@@ -152,6 +152,18 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::post('/', [AuthenticatedUserController::class, 'createKyc']);
         });
 
+        // Set bank account
+        Route::prefix('/bank-account')->group(function () {
+            Route::post('/', [AuthenticatedUserController::class, 'setBankAccount']);
+            Route::get('/', [AuthenticatedUserController::class, 'getBankAccount']);
+        });
+
+        // Withdraw
+        Route::prefix('/withdraw')->group(function () {
+            Route::post('/', [AuthenticatedUserController::class, 'withdraw']);
+            Route::get('/', [AuthenticatedUserController::class, 'getWithdrawals']);
+        });
+
         // Routes for user preferences
         Route::get('/preferences', [UserPreferenceController::class, 'show']);
         Route::post('/preferences', [UserPreferenceController::class, 'update']);;
@@ -189,8 +201,13 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
         Route::prefix('/transactions')->group(function () {
             Route::get('/', [AdminController::class, 'getTransactions']);
             Route::get('/{id}', [AdminController::class, 'getTransaction']);
-            Route::post('/{id}/approve', [AdminController::class, 'approveTransaction']);
-            Route::post('/{id}/deny', [AdminController::class, 'denyTransaction']);
+        });
+
+        Route::prefix('/withdrawals')->group(function () {
+            Route::get('/', [AdminController::class, 'getWithdrawals']);
+            Route::get('/{id}', [AdminController::class, 'getWithdrawal']);
+            Route::post('/{id}/approve', [AdminController::class, 'approveWithdrawal']);
+            Route::post('/{id}/deny', [AdminController::class, 'denyWithdrawal']);
         });
 
         Route::prefix('/receipts')->group(function () {
@@ -209,10 +226,10 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
             Route::delete('/{id}', [BlogPostController::class, 'deleteBlogPost']);
         });
 
-        Route::get('/chats/pending', [AdminChatController::class, 'getPendingChats']);
-        Route::post('/chats/{chatId}/assign', [AdminChatController::class, 'assignChat']);
-        Route::post('/chats/{chatId}/messages', [AdminChatController::class, 'sendAdminMessage']);
-        Route::post('/chats/{chatId}/close', [AdminChatController::class, 'closeChat']);
+        // Route::get('/chats/pending', [AdminChatController::class, 'getPendingChats']);
+        // Route::post('/chats/{chatId}/assign', [AdminChatController::class, 'assignChat']);
+        // Route::post('/chats/{chatId}/messages', [AdminChatController::class, 'sendAdminMessage']);
+        // Route::post('/chats/{chatId}/close', [AdminChatController::class, 'closeChat']);
     });
 });
 

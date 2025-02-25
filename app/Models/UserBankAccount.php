@@ -4,19 +4,16 @@ namespace DaaluPay\Models;
 
 use OpenApi\Annotations as OA;
 
-class UserBank extends BaseModel
+class UserBankAccount extends BaseModel
 {
-    protected $table = 'user_bank';
+    protected $table = 'user_bank_accounts';
 
     protected $fillable = [
+        'user_id',
         'account_number',
-        'name',
-        'user_id'
-    ];
+        'account_name',
+        'bank_name'
 
-    protected $visible = [
-        'account_number',
-        'name'
     ];
 
     protected $validationRules = [
@@ -25,7 +22,7 @@ class UserBank extends BaseModel
                 'required'
             ]
         ],
-        'name' => [
+        'bank_name' => [
             'rules' => [
                 'required'
             ]

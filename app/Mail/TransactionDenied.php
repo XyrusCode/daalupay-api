@@ -9,6 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use DaaluPay\Models\User;
+use DaaluPay\Models\Withdrawal;
 
 class TransactionDenied extends Mailable
 {
@@ -16,7 +17,7 @@ class TransactionDenied extends Mailable
 
     public function __construct(
         public User $user,
-        public Swap $swap,
+        public Withdrawal $TransactionDenied,
         public string $reason
     ) {
     }
@@ -34,7 +35,7 @@ class TransactionDenied extends Mailable
             view: 'emails.transaction.denied',
             with: [
                 'user'        => $this->user,
-                'swap' => $this->swap,
+                'TransactionDenied' => $this->TransactionDenied,
                 'reason'      => $this->reason,
             ],
         );

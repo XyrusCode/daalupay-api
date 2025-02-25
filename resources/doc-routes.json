@@ -221,6 +221,7 @@
                     "description": "Create user KYC",
                     "middleware": "auth:sanctum",
                     "request_body": {
+                        "passportPhoto": "string",
                         "documentType": "enum:passport,national_id,driver_license,voter_id,other",
                         "documentFile": "file",
                         "documentNumber": "string"
@@ -557,6 +558,46 @@
                         "sent_from": "string:user,agent",
                         "message": "string"
                     }
+                },
+                {
+                    "route": "/user/bank-account",
+                    "method": "POST",
+                    "description": "Set user bank account",
+                    "middleware": "auth:sanctum",
+                    "request_body": {
+                        "account_number": "string",
+                        "bank_name": "string",
+                        "account_name": "string"
+                    }
+                },
+                {
+                    "route": "/user/bank-account",
+                    "method": "GET",
+                    "description": "Get user bank account",
+                    "middleware": "auth:sanctum",
+                    "response_body": {
+                        "account_number": "string",
+                        "bank_name": "string",
+                        "account_name": "string"
+                    }
+                },
+                {
+                    "route": "/user/withdraw",
+                    "method": "POST",
+                    "description": "Withdraw funds",
+                    "middleware": "auth:sanctum",
+                    "request_body": {
+                        "amount": "decimal"
+                    }
+                },
+                {
+                    "route": "/user/withdraw",
+                    "method": "GET",
+                    "description": "Get user withdrawals",
+                    "middleware": "auth:sanctum",
+                    "response_body": {
+                        "withdrawals": "array:object"
+                    }
                 }
             ]
         },
@@ -687,21 +728,7 @@
                         "transaction": "object"
                     }
                 },
-                {
-                    "route": "/admin/transactions/{id}/approve",
-                    "method": "POST",
-                    "description": "Approve transaction",
-                    "middleware": ["auth:sanctum", "admin"]
-                },
-                {
-                    "route": "/admin/transactions/{id}/deny",
-                    "method": "POST",
-                    "description": "Deny transaction",
-                    "middleware": ["auth:sanctum", "admin"],
-                    "request_body": {
-                        "reason": "string"
-                    }
-                },
+
                 {
                     "route": "/admin/receipts",
                     "method": "GET",
@@ -740,6 +767,48 @@
                     "route": "/admin/receipts/{id}/deny",
                     "method": "POST",
                     "description": "Deny receipt",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "request_body": {
+                        "reason": "string"
+                    }
+                },
+                {
+                    "route": "/admin/withdrawals",
+                    "method": "GET",
+                    "description": "Get all withdrawals",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "response_body": {
+                        "withdrawals": [
+                            {
+                                "id": "integer",
+                                "user_id": "integer",
+                                "amount": "decimal",
+                                "type": "string",
+                                "status": "string",
+                                "created_at": "timestamp"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "route": "/admin/withdrawals/{id}",
+                    "method": "GET",
+                    "description": "Get transaction by id",
+                    "middleware": ["auth:sanctum", "admin"],
+                    "response_body": {
+                        "withdrawal": "object"
+                    }
+                },
+                {
+                    "route": "/admin/withdrawals/{id}/approve",
+                    "method": "POST",
+                    "description": "Approve withdrawal",
+                    "middleware": ["auth:sanctum", "admin"]
+                },
+                {
+                    "route": "/admin/withdrawals/{id}/deny",
+                    "method": "POST",
+                    "description": "Deny withdrawal",
                     "middleware": ["auth:sanctum", "admin"],
                     "request_body": {
                         "reason": "string"

@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use DaaluPay\Models\User;
-use DaaluPay\Models\Transaction;
+use DaaluPay\Models\Withdrawal;
 
 class TransactionApproved extends Mailable
 {
@@ -16,14 +16,14 @@ class TransactionApproved extends Mailable
 
     public function __construct(
         public User $user,
-        public Transaction $transaction
+        public Withdrawal $withdrawal
     ) {
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Transaction Has Been Approved'
+            subject: 'Your Withdrawal Has Been Approved'
         );
     }
 
@@ -33,7 +33,7 @@ class TransactionApproved extends Mailable
             view: 'emails.transaction.approved',
             with: [
                 'user'        => $this->user,
-                'transaction' => $this->transaction,
+                'withdrawal' => $this->withdrawal,
             ],
         );
     }
