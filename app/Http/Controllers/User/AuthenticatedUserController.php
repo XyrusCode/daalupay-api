@@ -18,6 +18,8 @@ use DaaluPay\Models\Withdrawal;
 use DaaluPay\Models\NotificationToken;
 use DaaluPay\Models\UserBankAccount;
 use DaaluPay\Services\FCMService;
+use Illuminate\Support\Facades\Mail;
+use DaaluPay\Mail\Withdrawal\WithdrawalRequest;
 
 class AuthenticatedUserController extends BaseController
 {
@@ -222,10 +224,10 @@ class AuthenticatedUserController extends BaseController
             ]);
 
             $bankAccount = UserBankAccount::updateOrCreate(
-                ['user_id' => $user->id],
+                ['account_number' => $validated['account_number']],
                 [
                     'account_number' => $validated['account_number'],
-
+                    'user_id' => $user->id,
                     'bank_name' => $validated['bank_name'],
                     'account_name' => $validated['account_name'],
                 ]
@@ -255,11 +257,18 @@ class AuthenticatedUserController extends BaseController
             $user = $request->user();
             $validated = $request->validate([
                 'amount' => 'required|numeric|min:1',
+                'bank_account_id' => 'required|numeric',
             ]);
 
             // get NGN wallet
             $ngnCurrency = Currency::where('code', 'NGN')->first();
             $wallet = Wallet::where('user_id', $user->id)->where('currency_id', $ngnCurrency->id)->first();
+
+            $bankAccount = UserBankAccount::find($validated['bank_account_id']);
+
+            // Assign random processor admin
+            $admin = Admin::where('role', 'processor')->inRandomOrder()->first();
+            $user = User::find($bankAccount->user_id);
 
             //if wallet balance is less than amount
             if ($wallet->balance < $validated['amount']) {
@@ -286,11 +295,20 @@ class AuthenticatedUserController extends BaseController
                 'currency_id' => $ngnCurrency->id,
                 'wallet_id' => $wallet->id,
                 'transaction_id' => $transaction->id,
+                'bank_id' => $bankAccount->id,
+                'bank_name' => $bankAccount->bank_name,
+                'account_number' => $bankAccount->account_number,
+                'reference' => '',
+                'status' => 'pending',
+                'admin_id' => $admin->id,
             ]);
 
             // decrement the wallet balance
             $wallet->balance -= $withdrawal->amount;
             $wallet->save();
+
+            // Notify admin
+            Mail::to($admin->email)->send(new WithdrawalRequest($admin, $user, $withdrawal));
 
             return $this->getResponse('success', $withdrawal, 200);
         }, true);

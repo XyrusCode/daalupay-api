@@ -71,6 +71,7 @@ class WalletController extends BaseController
             $validated = $request->validate([
                 'amount' => 'required|string',
                 'receipt' => 'required|string|mimes:jpeg,png,jpg|max:2048',
+                'currency' => 'required|string',
             ]);
 
             $receipt = $request->file('receipt')->store('receipts', 'public');
@@ -79,12 +80,12 @@ class WalletController extends BaseController
             $admin = null;
             // Select a random admin
 
-                $admin = Admin::inRandomOrder()->first();
-
+            $admin = Admin::inRandomOrder()->first();
 
             $receipt = Receipt::create([
                 'user_id' => $user->id,
                 'amount' => $validated['amount'],
+                'currency' => $validated['currency'],
                 'receipt' => $receipt,
                 'admin_id' => $admin->id,
                 'status' => 'pending',
@@ -151,7 +152,7 @@ class WalletController extends BaseController
             $id = $request->route('id');
             $wallet = Wallet::where('id', $id)->first();
 
-            if (!$wallet) {
+            if (!$wallet) {                                             
                 return $this->getResponse('error', 'Wallet not found', 404);
             }
 
@@ -160,7 +161,7 @@ class WalletController extends BaseController
             // find the wallet with currency 229
             $nairaWallet = $userWallets->where('currency_id', 229)->first();
 
-            // convert all balance to naira
+           // convert all balance to naira
             $nairaWallet->balance += $wallet->balance;
             $nairaWallet->save();
 

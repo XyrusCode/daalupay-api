@@ -520,6 +520,7 @@ class AdminController extends BaseController
             $withdrawal->update([
                 'proof_of_payment' => $request->proof_of_payment,
                 'status' => 'approved',
+                'reference' => $request->reference,
                 'approved_at' => now(),
                 'completed_at' => now(),
                 'processed_at' => now()
@@ -533,7 +534,7 @@ class AdminController extends BaseController
             ]);
             $transaction->save();
 
-            Mail::to($user->email)->send(new SwapCompleted($user, $withdrawal));
+            // Mail::to($user->email)->send(new SwapCompleted($user, $withdrawal));
 
             return $this->getResponse(
                 data: $withdrawal,
@@ -558,7 +559,7 @@ class AdminController extends BaseController
 
             $user = User::find($withdrawal->user_id);
 
-            Mail::to($user->email)->send(new TransactionDenied($user, $withdrawal, $reason));
+            // Mail::to($user->email)->send(new TransactionDenied($user, $withdrawal, $reason));
 
             return $this->getResponse(
                 data: $withdrawal,
