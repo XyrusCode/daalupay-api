@@ -157,6 +157,7 @@ class AuthenticatedUserController extends BaseController
                 'documentType' => 'required|string|max:255',
                 'documentFile' => 'required|string',
                 'documentNumber' => 'required|string|max:255',
+                'passportPhoto' => 'required|string',
             ]);
 
             $admin = Admin::where('role', 'processor')->inRandomOrder()->first();
@@ -166,6 +167,7 @@ class AuthenticatedUserController extends BaseController
                 'document_type' => $validated['documentType'],
                 'document_image' => $validated['documentFile'],
                 'document_number' => $validated['documentNumber'],
+                'passport_photo' => $validated['passportPhoto'],
                 'admin_id' => $admin->id,
                 'status' => 'pending',
                 'created_at' => now(),

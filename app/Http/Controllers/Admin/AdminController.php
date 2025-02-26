@@ -222,7 +222,8 @@ class AdminController extends BaseController
             ]);
 
             KYC::where('user_id', $user->id)->update([
-                'status' => 'approved'
+                'status' => 'approved',
+                'passport_photo' => $request->passport_photo,
             ]);
 
 
