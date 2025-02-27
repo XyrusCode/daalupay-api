@@ -59,10 +59,10 @@ class BlogPostController extends BaseController
             ]);
 
             // send mail to all users
-            $users = User::all();
-            foreach ($users as $user) {
-                Mail::to($user->email)->send(new NewBlogPost($blogPost));
-            }
+            // $users = User::all();
+            // foreach ($users as $user) {
+            //     Mail::to($user->email)->send(new NewBlogPost($blogPost));
+            // }
 
             return $this->getResponse(
                 status: true,
