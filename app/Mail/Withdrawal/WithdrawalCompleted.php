@@ -1,6 +1,6 @@
 <?php
 
-namespace DaaluPay\Mail;
+namespace DaaluPay\Mail\Withdrawal;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -9,20 +9,22 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class AdminDeleted extends Mailable
+class WithdrawalCompleted extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $admin;
+    public $user;
+    public $withdrawal;
 
     /**
      * Create a new message instance.
      *
-     * @param $admin
+     * @param $withdrawal
      */
-    public function __construct($admin)
+    public function __construct($user, $withdrawal)
     {
-        $this->admin = $admin;
+        $this->user = $user;
+        $this->withdrawal = $withdrawal;
     }
 
     /**
@@ -31,7 +33,7 @@ class AdminDeleted extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Admin Deleted',
+            subject: 'Withdrawal Completed',
         );
     }
 
@@ -41,8 +43,11 @@ class AdminDeleted extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'admin_deleted',
-            with: ['admin' => $this->admin],
+            view: 'withdrawal_completed',
+            with: [
+                'user' => $this->user,
+                'withdrawal' => $this->withdrawal
+            ],
         );
     }
 

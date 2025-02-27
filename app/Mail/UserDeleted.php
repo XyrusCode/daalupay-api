@@ -1,6 +1,6 @@
 <?php
 
-namespace DaaluPay\Mail\Withdrawal;
+namespace DaaluPay\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class Completed extends Mailable
+class UserDeleted extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -27,7 +27,7 @@ class Completed extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Completed',
+            subject: 'User Deleted',
         );
     }
 
@@ -37,7 +37,7 @@ class Completed extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'user_deleted',
         );
     }
 

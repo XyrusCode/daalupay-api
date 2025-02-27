@@ -6,6 +6,7 @@ use DaaluPay\Http\Controllers\BaseController;
 use DaaluPay\Mail\AdminReactivated;
 use DaaluPay\Mail\AdminSuspended;
 use DaaluPay\Mail\AdminUpdated;
+use DaaluPay\Mail\NewAdmin;
 use Illuminate\Http\Request;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\BlogPost;
@@ -303,6 +304,9 @@ class SuperAdminController extends BaseController
                 'updated_at' => now(),
             ]);
 
+            // Send email to new admin
+            Mail::to($admin->email)->send(new NewAdmin($admin, $validated['password']));
+
             return $this->getResponse(
                 data: $admin,
                 message: 'Admin created successfully'
@@ -324,6 +328,10 @@ class SuperAdminController extends BaseController
             switch ($admin->type) {
                 case 'processor':
                     Transaction::where('admin_id', $id)->update(['admin_id' => $newAdmin->id]);
+                    $swaps = Swap::where('admin_id', $id)->get();
+                    foreach ($swaps as $swap) {
+                        $swap->update(['admin_id' => $newAdmin->id]);
+                    }
                     break;
                 case 'support':
                     Chat::where('admin_id', $id)->update(['agent_id' => $newAdmin->id]);
@@ -334,7 +342,8 @@ class SuperAdminController extends BaseController
                     break;
             }
 
-            $swaps = Swap::where('admin_id', $id)->get();
+            // Inform delted admin
+            Mail::to($admin->email)->send(new AdminSuspended($admin, 'Your account has been deleted'));
 
             $admin->delete();
             return $this->getResponse(status: true, message: 'Admin deleted successfully');

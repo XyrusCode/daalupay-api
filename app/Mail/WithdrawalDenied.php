@@ -9,20 +9,25 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class AdminDeleted extends Mailable
+class WithdrawalDenied extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $admin;
+    public $user;
+    public $withdrawal;
+    public $reason;
 
     /**
      * Create a new message instance.
      *
-     * @param $admin
+     * @param $user
+     * @param $withdrawal
      */
-    public function __construct($admin)
+    public function __construct($user, $withdrawal, $reason)
     {
-        $this->admin = $admin;
+        $this->user = $user;
+        $this->withdrawal = $withdrawal;
+        $this->reason = $reason;
     }
 
     /**
@@ -31,7 +36,7 @@ class AdminDeleted extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Admin Deleted',
+            subject: 'Withdrawal Denied',
         );
     }
 
@@ -41,8 +46,12 @@ class AdminDeleted extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'admin_deleted',
-            with: ['admin' => $this->admin],
+            view: 'denied',
+            with: [
+                'user' => $this->user,
+                'withdrawal' => $this->withdrawal,
+                'reason' => $this->reason
+            ],
         );
     }
 

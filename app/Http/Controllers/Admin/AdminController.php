@@ -27,6 +27,11 @@ use DaaluPay\Models\Receipt;
 use Illuminate\Support\Facades\URL;
 use DaaluPay\Models\Wallet;
 use DaaluPay\Mail\PaymentReceived;
+use DaaluPay\Mail\UserDeleted;
+use DaaluPay\Mail\UserUpdated;
+use DaaluPay\Mail\Withdrawal\WithdrawalCompleted;
+use DaaluPay\Mail\Withdrawal\WithdrawalRequest;
+use DaaluPay\Mail\WithdrawalDenied;
 use DaaluPay\Models\Withdrawal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -161,6 +166,9 @@ class AdminController extends BaseController
             $user->update($request->all());
 
             $user->save();
+
+            // Notify user via email
+            Mail::to($user->email)->send(new UserUpdated($user));
 
 
             return $this->getResponse('success', $user, 200);
@@ -356,6 +364,9 @@ class AdminController extends BaseController
 
             $user->delete();
 
+            // mail user
+            Mail::to($user->email)->send(new UserDeleted($user));
+
             $message = 'User deleted successfully';
             return $this->getResponse(status: true, message: $message, data: null, status_code: 200);
         }, true);
@@ -380,6 +391,9 @@ class AdminController extends BaseController
             $user->role = $request->role ?? $user->role;
 
             $user->save();
+
+            // Notify user via email
+            Mail::to($user->email)->send(new UserUpdated($user));
 
             $message = 'User updated successfully';
             return $this->getResponse('success', null, 200, $message);
@@ -483,8 +497,6 @@ class AdminController extends BaseController
         return $this->process(function () {
             $withdrawals = Withdrawal::all();
 
-
-
             return $this->getResponse('success', $withdrawals, 200);
         }, true);
     }
@@ -538,7 +550,7 @@ class AdminController extends BaseController
             ]);
             $transaction->save();
 
-            // Mail::to($user->email)->send(new SwapCompleted($user, $withdrawal));
+            Mail::to($user->email)->send(new WithdrawalCompleted($user, $withdrawal));
 
             return $this->getResponse(
                 data: $withdrawal,
@@ -563,7 +575,7 @@ class AdminController extends BaseController
 
             $user = User::find($withdrawal->user_id);
 
-            // Mail::to($user->email)->send(new TransactionDenied($user, $withdrawal, $reason));
+            Mail::to($user->email)->send(new WithdrawalDenied($user, $withdrawal, $reason));
 
             return $this->getResponse(
                 data: $withdrawal,
