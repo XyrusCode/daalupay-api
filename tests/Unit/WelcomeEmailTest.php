@@ -18,7 +18,7 @@ class WelcomeEmailTest extends TestCase
             'password' => 'password123',
         ];
         // Arrange: Create a Mailable instance
-        $mailable = new NewUser($user);
+        $mailable = new NewUser($user, '12345');
 
         // Act: Render the email
         $rendered = $mailable->render();
