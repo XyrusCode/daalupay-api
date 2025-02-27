@@ -172,10 +172,7 @@ class AuthenticatedUserController extends BaseController
                 'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
-
-
             ]);
-
 
             return $this->getResponse(status: 'success', message: 'KYC created successfully', status_code: 200);
         }, true);

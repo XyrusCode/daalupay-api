@@ -3,6 +3,7 @@
 namespace DaaluPay\Http\Controllers\Payment;
 
 use DaaluPay\Http\Controllers\BaseController;
+use DaaluPay\Mail\PaymentRequestCreated;
 use DaaluPay\Mail\WalletCreated;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\AlipayPayment;
@@ -70,11 +71,9 @@ class WalletController extends BaseController
         return $this->process(function () use ($request) {
             $validated = $request->validate([
                 'amount' => 'required|string',
-                'receipt' => 'required|string|mimes:jpeg,png,jpg|max:2048',
+                'receipt' => 'required|string',
                 'currency' => 'required|string',
             ]);
-
-            $receipt = $request->file('receipt')->store('receipts', 'public');
 
             $user = $request->user();
             $admin = null;
@@ -82,11 +81,11 @@ class WalletController extends BaseController
 
             $admin = Admin::inRandomOrder()->first();
 
-            $receipt = Receipt::create([
+            $paymentRequest = Receipt::create([
                 'user_id' => $user->id,
                 'amount' => $validated['amount'],
                 'currency' => $validated['currency'],
-                'receipt' => $receipt,
+                'receipt' => $validated['receipt'],
                 'admin_id' => $admin->id,
                 'status' => 'pending',
                 'created_at' => now(),
@@ -94,13 +93,11 @@ class WalletController extends BaseController
             ]);
 
             $admin = null;
-            // Select a random admin
-            if (config('app.test_mode')) {
-                $admin = Admin::where('id', 3)->first();
-            } else {
+            // Select a random processor admin
+            $admin = Admin::where('role', 'processor')->inRandomOrder()->first();
 
-                $admin = Admin::inRandomOrder()->first();
-            }
+            // Notify the admin
+            Mail::to($admin->email)->send(new PaymentRequestCreated($admin, $paymentRequest));
 
             return $this->getResponse('success', $request->all(), 200);
         }, true);
@@ -152,18 +149,14 @@ class WalletController extends BaseController
             $id = $request->route('id');
             $wallet = Wallet::where('id', $id)->first();
 
-            if (!$wallet) {                                             
+            if (!$wallet) {
                 return $this->getResponse('error', 'Wallet not found', 404);
             }
 
-            //  get all user wallets
-            $userWallets = Wallet::where('user_id', $wallet->user_id)->get();
-            // find the wallet with currency 229
-            $nairaWallet = $userWallets->where('currency_id', 229)->first();
-
-           // convert all balance to naira
-            $nairaWallet->balance += $wallet->balance;
-            $nairaWallet->save();
+            // if wallet balance is above 0 return error
+            if ($wallet->balance > 0) {
+                return $this->getResponse('error', 'Wallet balance must be 0 to delete', 400);
+            }
 
             $wallet->delete();
             return $this->getResponse('success', $wallet, 200);

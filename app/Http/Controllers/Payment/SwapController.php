@@ -13,7 +13,8 @@ use DaaluPay\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Ramsey\Uuid\Uuid;
-// use DaaluPay\Services\FCMService;
+use DaaluPay\Services\FCMService;
+
 class SwapController extends BaseController
 {
 
@@ -23,6 +24,19 @@ class SwapController extends BaseController
             $user = $request->user();
             $swaps = Swap::where('user_id', $user->id)->get();
             return $this->getResponse('success', $swaps, 200);
+        }, true);
+    }
+
+    public function show(Request $request, $swap_id)
+    {
+        return $this->process(function () use ($request, $swap_id) {
+            $swap = Swap::find($swap_id);
+
+            if (!$swap) {
+                return $this->getResponse('failure', null, 404, 'Swap not found');
+            }
+
+            return $this->getResponse('success', $swap, 200);
         }, true);
     }
 
@@ -131,18 +145,6 @@ class SwapController extends BaseController
             $to_wallet->balance += $validated['to_amount'];
             $to_wallet->save();
 
-
-
-
-            // Send notifications to all active user device tokens
-            // $userDeviceTokens = $user->notificationTokens->where('status', 'active');
-            // foreach ($userDeviceTokens as $userDeviceToken) {
-            //     $this->fcm->sendNotification(
-            //         $userDeviceToken->token,
-            //         'Swap Approval',
-            //         'Your swap request has been created'
-            //     );
-            // }
             $admin = Admin::inRandomOrder()->first();
 
             // Create a new transaction record
@@ -180,27 +182,22 @@ class SwapController extends BaseController
 
             Mail::to($user->email)->send(new SwapCompleted($user, $swap));
 
+            // Send notifications to all active user device tokens
+            $userDeviceTokens = $user->notificationTokens->where('status', 'active');
+            foreach ($userDeviceTokens as $userDeviceToken) {
+                $this->sendFCMNotification(
+                    $request,
+                    'Swap Approval',
+                    'Your swap request has been created'
+                );
+            }
+
             return $this->getResponse(
                 status: true,
                 message: 'Swap created successfully',
                 data: $swap,
                 status_code: 200
             );
-        }, true);
-    }
-
-
-
-    public function show(Request $request, $swap_id)
-    {
-        return $this->process(function () use ($request, $swap_id) {
-            $swap = Swap::find($swap_id);
-
-            if (!$swap) {
-                return $this->getResponse('failure', null, 404, 'Swap not found');
-            }
-
-            return $this->getResponse('success', $swap, 200);
         }, true);
     }
 }
