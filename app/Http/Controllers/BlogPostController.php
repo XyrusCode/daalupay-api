@@ -4,7 +4,7 @@ namespace DaaluPay\Http\Controllers;
 
 use DaaluPay\Mail\NewBlogPost;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use DaaluPay\Models\User;
 use DaaluPay\Models\BlogPost;
 use Illuminate\Support\Facades\Mail;
 
@@ -57,7 +57,11 @@ class BlogPostController extends BaseController
                 'author_id' => $admin->id,
             ]);
 
-            Mail::to($admin->email)->send(new NewBlogPost($blogPost));
+            // send mail to all users
+            $users = User::all();
+            foreach ($users as $user) {
+                Mail::to($user->email)->send(new NewBlogPost($blogPost));
+            }
 
             return $this->getResponse(
                 status: true,
