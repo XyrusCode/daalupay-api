@@ -202,7 +202,9 @@ class AdminController extends BaseController
     {
         return $this->process(function () use ($request) {
             $id = $request->route('id');
+
             $user = User::find($id);
+
             if ($user->kyc_status === 'approved') {
                 return $this->getResponse(
                     status: 'error',
@@ -216,14 +218,15 @@ class AdminController extends BaseController
                 'verified_by' => $request->user()->id,
             ]);
 
-            // set transaction limit to unlimited
-            $user->preferences->update([
-                'daily_transaction_limit' => 'unlimited',
-            ]);
+            // set transaction limit to unlimited if preferences exists
+            if (!$user->preferences) {
+                $user->preferences()->create([
+                    'daily_transaction_limit' => 'unlimited',
+                ]);
+            }
 
             KYC::where('user_id', $user->id)->update([
-                'status' => 'approved',
-                'passport_photo' => $request->passport_photo,
+                'status' => 'approved'
             ]);
 
 

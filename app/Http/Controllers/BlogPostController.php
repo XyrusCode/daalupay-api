@@ -44,21 +44,20 @@ class BlogPostController extends BaseController
             $validated = $request->validate([
                 'title' => 'required|string|max:255',
                 'content' => 'required|string',
-                // 'featured_image' => 'required|file|mimes:jpeg,png,jpg|max:2048',
+                'featuredImage' => 'required',
                 'status' => 'required|string',
             ]);
 
-            // $imagePath = $request->file('featured_image')->store('blog-images', 'public');
 
             $blogPost = BlogPost::create([
                 'title' => $validated['title'],
                 'content' => $validated['content'],
-                'featured_image' => '',
+                'featured_image' => $validated['featuredImage'],
                 'status' => $validated['status'],
                 'author_id' => $admin->id,
             ]);
 
-            Mail::to($admin->email)->send(new NewBlogPost( $blogPost));
+            Mail::to($admin->email)->send(new NewBlogPost($blogPost));
 
             return $this->getResponse(
                 status: true,
@@ -77,13 +76,13 @@ class BlogPostController extends BaseController
             $validated = $request->validate([
                 'title' => 'required|string|max:255',
                 'content' => 'required|string',
-                // 'featured_image' => 'required|string|max:255',
+                'featuredImage' => 'required|string|max:255',
                 'status' => 'required|string|in:true,false',
             ]);
 
             $blogPost->title = $validated['title'];
             $blogPost->content = $validated['content'];
-            $blogPost->featured_image = $validated['featured_image'] ?? '';
+            $blogPost->featured_image = $validated['featuredImage'] ?? '';
             $blogPost->status = $validated['status'];
             $blogPost->save();
 
@@ -104,7 +103,7 @@ class BlogPostController extends BaseController
         });
     }
 
-        public function updateStatus($id)
+    public function updateStatus($id)
     {
         return $this->process(function () use ($id) {
             $blogPost = BlogPost::find($id);

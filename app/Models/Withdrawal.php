@@ -16,7 +16,7 @@ class Withdrawal extends Model
         'currency_id',
         'wallet_id',
         'transaction_id',
-        'bank_id',
+        'bank_account_id',
         'bank_name',
         'account_number',
         'account_name',

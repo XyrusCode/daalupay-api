@@ -19,12 +19,12 @@ return new class extends Migration
             $table->unsignedBigInteger('currency_id')->nullable();
             $table->unsignedBigInteger('wallet_id')->nullable();
             $table->string('transaction_id')->nullable();
-            $table->unsignedBigInteger('bank_id')->nullable();
+            $table->unsignedBigInteger('bank_account_id')->nullable();
             $table->string('bank_name')->nullable();
             $table->string('account_number')->nullable();
             $table->string('account_name')->nullable();
             $table->string('reference')->nullable();
-            $table->string('proof_of_payment');
+            $table->string('proof_of_payment')->nullable();
             $table->text('note')->nullable();
             $table->unsignedBigInteger('admin_id')->nullable();
             $table->timestamp('approved_at')->nullable();
