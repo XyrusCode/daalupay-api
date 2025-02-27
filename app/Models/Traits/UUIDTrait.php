@@ -1,4 +1,4 @@
-<?
+<?php
 
 namespace DaaluPay\Models\Traits;
 

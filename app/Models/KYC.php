@@ -18,7 +18,7 @@ class KYC extends Model
         'document_type',
         'document_number',
         'document_image',
-        'admin_id'
+        'admin_id',
     ];
 
     public function user(): BelongsTo

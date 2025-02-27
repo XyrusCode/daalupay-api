@@ -1,24 +1,23 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use DaaluPay\Http\Controllers\Payment\TransactionController;
-use DaaluPay\Http\Controllers\MigrationController;
-use DaaluPay\Http\Controllers\MiscController;
-use DaaluPay\Http\Controllers\AuthController;
-use DaaluPay\Http\Controllers\Payment\SwapController;
-use DaaluPay\Http\Controllers\Payment\WalletController;
-use DaaluPay\Http\Controllers\Admin\SuperAdminController;
 use DaaluPay\Http\Controllers\Admin\AdminController;
+use DaaluPay\Http\Controllers\Admin\SuperAdminController;
 use DaaluPay\Http\Controllers\AdminChatController;
+use DaaluPay\Http\Controllers\AuthController;
 use DaaluPay\Http\Controllers\BaseController;
-use DaaluPay\Http\Controllers\Payment\ExchangeController;
-use DaaluPay\Http\Controllers\User\AuthenticatedUserController;
-use DaaluPay\Http\Controllers\User\UserPreferenceController;
-use DaaluPay\Http\Controllers\Payment\DepositController;
 use DaaluPay\Http\Controllers\BlogPostController;
 use DaaluPay\Http\Controllers\ChatController;
+use DaaluPay\Http\Controllers\MigrationController;
+use DaaluPay\Http\Controllers\MiscController;
+use DaaluPay\Http\Controllers\Payment\DepositController;
+use DaaluPay\Http\Controllers\Payment\ExchangeController;
+use DaaluPay\Http\Controllers\Payment\SwapController;
+use DaaluPay\Http\Controllers\Payment\TransactionController;
+use DaaluPay\Http\Controllers\Payment\WalletController;
 use DaaluPay\Http\Controllers\TestController;
+use DaaluPay\Http\Controllers\User\AuthenticatedUserController;
+use DaaluPay\Http\Controllers\User\UserPreferenceController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,7 +57,6 @@ Route::prefix('/blog')->group(function () {
     Route::get('/{id}', [BlogPostController::class, 'getBlogPost']);
 });
 
-
 // Database Routes
 Route::prefix('/db')->group(function () {
     Route::get('/', [MigrationController::class, 'index']);
@@ -96,10 +94,8 @@ Route::post('/email/verification-notification', [AuthController::class, 'sendVer
 
 Route::post('/logout', [AuthController::class, 'logout']);
 
-
 Route::post('/user/request-otp', [AuthController::class, 'requestOtp']);
 Route::post('/user/verify-otp', [AuthController::class, 'verifyOtp']);
-
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::prefix('/user')->group(function () {
@@ -116,7 +112,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         });
 
         Route::get('/payment-methods', [WalletController::class, 'getPaymentMethods']);
-
 
         Route::prefix('/wallets')->group(function () {
             Route::post('/', [WalletController::class, 'store']);
@@ -166,7 +161,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
         // Routes for user preferences
         Route::get('/preferences', [UserPreferenceController::class, 'show']);
-        Route::post('/preferences', [UserPreferenceController::class, 'update']);;
+        Route::post('/preferences', [UserPreferenceController::class, 'update']);
 
         // transfer fee
         Route::get('/transfer-fee', [ExchangeController::class, 'transferFee']);
@@ -176,7 +171,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('/chats/{chatId}/messages', [ChatController::class, 'sendMessage']);
     });
 });
-
 
 // Admin routes
 Route::post('/admin/login', [AuthController::class, 'adminLogin']);
@@ -196,7 +190,6 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
             Route::post('/{id}/unsuspend', [AdminController::class, 'reactivateUser']);
             Route::post('/{id}/delete', [AdminController::class, 'deleteUser']);
         });
-
 
         Route::prefix('/transactions')->group(function () {
             Route::get('/', [AdminController::class, 'getTransactions']);
@@ -232,7 +225,6 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
         // Route::post('/chats/{chatId}/close', [AdminChatController::class, 'closeChat']);
     });
 });
-
 
 // Auth
 Route::post('/super-admin/login', [AuthController::class, 'superAdminLogin']);

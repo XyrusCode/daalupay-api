@@ -2,13 +2,13 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\Swap;
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Swap;
 
 class SwapCompleted extends Mailable
 {
@@ -17,8 +17,7 @@ class SwapCompleted extends Mailable
     public function __construct(
         public User $user,
         public Swap $swap
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {

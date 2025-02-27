@@ -3,33 +3,31 @@
 namespace DaaluPay\Http\Controllers;
 
 use DaaluPay\Exceptions\NotFoundException;
-use DaaluPay\Http\Controllers\BaseController;
 use DaaluPay\Http\Requests\Auth\LoginRequest;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Wallet;
 use DaaluPay\Mail\NewUser;
 use DaaluPay\Mail\PasswordChanged;
 use DaaluPay\Mail\PasswordReset as MailPasswordReset;
 use DaaluPay\Models\Address;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\SuperAdmin;
+use DaaluPay\Models\User;
 use Daalupay\Models\UserPreference;
-use Illuminate\Support\Facades\Cache;
+use DaaluPay\Models\Wallet;
 use DaaluPay\Notifications\OtpNotification;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends BaseController
 {
@@ -39,7 +37,7 @@ class AuthController extends BaseController
     public function login(LoginRequest $request): JsonResponse
     {
         return $this->process(function () use ($request) {
-            //validate request
+            // validate request
             $request->validate([
                 'email' => 'required|email',
                 'password' => 'required',
@@ -47,8 +45,8 @@ class AuthController extends BaseController
 
             $request->authenticate();
 
-            //handle user not found in db
-            if (!$request->user()) {
+            // handle user not found in db
+            if (! $request->user()) {
                 throw ValidationException::withMessages([
                     'email' => ['The provided credentials are incorrect.'],
                 ]);
@@ -78,7 +76,7 @@ class AuthController extends BaseController
 
             $admin = Admin::where('email', $request->email)->first();
 
-            if (!$admin || !Hash::check($request->password, $admin->password)) {
+            if (! $admin || ! Hash::check($request->password, $admin->password)) {
                 throw ValidationException::withMessages([
                     'email' => ['The provided credentials are incorrect.'],
                 ]);
@@ -87,6 +85,7 @@ class AuthController extends BaseController
             $token = $admin->createToken('auth_token')->plainTextToken;
             $admin->token = $token;
             $admin->userType = 'admin';
+
             return $this->getResponse(
                 data: $admin,
                 message: 'Admin login successful',
@@ -105,7 +104,7 @@ class AuthController extends BaseController
 
             $superAdmin = SuperAdmin::where('email', $request->email)->first();
 
-            if (!$superAdmin || !Hash::check($request->password, $superAdmin->password)) {
+            if (! $superAdmin || ! Hash::check($request->password, $superAdmin->password)) {
                 throw ValidationException::withMessages([
                     'email' => ['The provided credentials are incorrect.'],
                 ]);
@@ -145,7 +144,7 @@ class AuthController extends BaseController
                 'address' => 'required|string|max:255',
                 'city' => 'required|string|max:255',
                 'zipCode' => 'required|string|max:255',
-                'dateOfBirth' => 'required|date'
+                'dateOfBirth' => 'required|date',
             ]);
 
             $user = User::create([
@@ -157,10 +156,8 @@ class AuthController extends BaseController
                 'password' => Hash::make($request->password),
             ]);
 
-
             $nairaCurrencyId = DB::table('currencies')->where('code', 'NGN')->first()->id;
             $yuanCurrencyId = DB::table('currencies')->where('code', 'CNY')->first()->id;
-
 
             Wallet::create([
                 'uuid' => Str::uuid(),
@@ -176,7 +173,6 @@ class AuthController extends BaseController
                 'balance' => 0,
             ]);
 
-
             Address::create([
                 'user_id' => $user->id,
                 'town' => $request->city,
@@ -185,7 +181,7 @@ class AuthController extends BaseController
                 'zip_code' => $request->zipCode,
             ]);
 
-            if (!config('app.test_mode')) {
+            if (! config('app.test_mode')) {
 
                 UserPreference::create([
                     'user_id' => $user->id,
@@ -203,7 +199,7 @@ class AuthController extends BaseController
 
             // generate and send otp for user for testing
             $otp = random_int(10000, 99999);
-            Cache::put('otp_' . $user->id, $otp, now()->addMinutes(5));
+            Cache::put('otp_'.$user->id, $otp, now()->addMinutes(5));
 
             Mail::to($user->email)->send(new NewUser($user, $otp));
 
@@ -220,20 +216,20 @@ class AuthController extends BaseController
 
             $user = User::where('email', $request->email)->first();
 
-            if (!$user) {
+            if (! $user) {
                 throw ValidationException::withMessages([
                     'email' => ['The provided email is incorrect.'],
                 ]);
             }
 
             $otp = random_int(10000, 99999);
-            Cache::put('otp_' . $user->id, $otp, now()->addMinutes(5));
+            Cache::put('otp_'.$user->id, $otp, now()->addMinutes(5));
 
-            $otpInCache = Cache::get('otp_' . $user->id);
+            $otpInCache = Cache::get('otp_'.$user->id);
 
             Mail::to($user->email)->send(new OtpNotification($user, $otp, 5));
 
-            return $this->getResponse(status: 'success', message: 'OTP sent to email: ' . $user->email, status_code: 200);
+            return $this->getResponse(status: 'success', message: 'OTP sent to email: '.$user->email, status_code: 200);
         });
     }
 
@@ -247,13 +243,13 @@ class AuthController extends BaseController
 
             $user = User::where('email', $request->email)->first();
 
-            if (!$user) {
+            if (! $user) {
                 throw ValidationException::withMessages([
                     'email' => ['No user found with the provided email address.'],
                 ]);
             }
 
-            $otp = Cache::get('otp_' . $user->id);
+            $otp = Cache::get('otp_'.$user->id);
 
             // Ensure the OTP from the cache and request are treated as strings
             $otpFromCache = (string) $otp;  // Cast cache OTP to string
@@ -270,7 +266,6 @@ class AuthController extends BaseController
                 ]);
             }
 
-
             // Mark the user as active and save
             $user->status = 'active';
             $user->save();
@@ -278,7 +273,6 @@ class AuthController extends BaseController
             return $this->getResponse('success', $user, 200);
         });
     }
-
 
     /**
      * Destroy an authenticated session.
@@ -305,8 +299,8 @@ class AuthController extends BaseController
 
             $user = User::where('email', $request->email)->first();
 
-            //handle user not found in db
-            if (!$user) {
+            // handle user not found in db
+            if (! $user) {
                 throw ValidationException::withMessages([
                     'email' => ['User not found in database.'],
                 ]);
@@ -325,7 +319,7 @@ class AuthController extends BaseController
             return $this->getResponse(
                 data: [
                     'user' => $user,
-                    'token' => $user->createToken($request->device_name)->plainTextToken
+                    'token' => $user->createToken($request->device_name)->plainTextToken,
                 ],
                 message: 'Login Success'
             );
@@ -375,9 +369,9 @@ class AuthController extends BaseController
     public function resetPassword(Request $request): JsonResponse
     {
         $request->validate([
-            'token'                 => ['required'],
+            'token' => ['required'],
             'user_id' => ['required'],
-            'password'              => ['required'],
+            'password' => ['required'],
             'password_confirmation' => ['required'],
         ]);
 
@@ -390,14 +384,14 @@ class AuthController extends BaseController
         // database. Otherwise we will parse the error and return the response.
         $user = User::where('uuid', $userId)->first();
         // if user not found return error
-        if (!$user) {
+        if (! $user) {
             throw new NotFoundException('User not found');
         }
 
         // confirm token is valid from cache
-        $token = Cache::get('password_reset_token_' . $user->id);
+        $token = Cache::get('password_reset_token_'.$user->id);
 
-        if (!$token) {
+        if (! $token) {
             throw new NotFoundException(
                 'Token not found for this user, initate another passwword reset request.'
             );
@@ -412,7 +406,7 @@ class AuthController extends BaseController
         // if token is valid, send email to user
         if ($token === $request->token) {
 
-            Cache::forget('password_reset_token_' . $user->id);
+            Cache::forget('password_reset_token_'.$user->id);
 
             $user->password = Hash::make($request->password);
             $user->save();
@@ -432,12 +426,12 @@ class AuthController extends BaseController
     {
         $request->validate([
             'email' => ['required', 'email'],
-        ]);;
+        ]);
 
         $user = User::where('email', $request->email)->first();
 
         // if user does not exist
-        if (!$user) {
+        if (! $user) {
             throw ValidationException::withMessages([
                 'email' => ['The provided email is incorrect.'],
             ]);
@@ -447,20 +441,17 @@ class AuthController extends BaseController
         $token = Str::random(60);
 
         // save token to cache
-        Cache::put('password_reset_token_' . $user->id, $token, now()->addMinutes(15));
+        Cache::put('password_reset_token_'.$user->id, $token, now()->addMinutes(15));
 
         // Send the password reset link to the user's email
         Mail::to($user->email)->send(new MailPasswordReset($user, $token, 15));
 
-
-        return $this->getResponse(status: 'success', message: 'Password reset link sent to email: ' . $user->email, status_code: 200);
+        return $this->getResponse(status: 'success', message: 'Password reset link sent to email: '.$user->email, status_code: 200);
     }
-
 
     /**
      * Get a token for a user.
      *
-     * @param Request $request
      * @return JsonResponse
      */
     public function getToken(Request $request, string $type)
@@ -479,7 +470,7 @@ class AuthController extends BaseController
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || ($request->password && !Hash::check($request->password, $user->password))) {
+        if (! $user || ($request->password && ! Hash::check($request->password, $user->password))) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -495,7 +486,7 @@ class AuthController extends BaseController
     {
         if ($request->user()->hasVerifiedEmail()) {
             return redirect()->intended(
-                config('app.frontend_url') . '/dashboard?verified=1'
+                config('app.frontend_url').'/dashboard?verified=1'
             );
         }
 
@@ -504,7 +495,7 @@ class AuthController extends BaseController
         }
 
         return redirect()->intended(
-            config('app.frontend_url') . '/dashboard?verified=1'
+            config('app.frontend_url').'/dashboard?verified=1'
         );
     }
 }

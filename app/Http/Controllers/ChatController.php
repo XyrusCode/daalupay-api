@@ -14,7 +14,7 @@ class ChatController extends BaseController
     // User initiates a chat
     public function createChat(Request $request)
     {
-        return $this->process(function () use ($request) {
+        return $this->process(function () {
             // get admin of type support in random order
             $admin = Admin::where('role', 'support')->inRandomOrder()->first();
             $user = Auth::user();

@@ -3,7 +3,6 @@
 namespace DaaluPay\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -14,12 +13,11 @@ class NewAdmin extends Mailable
     use Queueable, SerializesModels;
 
     public $admin;
+
     public $password;
 
     /**
      * Create a new message instance.
-     *
-     * @param $admin
      */
     public function __construct($admin, $password)
     {
@@ -46,7 +44,7 @@ class NewAdmin extends Mailable
             view: 'new_admin',
             with: [
                 'admin' => $this->admin,
-                'password' => $this->password
+                'password' => $this->password,
             ],
         );
     }

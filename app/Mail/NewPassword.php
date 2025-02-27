@@ -3,7 +3,6 @@
 namespace DaaluPay\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -37,7 +36,7 @@ class NewPassword extends Mailable
     public function content(): Content
     {
         return new Content(
-             view: 'emails.password.new',
+            view: 'emails.password.new',
         );
     }
 

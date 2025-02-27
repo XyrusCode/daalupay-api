@@ -2,11 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use DaaluPay\Models\ExchangeRate;
 use DaaluPay\Models\Currency;
-use Ramsey\Uuid\Uuid;
+use DaaluPay\Models\ExchangeRate;
+use Illuminate\Database\Seeder;
 
 class ExchangeRateSeeder extends Seeder
 {

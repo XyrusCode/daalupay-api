@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BaseModel extends Model
 {
-    function toArray()
+    public function toArray()
     {
         $data = parent::toArray();
         // if (isset($data['uuid']) && !isset($data['id'])) {
@@ -15,8 +15,9 @@ class BaseModel extends Model
         // }
 
         if (is_array($data)) {
-            $data = array_filter($data, fn ($value) => !is_null($value) && $value !== '');
+            $data = array_filter($data, fn ($value) => ! is_null($value) && $value !== '');
         }
+
         return $data;
     }
 
@@ -45,7 +46,6 @@ class BaseModel extends Model
     //     return $this->casts;
     // }
 
-
     // public function getKey(): string
     // {
     //     return $this->getKey();
@@ -55,7 +55,6 @@ class BaseModel extends Model
     // {
     //     return $this->keyType;
     // }
-
 
     // public function getIncrementing(): bool
     // {

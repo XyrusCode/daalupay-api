@@ -41,7 +41,7 @@ class Handler extends ExceptionHandler
                 return response()->json([
                     'message' => 'Route not found.',
                     'code' => 404,
-                    'status' => 'error'
+                    'status' => 'error',
                 ], 404);
             }
         });

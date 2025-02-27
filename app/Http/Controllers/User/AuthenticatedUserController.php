@@ -3,23 +3,22 @@
 namespace DaaluPay\Http\Controllers\User;
 
 use DaaluPay\Http\Controllers\BaseController;
+use DaaluPay\Mail\Withdrawal\WithdrawalRequest;
+use DaaluPay\Models\Admin;
 use DaaluPay\Models\Currency;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
+use DaaluPay\Models\KYC;
+use DaaluPay\Models\NotificationToken;
 use DaaluPay\Models\Transaction;
 use DaaluPay\Models\User;
+use DaaluPay\Models\UserBankAccount;
+use DaaluPay\Models\Wallet;
+use DaaluPay\Models\Withdrawal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use DaaluPay\Models\Wallet;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use DaaluPay\Models\Admin;
-use DaaluPay\Models\KYC;
-use DaaluPay\Models\Withdrawal;
-use DaaluPay\Models\NotificationToken;
-use DaaluPay\Models\UserBankAccount;
-use DaaluPay\Services\FCMService;
 use Illuminate\Support\Facades\Mail;
-use DaaluPay\Mail\Withdrawal\WithdrawalRequest;
+use Illuminate\Support\Str;
 
 class AuthenticatedUserController extends BaseController
 {
@@ -35,7 +34,7 @@ class AuthenticatedUserController extends BaseController
 
             // load wallets and transactions if regular user
             $isUser = Auth::guard('user')->check();
-            if (!$isUser) {
+            if (! $isUser) {
                 $user->load('wallets', 'transactions');
 
                 $user->wallets->each(function ($wallet) {
@@ -52,7 +51,7 @@ class AuthenticatedUserController extends BaseController
         return $this->process(function () use ($request) {
             $admin = auth('admin')->user() ?? auth('super_admin')->user();
 
-            $message = 'success for user' . $request->user();
+            $message = 'success for user'.$request->user();
 
             return $this->getResponse(status: $message, data: $admin, status_code: 200);
         }, true);
@@ -73,12 +72,12 @@ class AuthenticatedUserController extends BaseController
                 $wallet->currency = Currency::find($wallet->currency_id)->code;
             }
 
-
             $stats = [
                 'wallets' => $wallets,
                 'transactions' => $transactions,
                 'swaps' => $swaps,
             ];
+
             return $this->getResponse('success', $stats, 200);
         }, true);
     }
@@ -88,6 +87,7 @@ class AuthenticatedUserController extends BaseController
         return $this->process(function () use ($request) {
             $user = User::find($request->user()->id);
             $user->update($request->all());
+
             return $this->getResponse('success', $user, 200);
         }, true);
     }
@@ -102,7 +102,7 @@ class AuthenticatedUserController extends BaseController
                 'new_password' => ['required', 'string', 'min:8'], // TODO: Add more validation rules
             ]);
 
-            if (!Hash::check($request->old_password, $user->password)) {
+            if (! Hash::check($request->old_password, $user->password)) {
                 return $this->getResponse('error', null, 400, 'Old password is incorrect');
             }
 
@@ -139,8 +139,7 @@ class AuthenticatedUserController extends BaseController
                 'pin' => ['required', 'string', 'min:4'],
             ]);
 
-
-            if (!Hash::check($request->pin, $user->pin)) {
+            if (! Hash::check($request->pin, $user->pin)) {
                 return $this->getResponse('error', null, 400, 'Pin is incorrect');
             }
 
@@ -187,7 +186,7 @@ class AuthenticatedUserController extends BaseController
                 'device_type' => 'required|string',
             ]);
 
-            $token =  NotificationToken::create([
+            $token = NotificationToken::create([
                 'token' => $validated['token'],
                 'device_type' => $validated['device_type'],
                 'user_id' => $user->id,
@@ -203,7 +202,7 @@ class AuthenticatedUserController extends BaseController
         return $this->process(function () use ($request, $id) {
             $user = $request->user();
             $token = DB::table('device_token')->where('token', $id)->first();
-            if (!$token) {
+            if (! $token) {
                 return $this->getResponse('error', null, 404, 'Token not found');
             }
             DB::table('device_token')->where('token', $id)->update(['status' => 'inactive']);
@@ -242,7 +241,7 @@ class AuthenticatedUserController extends BaseController
             $user = $request->user();
             $bankAccounts = UserBankAccount::where('user_id', $user->id)->get();
 
-            if (!$bankAccounts) {
+            if (! $bankAccounts) {
                 return $this->getResponse('error', null, 404, 'Bank account not found');
             }
 
@@ -269,7 +268,7 @@ class AuthenticatedUserController extends BaseController
             $admin = Admin::where('role', 'processor')->inRandomOrder()->first();
             $user = User::find($bankAccount->user_id);
 
-            //if wallet balance is less than amount
+            // if wallet balance is less than amount
             if ($wallet->balance < $validated['amount']) {
                 return $this->getResponse('error', null, 400, 'Insufficient balance');
             }
@@ -284,7 +283,7 @@ class AuthenticatedUserController extends BaseController
                 'status' => 'pending',
                 'payment_method' => 'withdrawal',
                 'reference_number' => Str::uuid(),
-                'description' => 'Withdrawal for ' . $validated['amount'] . ' ' . $ngnCurrency->code,
+                'description' => 'Withdrawal for '.$validated['amount'].' '.$ngnCurrency->code,
             ]);
 
             $withdrawal = Withdrawal::create([

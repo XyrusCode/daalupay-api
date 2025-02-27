@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Withdrawal extends Model
 {
-
     protected $table = 'withdrawals';
 
     protected $fillable = [
@@ -30,7 +29,7 @@ class Withdrawal extends Model
         'cancelled_at',
         'completed_at',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     /**
@@ -44,7 +43,6 @@ class Withdrawal extends Model
     /**
      * Get the bank account that the withdrawal was made to
      */
-
     public function bank()
     {
         return $this->belongsTo(UserBankAccount::class, 'bank_id');

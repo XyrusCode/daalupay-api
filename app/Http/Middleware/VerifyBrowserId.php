@@ -17,13 +17,13 @@ class VerifyBrowserId
      */
     public function handle(Request $request, Closure $next): Response
     {
-         $user = Auth::user();
+        $user = Auth::user();
         $browserId = $request->cookie('browser_id') ?? $request->header('BrowserId');
 
         // Get SessionID from database
         $session = $this->getSession($user, $browserId);
 
-        if (!$session) {
+        if (! $session) {
             return response()->json(['message' => 'Invalid browser ID'], 401);
         }
 
@@ -32,10 +32,12 @@ class VerifyBrowserId
 
         // Set session ID in the request
         $request->session()->setId($session->id);
+
         return $next($request);
     }
 
-    private function getSession($user, $browserId):?object {
+    private function getSession($user, $browserId): ?object
+    {
         // Implement your database query here
         return DB::table('sessions')
             ->where('user_id', $user->id)
@@ -43,7 +45,8 @@ class VerifyBrowserId
             ->first();
     }
 
-    private function updateSession($user, $browserId, $newSessionId): void {
+    private function updateSession($user, $browserId, $newSessionId): void
+    {
         // Implement your database update here
         DB::insert(
             'INSERT INTO sessions (user_id, browser_id, id) VALUES (?, ?,?)',

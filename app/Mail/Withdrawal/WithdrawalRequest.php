@@ -2,15 +2,14 @@
 
 namespace DaaluPay\Mail\Withdrawal;
 
+use DaaluPay\Models\Admin;
+use DaaluPay\Models\User;
+use DaaluPay\Models\Withdrawal;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\Admin;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Withdrawal;
 
 class WithdrawalRequest extends Mailable
 {
@@ -23,9 +22,7 @@ class WithdrawalRequest extends Mailable
         public Admin $admin,
         public User $user,
         public Withdrawal $withdrawal,
-    )
-
-    {
+    ) {
         $this->admin = $admin;
         $this->user = $user;
         $this->withdrawal = $withdrawal;

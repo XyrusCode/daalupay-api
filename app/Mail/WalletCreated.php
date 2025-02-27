@@ -2,13 +2,13 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\User;
+use DaaluPay\Models\Wallet;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Wallet;
 
 class WalletCreated extends Mailable
 {
@@ -17,8 +17,7 @@ class WalletCreated extends Mailable
     public function __construct(
         public User $user,
         public Wallet $wallet
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {
@@ -32,7 +31,7 @@ class WalletCreated extends Mailable
         return new Content(
             view: 'emails.wallet.wallet_created',
             with: [
-                'user'   => $this->user,
+                'user' => $this->user,
                 'wallet' => $this->wallet,
             ],
         );

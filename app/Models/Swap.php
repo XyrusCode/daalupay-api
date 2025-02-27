@@ -2,13 +2,9 @@
 
 namespace DaaluPay\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Admin;
-use DaaluPay\Models\Transaction;
 
 class Swap extends Model
 {

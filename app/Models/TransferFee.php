@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class TransferFee extends Model
 {
     protected $table = 'transfer_fee';
+
     protected $fillable = ['currency_code', 'fee'];
 
     public function currency()

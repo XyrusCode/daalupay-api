@@ -2,13 +2,10 @@
 
 namespace DaaluPay\Http\Controllers;
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Artisan;
+
 class MiscController extends BaseController
 {
-
     public function getAppInfo()
     {
         return response()->json([
@@ -28,7 +25,7 @@ class MiscController extends BaseController
 
         try {
 
-            Artisan::call($command. ' --force');
+            Artisan::call($command.' --force');
 
             $output = Artisan::output();
 
@@ -37,7 +34,5 @@ class MiscController extends BaseController
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
 
-
-        }
-
+    }
 }

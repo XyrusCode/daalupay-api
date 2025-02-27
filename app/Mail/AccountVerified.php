@@ -2,12 +2,12 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
 
 class AccountVerified extends Mailable
 {
@@ -18,8 +18,7 @@ class AccountVerified extends Mailable
      */
     public function __construct(
         public User $user
-    ) {
-    }
+    ) {}
 
     /**
      * Get the message envelope.
@@ -39,7 +38,7 @@ class AccountVerified extends Mailable
         return new Content(
             view: 'emails.user.account_verified',
             with: [
-                'user' => $this->user
+                'user' => $this->user,
             ],
         );
     }

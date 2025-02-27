@@ -2,13 +2,13 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\User;
+use DaaluPay\Models\Withdrawal;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Withdrawal;
 
 class TransactionApproved extends Mailable
 {
@@ -17,8 +17,7 @@ class TransactionApproved extends Mailable
     public function __construct(
         public User $user,
         public Withdrawal $withdrawal
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {
@@ -32,7 +31,7 @@ class TransactionApproved extends Mailable
         return new Content(
             view: 'emails.transaction.approved',
             with: [
-                'user'        => $this->user,
+                'user' => $this->user,
                 'withdrawal' => $this->withdrawal,
             ],
         );

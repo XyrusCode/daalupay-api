@@ -3,12 +3,12 @@
 namespace DaaluPay\Mail;
 
 use DaaluPay\Models\AlipayPayment;
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
 
 class ReceiptApproved extends Mailable
 {
@@ -31,7 +31,7 @@ class ReceiptApproved extends Mailable
         return new Content(
             view: 'emails.receipt.approved',
             with: [
-                'user'    => $this->user,
+                'user' => $this->user,
                 'alipayPayment' => $this->alipayPayment,
             ],
         );

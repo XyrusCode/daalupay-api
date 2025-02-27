@@ -2,12 +2,12 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
 
 class PasswordReset extends Mailable
 {
@@ -20,8 +20,7 @@ class PasswordReset extends Mailable
         public User $user,
         public string $resetToken,
         public int $expiration = 60 // in minutes
-    ) {
-    }
+    ) {}
 
     /**
      * Get the message envelope.
@@ -41,7 +40,7 @@ class PasswordReset extends Mailable
         return new Content(
             view: 'emails.password.reset',
             with: [
-                'user'       => $this->user,
+                'user' => $this->user,
                 'resetToken' => $this->resetToken,
                 'expiration' => $this->expiration,
             ],

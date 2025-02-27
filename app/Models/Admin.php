@@ -2,11 +2,11 @@
 
 namespace DaaluPay\Models;
 
-use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Laravel\Sanctum\HasApiTokens;
 
 class Admin extends Authenticatable
 {
@@ -28,7 +28,7 @@ class Admin extends Authenticatable
         'password',
         'status',
         'role',
-        'phone'
+        'phone',
     ];
 
     protected static function boot()

@@ -3,7 +3,6 @@
 namespace DaaluPay\Mail\Withdrawal;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -14,12 +13,11 @@ class WithdrawalCompleted extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
+
     public $withdrawal;
 
     /**
      * Create a new message instance.
-     *
-     * @param $withdrawal
      */
     public function __construct($user, $withdrawal)
     {
@@ -46,7 +44,7 @@ class WithdrawalCompleted extends Mailable
             view: 'withdrawal_completed',
             with: [
                 'user' => $this->user,
-                'withdrawal' => $this->withdrawal
+                'withdrawal' => $this->withdrawal,
             ],
         );
     }

@@ -3,7 +3,6 @@
 namespace DaaluPay\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -37,13 +36,13 @@ class NewUserNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Welcome to ' . config('app.name'))
+            ->subject('Welcome to '.config('app.name'))
             ->greeting("Hello {$this->user->name}!")
-            ->line('Welcome to ' . config('app.name') . '. We\'re excited to have you on board!')
+            ->line('Welcome to '.config('app.name').'. We\'re excited to have you on board!')
             ->line('To get started, you can explore our features and services.')
             ->action('Visit Dashboard', url('/dashboard'))
             ->line('If you have any questions, feel free to contact our support team.')
-                    ->line('Thank you for choosing ' . config('app.name') . '!');
+            ->line('Thank you for choosing '.config('app.name').'!');
     }
 
     /**

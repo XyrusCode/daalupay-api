@@ -2,12 +2,12 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
 
 class KycApproved extends Mailable
 {
@@ -15,8 +15,7 @@ class KycApproved extends Mailable
 
     public function __construct(
         public User $user
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {

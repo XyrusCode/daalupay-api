@@ -3,14 +3,13 @@
 namespace DaaluPay\Http\Controllers\Payment;
 
 use DaaluPay\Http\Controllers\BaseController;
-use Illuminate\Http\Request;
 use DaaluPay\Models\Payment;
 use DaaluPay\Models\Transaction;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends BaseController
 {
-
     public function createAndAssignPayment(Request $request)
     {
         return $this->process(function () use ($request) {

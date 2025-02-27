@@ -2,43 +2,41 @@
 
 namespace DaaluPay\Http\Controllers;
 
-use Illuminate\Http\Request;
+use DaaluPay\Exceptions\CustomException;
+use DaaluPay\Helpers\StatusCodeHelper;
+use DaaluPay\Models\Receipt;
+use DaaluPay\Services\FCMService;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Kreait\Firebase\Exception\FirebaseException;
 use Kreait\Firebase\Exception\MessagingException;
-use DaaluPay\Services\FCMService;
-use DaaluPay\Exceptions\CustomException;
-use DaaluPay\Helpers\StatusCodeHelper;
-use DaaluPay\Models\Receipt;
+use OpenApi\Annotations as OA;
 
 use function Sentry\captureException;
-
-use OpenApi\Annotations as OA;
 
 /**
  * @OA\Info(
  *     title="DaaluPay API",
  *     version="1.0.0",
  *     description="DaaluPay API Documentation",
+ *
  *     @OA\Contact(
  *         email="info@daalupay.com",
  *         name="DaaluPay Support"
  *     )
  * )
- *
  */
 
 /**
  * @OA\PathItem(path="/api")
  */
-
 class BaseController extends Controller
 {
     use AuthorizesRequests;
@@ -61,7 +59,7 @@ class BaseController extends Controller
 
             return $result;
         } catch (\Throwable $e) {
-            Log::error('Transaction failed: ' . $e->getMessage());
+            Log::error('Transaction failed: '.$e->getMessage());
             // Rollback the transaction in case of any error
             DB::rollBack();
 
@@ -91,23 +89,23 @@ class BaseController extends Controller
      */
     public function getResponse($status = 'success', $data = null, $status_code = 200, $message = null): JsonResponse
     {
-        if (!StatusCodeHelper::isValid($status_code)) {
-            $message ??= "Invalid HTTP Status Code";
+        if (! StatusCodeHelper::isValid($status_code)) {
+            $message ??= 'Invalid HTTP Status Code';
             $status_code = 500;
         }
 
         $json = [
-            'status' => $status
+            'status' => $status,
         ];
 
-        if (!is_null($data)) {
+        if (! is_null($data)) {
             if (is_array($data) || is_object($data)) {
                 $data = $this->convertKeysWithUnderscoresToCamelCases(json_decode(json_encode($data), true));
             }
             $json['data'] = $data;
         }
 
-        if (!is_null($message)) {
+        if (! is_null($message)) {
             $json['message'] = $message;
         }
 
@@ -122,29 +120,29 @@ class BaseController extends Controller
         // capture exception to sentry
         captureException($e);
 
-        Log::error('Exception handled: ' . $e->getMessage());
+        Log::error('Exception handled: '.$e->getMessage());
 
         // Determine the type of throwable
         return match (true) {
             $e instanceof ValidationException => $this->getResponse(
                 status: 'error',
                 status_code: 422,
-                message: 'Incorrect Credentails: ' . $e->getMessage()
+                message: 'Incorrect Credentails: '.$e->getMessage()
             ),
             $e instanceof CustomException => $this->getResponse(
                 status: 'error',
                 status_code: 404,
-                message: 'Model not found: ' . $e->getMessage()
+                message: 'Model not found: '.$e->getMessage()
             ),
             $e instanceof QueryException => $this->getResponse(
                 status: 'error',
                 status_code: 400,
-                message: 'Database query error: ' . $e->getMessage()
+                message: 'Database query error: '.$e->getMessage()
             ),
             default => $this->getResponse(
                 status: 'error',
                 status_code: 500,
-                message: 'An error occurred: ' . $e->getMessage()
+                message: 'An error occurred: '.$e->getMessage()
             ),
         };
     }
@@ -152,18 +150,19 @@ class BaseController extends Controller
     /**
      * Convert an object to an array
      */
-    function toArray(object $data)
+    public function toArray(object $data)
     {
         if (method_exists($data, 'toArray')) {
             $data = $data->toArray();
         }
+
         return $data;
     }
 
     /**
      * Con vert keys with underscores to camel cases
      */
-    function convertKeysWithUnderscoresToCamelCases(array $data): array
+    public function convertKeysWithUnderscoresToCamelCases(array $data): array
     {
         $result = [];
         foreach ($data as $key => $value) {
@@ -176,12 +175,13 @@ class BaseController extends Controller
                 $result[$camelCasedKey] = is_array($value) ? $this->convertKeysWithUnderscoresToCamelCases($value) : $value;
             }
         }
+
         return $result;
     }
 
-    function underscoreToCamelCase(string $string): string
+    public function underscoreToCamelCase(string $string): string
     {
-        if (!str_contains($string, '_')) {
+        if (! str_contains($string, '_')) {
             return $string;
         }
 
@@ -191,74 +191,76 @@ class BaseController extends Controller
         return $str;
     }
 
+    public function getRequestAttributes(Request $request)
+    {
+        return $request->getParsedBody() ?? [];
+    }
 
-    function getRequestAttributes(Request $request) {
-            return $request->getParsedBody() ?? [];
-        }
+    public function getQueryParams(Request $request)
+    {
+        return $request->getQueryParams();
+    }
 
-    	function getQueryParams(Request $request) {
-		return $request->getQueryParams();
-	}
+    public function getQueryParam(Request $request, string $key, $default = null)
+    {
+        return $request->getQueryParam($key, $default);
+    }
 
-    	function getQueryParam(Request $request, string $key, $default = null) {
-		return $request->getQueryParam($key, $default);
-	}
-
-    function getBlobFromDB(string $table, string $key) {
+    public function getBlobFromDB(string $table, string $key)
+    {
         $receipt = DB::table($table)->where('id', $key)->first();
         $file = $receipt->receipt;
         // check if blob is null
-        if (!$file) {
-        $this->getResponse(status: 'error', status_code: 404, message: 'File not found');
+        if (! $file) {
+            $this->getResponse(status: 'error', status_code: 404, message: 'File not found');
+        }
+
+        // Determine the content type (modify accordingly)
+        $mimeType = $file->mime_type ?? 'application/octet-stream';
+
+        return response($file)
+            ->header('Content-Type', $mimeType)
+            ->header('Content-Disposition', 'inline; filename="'.$file->filename.'"');
     }
-
-     // Determine the content type (modify accordingly)
-    $mimeType = $file->mime_type ?? 'application/octet-stream';
-
-    return response($file)
-        ->header('Content-Type', $mimeType)
-        ->header('Content-Disposition', 'inline; filename="' . $file->filename . '"');
-    }
-
 
     public function serveReceipt($id)
-{
-    $receipt = Receipt::findOrFail($id);
-    $file = $receipt->receipt;
+    {
+        $receipt = Receipt::findOrFail($id);
+        $file = $receipt->receipt;
 
-    if (!$file) {
-        $this->getResponse(status: 'error', status_code: 404, message: 'File not found');
+        if (! $file) {
+            $this->getResponse(status: 'error', status_code: 404, message: 'File not found');
+        }
+
+        if (! $receipt) {
+            $this->getResponse(status: 'error', status_code: 404, message: 'Receipt not found');
+        }
+
+        $mimeType = $file->mime_type ?? 'application/octet-stream';
+
+        return response($file)
+            ->header('Content-Type', $mimeType)
+            ->header('Content-Disposition', 'inline; filename="'.($receipt->filename ?? 'receipt').'"');
     }
 
-        if (!$receipt) {
-        $this->getResponse(status: 'error', status_code: 404, message: 'Receipt not found');
-    }
-
-    $mimeType = $file->mime_type ?? 'application/octet-stream';
-
-    return response($file)
-        ->header('Content-Type', $mimeType)
-        ->header('Content-Disposition', 'inline; filename="' . ($receipt->filename ?? 'receipt') . '"');
-}
-
-public function sendFCMNotification(Request $request, $messageTitle, $messageBody)
-{
-           /** @var FCMService $fcm */
+    public function sendFCMNotification(Request $request, $messageTitle, $messageBody)
+    {
+        /** @var FCMService $fcm */
         $fcm = app(FCMService::class);
 
         $user = $request->user();
 
         try {
             // Attempt to send the notification
-                    // Send notifications to all active user device tokens
-        $userDeviceTokens = $user->notificationTokens->where('status', 'active');
-        foreach ($userDeviceTokens as $userDeviceToken) {
-            $fcm->sendNotification(
-                $userDeviceToken->token,
-                $messageTitle,
-                $messageBody
-            );
-        }
+            // Send notifications to all active user device tokens
+            $userDeviceTokens = $user->notificationTokens->where('status', 'active');
+            foreach ($userDeviceTokens as $userDeviceToken) {
+                $fcm->sendNotification(
+                    $userDeviceToken->token,
+                    $messageTitle,
+                    $messageBody
+                );
+            }
 
             // Return a success response with the result (if any)
             return $this->getResponse(
@@ -271,22 +273,22 @@ public function sendFCMNotification(Request $request, $messageTitle, $messageBod
             return $this->getResponse(
                 status: 'error',
                 status_code: 422,
-                message: 'Messaging error: ' . $e->getMessage()
+                message: 'Messaging error: '.$e->getMessage()
             );
         } catch (FirebaseException $e) {
             // Catches general Firebase exceptions
             return $this->getResponse(
                 status: 'error',
                 status_code: 500,
-                message: 'Firebase error: ' . $e->getMessage()
+                message: 'Firebase error: '.$e->getMessage()
             );
         } catch (\Exception $e) {
             // Catches any other exceptions
             return $this->getResponse(
                 status: 'error',
                 status_code: 500,
-                message: 'Unexpected error: ' . $e->getMessage()
+                message: 'Unexpected error: '.$e->getMessage()
             );
         }
-}
+    }
 }

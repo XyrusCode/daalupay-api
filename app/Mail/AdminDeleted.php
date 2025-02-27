@@ -3,7 +3,6 @@
 namespace DaaluPay\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -17,8 +16,6 @@ class AdminDeleted extends Mailable
 
     /**
      * Create a new message instance.
-     *
-     * @param $admin
      */
     public function __construct($admin)
     {

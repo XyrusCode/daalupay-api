@@ -2,12 +2,12 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\BlogPost;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\BlogPost;
 
 class NewBlogPost extends Mailable
 {
@@ -15,13 +15,12 @@ class NewBlogPost extends Mailable
 
     public function __construct(
         public BlogPost $post
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New Blog Post: ' . $this->post->title
+            subject: 'New Blog Post: '.$this->post->title
         );
     }
 

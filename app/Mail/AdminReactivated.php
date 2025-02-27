@@ -2,12 +2,12 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\Admin;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\Admin;
 
 class AdminReactivated extends Mailable
 {
@@ -15,8 +15,7 @@ class AdminReactivated extends Mailable
 
     public function __construct(
         public Admin $admin
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {

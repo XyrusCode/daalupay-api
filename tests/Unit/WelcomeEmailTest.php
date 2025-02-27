@@ -2,16 +2,12 @@
 
 namespace Tests\Unit;
 
-use DaaluPay\Mail\WelcomeEmail;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Mail;
-use Tests\TestCase;
 use DaaluPay\Mail\NewUser;
+use Tests\TestCase;
 
 class WelcomeEmailTest extends TestCase
 {
-     public function test_email_content()
-
+    public function test_email_content()
     {
         // Test User
         $user = (object) [

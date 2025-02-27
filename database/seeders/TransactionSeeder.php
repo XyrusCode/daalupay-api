@@ -2,12 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use DaaluPay\Models\Admin;
 use DaaluPay\Models\Transaction;
 use DaaluPay\Models\User;
-use DaaluPay\Models\Payment;
-USE DaaluPay\Models\Admin;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 
@@ -39,4 +37,3 @@ class TransactionSeeder extends Seeder
         }
     }
 }
-

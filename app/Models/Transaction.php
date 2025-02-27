@@ -2,12 +2,7 @@
 
 namespace DaaluPay\Models;
 
-use DaaluPay\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
-use DaaluPay\Models\Payment;
-use DaaluPay\Models\Employee;
-use DaaluPay\Models\User;
 
 class Transaction extends BaseModel
 {
@@ -31,7 +26,7 @@ class Transaction extends BaseModel
         'user_id',
         'admin_id',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     /**
@@ -41,6 +36,4 @@ class Transaction extends BaseModel
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
-
-
 }

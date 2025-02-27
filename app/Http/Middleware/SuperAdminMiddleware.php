@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Notifications\UnauthorizedSuperAdminAccess;
 use Closure;
+use DaaluPay\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Notifications\UnauthorizedSuperAdminAccess;
-use DaaluPay\Models\Admin;
 
 class SuperAdminMiddleware
 {
@@ -14,7 +14,7 @@ class SuperAdminMiddleware
     {
         $user = Auth::guard('sanctum')->user();
 
-        if (!$user || $user->role !== 'super_admin') {
+        if (! $user || $user->role !== 'super_admin') {
             // If user is an admin (but not super_admin), notify super admins
             if ($user && $user->role === 'admin') {
                 // Get all super admins

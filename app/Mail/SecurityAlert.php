@@ -2,12 +2,12 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
 
 class SecurityAlert extends Mailable
 {
@@ -20,8 +20,7 @@ class SecurityAlert extends Mailable
         public User $user,
         public string $alertMessage,
         public ?string $ipAddress = null
-    ) {
-    }
+    ) {}
 
     /**
      * Get the message envelope.
@@ -41,9 +40,9 @@ class SecurityAlert extends Mailable
         return new Content(
             view: 'emails.security.alert',
             with: [
-                'user'         => $this->user,
+                'user' => $this->user,
                 'alertMessage' => $this->alertMessage,
-                'ipAddress'    => $this->ipAddress,
+                'ipAddress' => $this->ipAddress,
             ],
         );
     }

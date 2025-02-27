@@ -2,13 +2,13 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\AlipayPayment;
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
-use DaaluPay\Models\AlipayPayment;
 
 class ReceiptDenied extends Mailable
 {
@@ -32,9 +32,9 @@ class ReceiptDenied extends Mailable
         return new Content(
             view: 'emails.receipt.denied',
             with: [
-                'user'    => $this->user,
+                'user' => $this->user,
                 'alipayPayment' => $this->alipayPayment,
-                'reason'  => $this->reason,
+                'reason' => $this->reason,
             ],
         );
     }

@@ -2,15 +2,16 @@
 
 namespace DaaluPay\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+
 class SuperAdmin extends Authenticatable
 {
+    use HasApiTokens;
     use HasFactory;
     use Notifiable;
-    use HasApiTokens;
 
     protected $hidden = [
         'password',
@@ -26,6 +27,6 @@ class SuperAdmin extends Authenticatable
         'password',
         'status',
         'role',
-        'phone'
+        'phone',
     ];
 }

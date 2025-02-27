@@ -14,14 +14,13 @@ class CountryCurrencySeeder extends Seeder
     {
         try {
 
-
             $countries = $this->getLocalCountriesData();
             $exchangeRates = $this->getLocalExchangeRates();
 
-            if (empty($countries) || !is_array($countries) || empty($exchangeRates) || !is_array($exchangeRates)) {
-                throw new \Exception("Failed to retrieve valid data for countries or exchange rates. Countries: " .
-                    (is_array($countries) ? count($countries) : 'not array') .
-                    ", Rates: " . (is_array($exchangeRates) ? count($exchangeRates) : 'not array'));
+            if (empty($countries) || ! is_array($countries) || empty($exchangeRates) || ! is_array($exchangeRates)) {
+                throw new \Exception('Failed to retrieve valid data for countries or exchange rates. Countries: '.
+                    (is_array($countries) ? count($countries) : 'not array').
+                    ', Rates: '.(is_array($exchangeRates) ? count($exchangeRates) : 'not array'));
             }
 
             DB::beginTransaction();
@@ -63,31 +62,32 @@ class CountryCurrencySeeder extends Seeder
                 throw $e;
             }
         } catch (\Exception $e) {
-            $this->command->error("Seeding failed: " . $e->getMessage());
+            $this->command->error('Seeding failed: '.$e->getMessage());
         }
     }
 
     private function getLocalCountriesData(): array
     {
         $path = database_path('seeders/data/countries.json');
-        $this->command->info("Looking for file at: " . $path);
+        $this->command->info('Looking for file at: '.$path);
 
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             // Try alternative path
             throw new \Exception("Countries data file not found at: $path");
         }
 
         $data = json_decode(file_get_contents($path), true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \Exception("JSON decode error: " . json_last_error_msg());
+            throw new \Exception('JSON decode error: '.json_last_error_msg());
         }
 
         // Ensure we have an array
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             $data = [$data];
         }
 
-        $this->command->info("Found " . count($data) . " countries in JSON file");
+        $this->command->info('Found '.count($data).' countries in JSON file');
+
         return $data;
     }
 
@@ -105,7 +105,8 @@ class CountryCurrencySeeder extends Seeder
         }
 
         // Debug output
-        $this->command->info("Exchange rates count: " . count($rates));
+        $this->command->info('Exchange rates count: '.count($rates));
+
         return $rates;
     }
 

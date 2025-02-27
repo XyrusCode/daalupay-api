@@ -3,9 +3,9 @@
 namespace DaaluPay\Http\Controllers;
 
 use DaaluPay\Mail\NewBlogPost;
-use Illuminate\Http\Request;
-use DaaluPay\Models\User;
 use DaaluPay\Models\BlogPost;
+use DaaluPay\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class BlogPostController extends BaseController
@@ -14,6 +14,7 @@ class BlogPostController extends BaseController
     {
         return $this->process(function () {
             $blogPosts = BlogPost::all();
+
             return $this->getResponse(
                 status: true,
                 message: 'Blog posts fetched successfully',
@@ -27,6 +28,7 @@ class BlogPostController extends BaseController
     {
         return $this->process(function () use ($id) {
             $blogPost = BlogPost::find($id);
+
             return $this->getResponse(
                 status: true,
                 message: 'Blog post fetched successfully',
@@ -47,7 +49,6 @@ class BlogPostController extends BaseController
                 'featuredImage' => 'required',
                 'status' => 'required|string',
             ]);
-
 
             $blogPost = BlogPost::create([
                 'title' => $validated['title'],
@@ -119,9 +120,6 @@ class BlogPostController extends BaseController
             }
         });
     }
-
-
-
 
     public function getPublicBlogPosts()
     {

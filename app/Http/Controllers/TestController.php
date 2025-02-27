@@ -2,23 +2,23 @@
 
 namespace DaaluPay\Http\Controllers;
 
+use DaaluPay\Mail\NewUser;
+use DaaluPay\Models\User;
+use DaaluPay\Services\FCMService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Kreait\Firebase\Exception\FirebaseException;
 use Kreait\Firebase\Exception\MessagingException;
-use DaaluPay\Services\FCMService;
-use DaaluPay\Models\User;
-use Illuminate\Support\Facades\Mail;
-use DaaluPay\Mail\NewUser;
 
 class TestController extends BaseController
 {
-
-        public function sendEmail()
+    public function sendEmail()
     {
         $user = User::findOrFail(1);
         try {
             Mail::to($user->email)->send(new NewUser($user, 'secondArgument'));
-            return response()->json(['message' => 'Email sent successfully for user ' . $user->first_name . ' ' . $user->last_name]);
+
+            return response()->json(['message' => 'Email sent successfully for user '.$user->first_name.' '.$user->last_name]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Email not sent!', 'error' => $e->getMessage()]);
         }
@@ -36,7 +36,7 @@ class TestController extends BaseController
         // Use a device token provided in the query string or replace this with a valid test token
         $token = $request->query('token', $token);
         $title = 'Test Notification';
-        $body  = 'This is a test notification from Firebase at '. now()->toDateTimeString();
+        $body = 'This is a test notification from Firebase at '.now()->toDateTimeString();
 
         /** @var FCMService $fcm */
         $fcm = app(FCMService::class);
@@ -49,25 +49,25 @@ class TestController extends BaseController
             return response()->json([
                 'success' => true,
                 'message' => 'Notification sent successfully',
-                'result'  => $result,
+                'result' => $result,
             ]);
         } catch (MessagingException $e) {
             // Catches errors specific to messaging (e.g. invalid token, unregistered token, etc.)
             return response()->json([
                 'success' => false,
-                'error'   => 'Messaging error: ' . $e->getMessage(),
+                'error' => 'Messaging error: '.$e->getMessage(),
             ], 422);
         } catch (FirebaseException $e) {
             // Catches general Firebase exceptions
             return response()->json([
                 'success' => false,
-                'error'   => 'Firebase error: ' . $e->getMessage(),
+                'error' => 'Firebase error: '.$e->getMessage(),
             ], 500);
         } catch (\Exception $e) {
             // Catches any other exceptions
             return response()->json([
                 'success' => false,
-                'error'   => 'Unexpected error: ' . $e->getMessage(),
+                'error' => 'Unexpected error: '.$e->getMessage(),
             ], 500);
         }
     }

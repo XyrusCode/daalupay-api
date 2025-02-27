@@ -2,12 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\SuperAdmin;
-use Illuminate\Support\Facades\Hash;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Ramsey\Uuid\Uuid;
 
 class AdminSeeder extends Seeder
@@ -17,7 +16,6 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-
 
         // create a known admin
         Admin::create([
@@ -50,7 +48,7 @@ class AdminSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
-                // Create 5 admins
+        // Create 5 admins
         for ($i = 4; $i <= 5; $i++) {
             $firstName = Faker::create()->firstName;
             $lastName = Faker::create()->lastName;
@@ -59,7 +57,7 @@ class AdminSeeder extends Seeder
                 'uuid' => Uuid::uuid4(),
                 'first_name' => $firstName,
                 'last_name' => $lastName,
-                'email' => $firstName . '.' . $lastName . '@daalupay.com',
+                'email' => $firstName.'.'.$lastName.'@daalupay.com',
                 'password' => Hash::make('password'),
                 'phone' => Faker::create()->phoneNumber,
                 'status' => 'active',

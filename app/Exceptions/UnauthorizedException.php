@@ -2,12 +2,12 @@
 
 namespace DaaluPay\Exceptions;
 
-use Exception;
 use DaaluPay\Constants\Messages;
+use Exception;
 
 class UnauthorizedException extends Exception
 {
-    function __construct()
+    public function __construct()
     {
         parent::__construct(Messages::UNAUTHORIZED, 401);
     }

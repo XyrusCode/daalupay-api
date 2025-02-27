@@ -63,15 +63,15 @@ return [
         ],
 
         'mongodb' => [
-        'driver' => 'mongodb',
-        'host' => env('DB_MONGO_HOST', '127.0.0.1'),
-        'port' => env('DB_MONGO_PORT', 27017),
-        'database' => env('DB_MONGO_DATABASE', 'forge'),
-        'username' => env('DB_MONGO_USERNAME', 'forge'),
-        'password' => env('DB_MONGO_PASSWORD', ''),
-        'options' => [
-            'database' => env('DB_MONGO_AUTHDATABASE', 'admin'), // required with MongoDB >= 3.4
-        ],
+            'driver' => 'mongodb',
+            'host' => env('DB_MONGO_HOST', '127.0.0.1'),
+            'port' => env('DB_MONGO_PORT', 27017),
+            'database' => env('DB_MONGO_DATABASE', 'forge'),
+            'username' => env('DB_MONGO_USERNAME', 'forge'),
+            'password' => env('DB_MONGO_PASSWORD', ''),
+            'options' => [
+                'database' => env('DB_MONGO_AUTHDATABASE', 'admin'), // required with MongoDB >= 3.4
+            ],
 
         ],
     ],
@@ -109,7 +109,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
         ],
 
         'default' => [

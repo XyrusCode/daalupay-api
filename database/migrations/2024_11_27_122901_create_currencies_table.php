@@ -9,7 +9,7 @@ class CreateCurrenciesTable extends Migration
     /**
      * Run the migrations.
      */
-     public function up()
+    public function up()
     {
         Schema::create('currencies', function (Blueprint $table) {
             $table->id();

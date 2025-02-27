@@ -5,14 +5,11 @@ namespace DaaluPay\Http\Controllers;
 use Illuminate\Support\Facades\Artisan;
 
 class MigrationController extends BaseController
-    {
-
-
+{
     public function index()
     {
         return view('migration'); // Keep existing view logic
     }
-
 
     public function getMigrations()
     {
@@ -25,7 +22,6 @@ class MigrationController extends BaseController
 
         return response()->json($output);
     }
-
 
     public function runMigrations()
     {
@@ -48,16 +44,16 @@ class MigrationController extends BaseController
             // Return a more descriptive error response
             return response()->json([
                 'success' => false,
-                'message' => "Migration error in: {$migrationFile}. " . $errorMessage
+                'message' => "Migration error in: {$migrationFile}. ".$errorMessage,
             ]);
         }
     }
-
 
     public function rollbackMigrations()
     {
         try {
             Artisan::call('migrate:rollback');
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
@@ -68,18 +64,19 @@ class MigrationController extends BaseController
     {
         try {
             Artisan::call('migrate:fresh');
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
-
     public function runSeeds()
     {
         try {
             // using --force option to run in production mode
             Artisan::call('db:seed', ['--force' => true]);
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);

@@ -2,13 +2,12 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use DaaluPay\Models\Currency;
 use DaaluPay\Models\User;
 use DaaluPay\Models\Wallet;
-use Illuminate\Support\Str;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
+
 class WalletSeeder extends Seeder
 {
     /**

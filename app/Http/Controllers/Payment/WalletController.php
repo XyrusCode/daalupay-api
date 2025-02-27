@@ -7,19 +7,18 @@ use DaaluPay\Mail\PaymentRequestCreated;
 use DaaluPay\Mail\WalletCreated;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\AlipayPayment;
-use Illuminate\Http\Request;
-use DaaluPay\Models\Wallet;
 use DaaluPay\Models\Currency;
 use DaaluPay\Models\PaymentMethod;
 use DaaluPay\Models\Receipt;
-use Illuminate\Support\Str;
 use DaaluPay\Models\Transaction;
 use DaaluPay\Models\User;
+use DaaluPay\Models\Wallet;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class WalletController extends BaseController
 {
-
     public function index(Request $request)
     {
         return $this->process(function () use ($request) {
@@ -48,8 +47,8 @@ class WalletController extends BaseController
 
             // Find currency or fail with meaningful message
             $currencyModel = Currency::where('code', $currency)->first();
-            if (!$currencyModel) {
-                return $this->getResponse('error', 'Invalid currency code: ' . $currency, 400);
+            if (! $currencyModel) {
+                return $this->getResponse('error', 'Invalid currency code: '.$currency, 400);
             }
 
             $wallet = Wallet::create([
@@ -133,7 +132,7 @@ class WalletController extends BaseController
 
     public function getWallet(Request $request, $uuid)
     {
-        return $this->process(function () use ($request, $uuid) {
+        return $this->process(function () use ($uuid) {
             $wallet = Wallet::where('uuid', $uuid)->first();
 
             $wallet->user = User::find($wallet->user_id);
@@ -149,7 +148,7 @@ class WalletController extends BaseController
             $id = $request->route('id');
             $wallet = Wallet::where('id', $id)->first();
 
-            if (!$wallet) {
+            if (! $wallet) {
                 return $this->getResponse('error', 'Wallet not found', 404);
             }
 
@@ -159,6 +158,7 @@ class WalletController extends BaseController
             }
 
             $wallet->delete();
+
             return $this->getResponse('success', $wallet, 200);
         }, true);
     }
@@ -190,9 +190,9 @@ class WalletController extends BaseController
                 $lastTransactionDate = $user->preferences->last_transaction_date;
 
                 // Bypass the check if the user has never made a transaction (last_transaction_date is null)
-                if (!$lastTransactionDate) {
+                if (! $lastTransactionDate) {
                     $user->preferences->update([
-                        'last_transaction_date'   => now(),
+                        'last_transaction_date' => now(),
                     ]);
                 }
 
@@ -200,10 +200,9 @@ class WalletController extends BaseController
                 if ($lastTransactionDate && $lastTransactionDate->diffInHours(now()) >= 24) {
                     $user->preferences->update([
                         'transaction_total_today' => 0,
-                        'last_transaction_date'   => now(),
+                        'last_transaction_date' => now(),
                     ]);
                 }
-
 
                 if ($user->preferences->transaction_total_today + $request['amount'] > $user->preferences->daily_transaction_limit) {
                     return $this->getResponse('error', 'Transaction limit exceeded', 400);
@@ -239,9 +238,8 @@ class WalletController extends BaseController
 
             $user->preferences->update([
                 'transaction_total_today' => $user->preferences->transaction_total_today + $transaction['amount'],
-                'last_transaction_date'   => now(),
+                'last_transaction_date' => now(),
             ]);
-
 
             return $this->getResponse('success', $payment, 200);
         }, true);
@@ -252,15 +250,17 @@ class WalletController extends BaseController
         return $this->process(function () use ($request) {
             $user = $request->user();
             $alipayTransfers = AlipayPayment::where('user_id', $user->id)->get();
+
             return $this->getResponse('success', $alipayTransfers, 200);
         }, true);
     }
+
     public function getAlipayTranfersById(Request $request, $id)
     {
-        return $this->process(function () use ($request, $id) {
+        return $this->process(function () use ($id) {
             $alipayTransfer = AlipayPayment::find($id);
 
-            if (!$alipayTransfer) {
+            if (! $alipayTransfer) {
                 return $this->getResponse('failure', null, 404, 'Alipay Receipt not found');
             }
 
@@ -268,13 +268,13 @@ class WalletController extends BaseController
         }, true);
     }
 
-    public function
-    getPaymentMethods(Request $request)
+    public function getPaymentMethods(Request $request)
     {
-        return $this->process(function () use ($request) {
+        return $this->process(function () {
             $paymentMethods = PaymentMethod::query();
             // fiter where status is enabled
             $activeMethods = $paymentMethods->where('status', 'enabled')->get();
+
             return $this->getResponse(status: true, message: 'Payment methods fetched successfully', data: $activeMethods);
         });
     }

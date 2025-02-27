@@ -2,20 +2,22 @@
 
 namespace DaaluPay\Notifications;
 
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
+
 class OtpNotification extends Mailable
 {
     use Queueable;
     use SerializesModels;
 
     public User $user;
+
     protected $otp;
+
     protected $validityInMinutes;
 
     /**
@@ -28,7 +30,7 @@ class OtpNotification extends Mailable
         $this->validityInMinutes = $validityInMinutes;
     }
 
-      /**
+    /**
      * Get the message envelope.
      */
     public function envelope(): Envelope

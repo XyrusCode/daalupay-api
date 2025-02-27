@@ -3,17 +3,16 @@
 namespace DaaluPay\Http\Controllers\Payment;
 
 use DaaluPay\Http\Controllers\BaseController;
-use Illuminate\Http\Request;
-use DaaluPay\Models\Deposit;
-use DaaluPay\Models\Wallet;
-use DaaluPay\Models\Transaction;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
 use DaaluPay\Mail\NewDeposit;
+use DaaluPay\Models\Deposit;
+use DaaluPay\Models\Transaction;
+use DaaluPay\Models\Wallet;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class DepositController extends BaseController
 {
-
     public function store(Request $request)
     {
         return $this->process(function () use ($request) {
@@ -24,9 +23,9 @@ class DepositController extends BaseController
                 $lastTransactionDate = $user->preferences->last_transaction_date;
 
                 // Bypass the check if the user has never made a transaction (last_transaction_date is null)
-                if (!$lastTransactionDate) {
+                if (! $lastTransactionDate) {
                     $user->preferences->update([
-                        'last_transaction_date'   => now(),
+                        'last_transaction_date' => now(),
                     ]);
                 }
 
@@ -34,10 +33,9 @@ class DepositController extends BaseController
                 if ($lastTransactionDate && $lastTransactionDate->diffInHours(now()) >= 24) {
                     $user->preferences->update([
                         'transaction_total_today' => 0,
-                        'last_transaction_date'   => now(),
+                        'last_transaction_date' => now(),
                     ]);
                 }
-
 
                 if ($user->preferences->transaction_total_today + $request['amount'] > $user->preferences->daily_transaction_limit) {
                     return $this->getResponse('error', 'Transaction limit exceeded', 400);
@@ -54,7 +52,7 @@ class DepositController extends BaseController
                 'status' => 'completed',
                 'payment_method' => 'deposit',
                 'reference_number' => Str::uuid(),
-                'description' => 'Deposit for ' . $request->amount . ' ' . $request->currency,
+                'description' => 'Deposit for '.$request->amount.' '.$request->currency,
             ]);
 
             $deposit = Deposit::create([
@@ -74,7 +72,7 @@ class DepositController extends BaseController
 
             $user->preferences->update([
                 'transaction_total_today' => $user->preferences->transaction_total_today + $request['amount'],
-                'last_transaction_date'   => now(),
+                'last_transaction_date' => now(),
             ]);
 
             Mail::to($user->email)->send(new NewDeposit($user, $deposit));

@@ -4,23 +4,19 @@ namespace DaaluPay\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use DaaluPay\Models\Address;
-use DaaluPay\Models\KYC;
-use DaaluPay\ModelsUserPreference;
-
 use OpenApi\Annotations as OA;
 
 /**
  * @OA\Schema(
  *  type="object",
+ *
  *  @OA\Property(
  *    type="string",
  *    property="id",
@@ -52,14 +48,18 @@ use OpenApi\Annotations as OA;
  *  @OA\Property(
  *    type="array",
  *    property="wallets",
+ *
  *    @OA\Items(type="object", ref="#/components/schemas/Wallet")
  *  ),
+ *
  *  @OA\Property(
  *    type="array",
  *    property="transactions",
+ *
  *    @OA\Items(type="object", ref="#/components/schemas/Transaction")
  *  )
  * )
+ *
  * @property string $id
  * @property string $first_name
  * @property string $last_name
@@ -72,13 +72,12 @@ use OpenApi\Annotations as OA;
  */
 class User extends Authenticatable
 {
+    use HasApiTokens;
 
     /** @use HasFactory<\Database\Factories\AdminFactory> */
     use HasFactory;
     use Notifiable;
-    use HasApiTokens;
     use SoftDeletes;
-
 
     /**
      * The data type of the auto-incrementing ID.
@@ -131,8 +130,6 @@ class User extends Authenticatable
 
     /**
      * Get the address associated with the user.
-     *
-     * @return HasOne
      */
     public function address(): HasOne
     {
@@ -141,8 +138,6 @@ class User extends Authenticatable
 
     /**
      * Get the wallet associated with the user.
-     *
-     * @return HasMany
      */
     public function wallets(): HasMany
     {
@@ -151,8 +146,6 @@ class User extends Authenticatable
 
     /**
      * Get the transactions for the user.
-     *
-     * @return HasMany
      */
     public function transactions(): HasMany
     {
@@ -161,8 +154,6 @@ class User extends Authenticatable
 
     /**
      * Get the deposits for the user.
-     *
-     * @return HasMany
      */
     public function deposits(): HasMany
     {
@@ -171,8 +162,6 @@ class User extends Authenticatable
 
     /**
      * Get the withdrawals for the user.
-     *
-     * @return HasMany
      */
     public function withdrawals(): HasMany
     {
@@ -181,8 +170,6 @@ class User extends Authenticatable
 
     /**
      * Get the bank accounts for the user.
-     *
-     * @return HasMany
      */
     public function bankAccounts(): HasMany
     {
@@ -191,19 +178,14 @@ class User extends Authenticatable
 
     /**
      * Get the swaps for the user.
-     *
-     * @return HasMany
      */
     public function swaps(): HasMany
     {
         return $this->hasMany(Swap::class);
     }
 
-
     /**
      * Get the KYC associated with the user.
-     *
-     * @return HasOne
      */
     public function kyc(): HasOne
     {
@@ -214,7 +196,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(NotificationToken::class);
     }
-
 
     /**
      * A user can have many messages

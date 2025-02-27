@@ -24,8 +24,6 @@ class Suspension extends BaseModel
 
     /**
      * Get the user that owns the suspension.
-     *
-     * @return BelongsTo
      */
     public function user(): BelongsTo
     {

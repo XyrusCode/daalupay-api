@@ -5,40 +5,32 @@ namespace DaaluPay\Http\Controllers\Admin;
 use DaaluPay\Http\Controllers\BaseController;
 use DaaluPay\Mail\KycApproved;
 use DaaluPay\Mail\KycDenied;
+use DaaluPay\Mail\PaymentReceived;
 use DaaluPay\Mail\ReceiptApproved;
 use DaaluPay\Mail\ReceiptDenied;
-use DaaluPay\Mail\SwapCompleted;
-use DaaluPay\Mail\TransactionDenied;
+use DaaluPay\Mail\UserDeleted;
 use DaaluPay\Mail\UserReactivated;
 use DaaluPay\Mail\UserSuspended;
+use DaaluPay\Mail\UserUpdated;
+use DaaluPay\Mail\Withdrawal\WithdrawalCompleted;
+use DaaluPay\Mail\WithdrawalDenied;
 use DaaluPay\Models\Address;
 use DaaluPay\Models\AlipayPayment;
 use DaaluPay\Models\BlogPost;
-use Illuminate\Http\Request;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Transaction;
+use DaaluPay\Models\Currency;
+use DaaluPay\Models\KYC;
 use DaaluPay\Models\Suspension;
 use DaaluPay\Models\Swap;
-use DaaluPay\Models\KYC;
-use DaaluPay\Notifications\SwapStatusUpdated;
-use Ramsey\Uuid\Uuid;
-use DaaluPay\Models\Currency;
-use DaaluPay\Models\Receipt;
-use Illuminate\Support\Facades\URL;
+use DaaluPay\Models\Transaction;
+use DaaluPay\Models\User;
 use DaaluPay\Models\Wallet;
-use DaaluPay\Mail\PaymentReceived;
-use DaaluPay\Mail\UserDeleted;
-use DaaluPay\Mail\UserUpdated;
-use DaaluPay\Mail\Withdrawal\WithdrawalCompleted;
-use DaaluPay\Mail\Withdrawal\WithdrawalRequest;
-use DaaluPay\Mail\WithdrawalDenied;
 use DaaluPay\Models\Withdrawal;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Ramsey\Uuid\Uuid;
 
 class AdminController extends BaseController
 {
-
     public function stats()
     {
         return $this->process(function () {
@@ -56,9 +48,8 @@ class AdminController extends BaseController
                 })->map(function ($swap) {
                     $user = $swap->user;
                     $swap->user->fullName = $user->firstName && $user->lastName
-                        ? $user->firstName . ' ' . $user->lastName
+                        ? $user->firstName.' '.$user->lastName
                         : $user->email;
-
 
                     return $swap;
                 })->values();
@@ -78,14 +69,13 @@ class AdminController extends BaseController
                 ];
             }
 
-
-            return $this->getResponse(status: true, message: 'Admin dashboard fetched where admin is ' . $admin_id, data: $stats);
+            return $this->getResponse(status: true, message: 'Admin dashboard fetched where admin is '.$admin_id, data: $stats);
         }, true);
     }
 
     public function getTransactions(Request $request)
     {
-        return $this->process(function () use ($request) {
+        return $this->process(function () {
             $admin = auth('admin')->user() ?? auth('super_admin')->user();
 
             $transactions = Swap::where('admin_id', $admin->id)
@@ -97,7 +87,7 @@ class AdminController extends BaseController
             })->map(function ($transaction) {
                 $user = $transaction->user;
                 $transaction->user->fullName = $user->firstName && $user->lastName
-                    ? $user->firstName . ' ' . $user->lastName
+                    ? $user->firstName.' '.$user->lastName
                     : $user->email;
 
                 return $transaction;
@@ -111,12 +101,14 @@ class AdminController extends BaseController
     {
         return $this->process(function () use ($id) {
             $transaction = Swap::find($id);
+
             return $this->getResponse(status: true, message: 'Transaction fetched successfully', data: $transaction);
         }, true);
     }
 
     /**
      * Get all users
+     *
      * @return JsonResponse
      */
     public function getAllUsers()
@@ -135,7 +127,8 @@ class AdminController extends BaseController
 
     /**
      * Get a user by ID
-     * @param int $user_id
+     *
+     * @param  int  $user_id
      * @return JsonResponse
      */
     public function getUser($user_id)
@@ -149,8 +142,8 @@ class AdminController extends BaseController
 
     /**
      * Update a user
-     * @param Request $request
-     * @param int $user_id
+     *
+     * @param  int  $user_id
      * @return JsonResponse
      */
     public function updateUser(Request $request, $user_id)
@@ -158,8 +151,9 @@ class AdminController extends BaseController
         return $this->process(function () use ($request, $user_id) {
             $user = User::find($user_id);
 
-            if (!$user) {
+            if (! $user) {
                 $message = 'User does not exist';
+
                 return $this->getResponse('failure', null, 404, $message);
             }
 
@@ -170,14 +164,13 @@ class AdminController extends BaseController
             // Notify user via email
             Mail::to($user->email)->send(new UserUpdated($user));
 
-
             return $this->getResponse('success', $user, 200);
         }, true);
     }
 
     /**
      * Suspend a user and create a suspension record
-     * @param Request $request
+     *
      * @return JsonResponse
      */
     public function createSuspension(Request $request)
@@ -227,16 +220,15 @@ class AdminController extends BaseController
             ]);
 
             // set transaction limit to unlimited if preferences exists
-            if (!$user->preferences) {
+            if (! $user->preferences) {
                 $user->preferences()->create([
                     'daily_transaction_limit' => 'unlimited',
                 ]);
             }
 
             KYC::where('user_id', $user->id)->update([
-                'status' => 'approved'
+                'status' => 'approved',
             ]);
-
 
             Mail::to($user->email)->send(new KycApproved($user));
 
@@ -268,7 +260,6 @@ class AdminController extends BaseController
             );
         });
     }
-
 
     public function suspendUser(Request $request)
     {
@@ -320,7 +311,6 @@ class AdminController extends BaseController
         });
     }
 
-
     public function reactivateUser(Request $request)
     {
         return $this->process(function () use ($request) {
@@ -357,8 +347,9 @@ class AdminController extends BaseController
         return $this->process(function () use ($request) {
             $user = User::find($request->route('id'));
 
-            if (!$user) {
+            if (! $user) {
                 $message = 'User does not exist';
+
                 return $this->getResponse(status: false, message: $message, data: null, status_code: 404);
             }
 
@@ -368,10 +359,10 @@ class AdminController extends BaseController
             Mail::to($user->email)->send(new UserDeleted($user));
 
             $message = 'User deleted successfully';
+
             return $this->getResponse(status: true, message: $message, data: null, status_code: 200);
         }, true);
     }
-
 
     public function updateDetails(Request $request, $user_id)
     {
@@ -380,8 +371,9 @@ class AdminController extends BaseController
 
             $user = User::find($user_id);
 
-            if (!$user) {
+            if (! $user) {
                 $message = 'User does not exist';
+
                 return $this->getResponse('failure', null, 404, $message);
             }
 
@@ -396,6 +388,7 @@ class AdminController extends BaseController
             Mail::to($user->email)->send(new UserUpdated($user));
 
             $message = 'User updated successfully';
+
             return $this->getResponse('success', null, 200, $message);
         }, true);
     }
@@ -404,8 +397,6 @@ class AdminController extends BaseController
     {
         return $this->process(function () {
             $receipts = AlipayPayment::all();
-
-
 
             return $this->getResponse('success', $receipts, 200);
         }, true);
@@ -424,13 +415,13 @@ class AdminController extends BaseController
     {
         return $this->process(function () use ($request, $id) {
             $request->validate([
-                'proof_of_payment' => 'required'
+                'proof_of_payment' => 'required',
             ]);
 
             $alipayPayment = AlipayPayment::find($id);
 
-            //check if request has proof of payment
-            if (!$request->has('proof_of_payment')) {
+            // check if request has proof of payment
+            if (! $request->has('proof_of_payment')) {
                 return $this->getResponse(
                     status: 'error',
                     message: 'Proof of payment is required',
@@ -446,10 +437,9 @@ class AdminController extends BaseController
                 );
             }
 
-
             $alipayPayment->update([
                 'proof_of_payment' => $request->proof_of_payment,
-                'status' => 'completed'
+                'status' => 'completed',
             ]);
             $alipayPayment->save();
 
@@ -464,7 +454,7 @@ class AdminController extends BaseController
 
             $transaction = Transaction::where('id', $alipayPayment->transaction_id)->first();
             $transaction->update([
-                'status' => 'completed'
+                'status' => 'completed',
             ]);
             $transaction->save();
 
@@ -479,7 +469,7 @@ class AdminController extends BaseController
     {
         return $this->process(function () use ($request, $id) {
             $request->validate([
-                'reason' => 'required'
+                'reason' => 'required',
             ]);
 
             $receipt = AlipayPayment::find($id);
@@ -488,6 +478,7 @@ class AdminController extends BaseController
             $user = User::find($receipt->user_id);
 
             Mail::to($user->email)->send(new ReceiptDenied($user, $receipt, $request->reason));
+
             return $this->getResponse('success', $receipt, 200);
         }, true);
     }
@@ -518,12 +509,11 @@ class AdminController extends BaseController
             $withdrawal = Withdrawal::find($id);
 
             $request->validate([
-                'proof_of_payment' => 'required'
+                'proof_of_payment' => 'required',
             ]);
 
-
-            //check if request has proof of payment
-            if (!$request->has('proof_of_payment')) {
+            // check if request has proof of payment
+            if (! $request->has('proof_of_payment')) {
                 return $this->getResponse(
                     status: 'error',
                     message: 'Proof of payment is required',
@@ -539,7 +529,7 @@ class AdminController extends BaseController
                 'reference' => $request->reference,
                 'approved_at' => now(),
                 'completed_at' => now(),
-                'processed_at' => now()
+                'processed_at' => now(),
             ]);
             $withdrawal->save();
 

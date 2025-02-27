@@ -2,20 +2,17 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
 
 class NewUser extends Mailable
 {
     use Queueable;
     use SerializesModels;
-
-
 
     /**
      * Create a new message instance.
@@ -23,8 +20,7 @@ class NewUser extends Mailable
     public function __construct(
         public User $user,
         public string $otp
-    ) {
-    }
+    ) {}
 
     /**
      * Get the message envelope.
@@ -45,7 +41,7 @@ class NewUser extends Mailable
             view: 'emails.user.new',
             with: [
                 'user' => $this->user,
-                'otp' => $this->otp
+                'otp' => $this->otp,
             ],
         );
     }

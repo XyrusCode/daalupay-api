@@ -2,13 +2,13 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\Transaction;
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Transaction;
 
 class PaymentSent extends Mailable
 {
@@ -20,8 +20,7 @@ class PaymentSent extends Mailable
     public function __construct(
         public User $user,
         public Transaction $transaction
-    ) {
-    }
+    ) {}
 
     /**
      * Get the message envelope.
@@ -41,7 +40,7 @@ class PaymentSent extends Mailable
         return new Content(
             view: 'emails.payment.sent',
             with: [
-                'user'        => $this->user,
+                'user' => $this->user,
                 'transaction' => $this->transaction,
             ],
         );

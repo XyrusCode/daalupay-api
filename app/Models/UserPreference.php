@@ -2,10 +2,10 @@
 
 namespace Daalupay\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use DaaluPay\Models\BaseModel;
 use DaaluPay\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserPreference extends BaseModel
 {
@@ -32,10 +32,8 @@ class UserPreference extends BaseModel
         'last_transaction_date' => 'datetime',
     ];
 
-
     /**
      * Relationship: each preference record belongs to a user.
-     * @return BelongsTo
      */
     public function user(): BelongsTo
     {

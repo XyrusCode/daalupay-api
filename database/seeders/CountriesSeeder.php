@@ -533,6 +533,6 @@ class CountriesSeeder extends Seeder
 (266, 'New Zealand dollar', 'NZD', '1.00000000', 'enabled', 245, NULL, NULL),
 (267, 'Nicaraguan córdoba', 'NIO', '1.00000000', 'enabled', 246, NULL, NULL),
 (268, 'Eastern Caribbean dollar', 'XCD', '1.00000000', 'enabled', 247, NULL, NULL);"
-);
+        );
     }
 }

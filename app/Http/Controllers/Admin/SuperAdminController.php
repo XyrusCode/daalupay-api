@@ -7,43 +7,42 @@ use DaaluPay\Mail\AdminReactivated;
 use DaaluPay\Mail\AdminSuspended;
 use DaaluPay\Mail\AdminUpdated;
 use DaaluPay\Mail\NewAdmin;
-use Illuminate\Http\Request;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\BlogPost;
 use DaaluPay\Models\Chat;
 use DaaluPay\Models\Currency;
-use DaaluPay\Models\PaymentMethod;
 use DaaluPay\Models\ExchangeRate;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Transaction;
+use DaaluPay\Models\PaymentMethod;
 use DaaluPay\Models\Swap;
+use DaaluPay\Models\Transaction;
 use DaaluPay\Models\TransferFee;
-use Illuminate\Support\Facades\DB;
+use DaaluPay\Models\User;
 use DaaluPay\Models\Wallet;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Ramsey\Uuid\Uuid;
 
 class SuperAdminController extends BaseController
 {
-
-    function getPayStackBalance()
+    public function getPayStackBalance()
     {
         $curl = curl_init();
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://api.paystack.co/balance",
+        curl_setopt_array($curl, [
+            CURLOPT_URL => 'https://api.paystack.co/balance',
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
+            CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "GET",
-            CURLOPT_HTTPHEADER => array(
-                "Authorization: Bearer " . env('PAYSTACK_SECRET_KEY'),
-                "Cache-Control: no-cache",
-            ),
-        ));
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer '.env('PAYSTACK_SECRET_KEY'),
+                'Cache-Control: no-cache',
+            ],
+        ]);
 
         $response = curl_exec($curl);
         $err = curl_error($curl);
@@ -57,23 +56,23 @@ class SuperAdminController extends BaseController
         return $this->getResponse(status: true, message: 'PayStack balance fetched successfully', data: $response);
     }
 
-    function getFlutterWaveBalance()
+    public function getFlutterWaveBalance()
     {
         $curl = curl_init();
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://api.flutterwave.com/v3/balances",
+        curl_setopt_array($curl, [
+            CURLOPT_URL => 'https://api.flutterwave.com/v3/balances',
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
+            CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "GET",
-            CURLOPT_HTTPHEADER => array(
-                "Authorization: Bearer " . env('FLUTTERWAVE_SECRET_KEY'),
-                "Cache-Control: no-cache",
-            ),
-        ));
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer '.env('FLUTTERWAVE_SECRET_KEY'),
+                'Cache-Control: no-cache',
+            ],
+        ]);
 
         $response = curl_exec($curl);
         $err = curl_error($curl);
@@ -91,7 +90,6 @@ class SuperAdminController extends BaseController
     {
         return $this->process(function () {
 
-
             $users = User::get();
             $swaps = Swap::with('user')->get();
 
@@ -100,9 +98,8 @@ class SuperAdminController extends BaseController
             })->map(function ($swap) {
                 $user = $swap->user;
                 $swap->user->fullName = $user->firstName && $user->lastName
-                    ? $user->firstName . ' ' . $user->lastName
+                    ? $user->firstName.' '.$user->lastName
                     : $user->email;
-
 
                 return $swap;
             })->values();
@@ -132,6 +129,7 @@ class SuperAdminController extends BaseController
                 'swaps' => $swaps,
                 'nairaBalance' => $nairaBalance,
             ];
+
             return $this->getResponse(status: true, message: 'Super admin dashboard fetched successfully', data: $stats);
         }, true);
     }
@@ -140,6 +138,7 @@ class SuperAdminController extends BaseController
     {
         $this->process(function () {
             $admin = Admin::find(auth('admin')->user()->id);
+
             return $this->getResponse(status: true, message: 'Super admin dashboard fetched successfully', data: $admin);
         }, true);
     }
@@ -171,14 +170,13 @@ class SuperAdminController extends BaseController
         });
     }
 
-
     public function getAdmin(Request $request)
     {
         return $this->process(function () use ($request) {
             $id = $request->route('id');
             $admin = Admin::find($id);
 
-            if (!$admin) {
+            if (! $admin) {
                 return $this->getResponse(
                     status: 'error',
                     message: 'Admin not found',
@@ -199,7 +197,7 @@ class SuperAdminController extends BaseController
             $id = $request->route('id');
             $admin = Admin::find($id);
 
-            if (!$admin) {
+            if (! $admin) {
                 return $this->getResponse(
                     status: 'error',
                     message: 'Admin not found',
@@ -224,14 +222,13 @@ class SuperAdminController extends BaseController
         });
     }
 
-
     public function suspendAdmin(Request $request, Admin $admin)
     {
         return $this->process(function () use ($request) {
             $id = $request->route('id');
             $admin = Admin::find($id);
 
-            if (!$admin) {
+            if (! $admin) {
                 return $this->getResponse(
                     status: 'error',
                     message: 'Admin not found',
@@ -281,7 +278,6 @@ class SuperAdminController extends BaseController
             );
         });
     }
-
 
     public function addAdmin(Request $request)
     {
@@ -346,14 +342,14 @@ class SuperAdminController extends BaseController
             Mail::to($admin->email)->send(new AdminSuspended($admin, 'Your account has been deleted'));
 
             $admin->delete();
+
             return $this->getResponse(status: true, message: 'Admin deleted successfully');
         });
     }
 
-
     public function getAllCurrencies(Request $request)
     {
-        return $this->process(function () use ($request) {
+        return $this->process(function () {
             // Create a subquery to get the minimum id for each currency code
             $subQuery = Currency::selectRaw('MIN(id) as id')
                 ->groupBy('code');
@@ -367,7 +363,6 @@ class SuperAdminController extends BaseController
             );
         });
     }
-
 
     public function enableCurrency(Request $request)
     {
@@ -390,7 +385,6 @@ class SuperAdminController extends BaseController
             );
         });
     }
-
 
     public function disableCurrency(Request $request)
     {
@@ -416,13 +410,13 @@ class SuperAdminController extends BaseController
 
     public function getAllPaymentMethods(Request $request)
     {
-        return $this->process(function () use ($request) {
+        return $this->process(function () {
             $paymentMethods = PaymentMethod::query();
             $paymentMethods = $paymentMethods->get();
+
             return $this->getResponse(status: true, message: 'Payment methods fetched successfully', data: $paymentMethods);
         });
     }
-
 
     public function enablePaymentMethod(Request $request, PaymentMethod $paymentMethod)
     {
@@ -445,7 +439,6 @@ class SuperAdminController extends BaseController
             );
         });
     }
-
 
     public function disablePaymentMethod(Request $request)
     {
@@ -473,6 +466,7 @@ class SuperAdminController extends BaseController
     {
         return $this->process(function () use ($request) {
             $exchangeRate = ExchangeRate::create($request->all());
+
             return $this->getResponse(status: true, message: 'Exchange rate created successfully', data: $exchangeRate);
         }, true);
     }
@@ -482,6 +476,7 @@ class SuperAdminController extends BaseController
         return $this->process(function () use ($request) {
             $exchangeRate = ExchangeRate::find($request->route('id'));
             $exchangeRate->update($request->all());
+
             return $this->getResponse(status: true, message: 'Exchange rate updated successfully', data: $exchangeRate);
         }, true);
     }
@@ -491,6 +486,7 @@ class SuperAdminController extends BaseController
         return $this->process(function () use ($request) {
             $exchangeRate = ExchangeRate::find($request->route('id'));
             $exchangeRate->delete();
+
             return $this->getResponse(status: true, message: 'Exchange rate deleted successfully');
         }, true);
     }
@@ -501,14 +497,15 @@ class SuperAdminController extends BaseController
             $from = $request->query('from');
             $to = $request->query('to');
             // if no query params, return all exchange rates
-            if (!$from && !$to) {
+            if (! $from && ! $to) {
                 $exchangeRate = DB::table('exchange_rate')->get();
+
                 return $this->getResponse(status: true, message: 'Exchange rate fetched successully', data: $exchangeRate);
             }
 
             $exchangeRate = DB::table('exchange_rate')->where('from_currency', $from)->where('to_currency', $to)->first();
 
-            if (!$exchangeRate) {
+            if (! $exchangeRate) {
                 return $this->getResponse(status: false, message: 'Exchange rate not found', status_code: 404);
             }
 
@@ -518,7 +515,7 @@ class SuperAdminController extends BaseController
 
     public function getTransferFees(Request $request)
     {
-        return $this->process(function () use ($request) {
+        return $this->process(function () {
             $transferFees = TransferFee::query();
 
             $transferFees = $transferFees->get();
@@ -538,7 +535,7 @@ class SuperAdminController extends BaseController
             // Validate the request
             $validated = $request->validate([
                 'currency' => 'required|string|exists:currencies,code',
-                'fee' => 'required|numeric|min:0'
+                'fee' => 'required|numeric|min:0',
             ]);
 
             $currency = Currency::where('code', $validated['currency'])->first();
@@ -550,7 +547,7 @@ class SuperAdminController extends BaseController
                 // Update existing fee
                 $existingFee->update([
                     'fee' => $validated['fee'],
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ]);
                 $transferFee = $existingFee;
             } else {
@@ -565,7 +562,7 @@ class SuperAdminController extends BaseController
 
             return $this->getResponse(
                 status: true,
-                message: 'Transfer fee ' . ($existingFee ? 'updated' : 'created') . ' successfully',
+                message: 'Transfer fee '.($existingFee ? 'updated' : 'created').' successfully',
                 data: $transferFee
             );
         }, true);

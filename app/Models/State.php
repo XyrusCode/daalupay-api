@@ -10,13 +10,11 @@ class State extends BaseModel
 
     protected $fillable = [
         'name',
-        'country_id'
+        'country_id',
     ];
 
     /**
      * Get the country that owns the state.
-     *
-     * @return BelongsTo
      */
     public function country(): BelongsTo
     {

@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Swap;
 use DaaluPay\Models\Admin;
+use DaaluPay\Models\Swap;
 use DaaluPay\Models\Transaction;
+use DaaluPay\Models\User;
+use Illuminate\Database\Seeder;
 use Ramsey\Uuid\Uuid;
+
 class SwapSeeder extends Seeder
 {
     /**

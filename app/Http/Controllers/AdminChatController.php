@@ -13,15 +13,16 @@ class AdminChatController extends BaseController
     // Get all pending chats
     public function getPendingChats(Request $request)
     {
-        return $this->process(function () use ($request) {
+        return $this->process(function () {
 
             // get pending or active chats
             $pendingChats = Chat::where('status', 'pending')->get();
-            $activeChats = Chat::where('status', 'active', )->get();
-            //merge the two collections
+            $activeChats = Chat::where('status', 'active')->get();
+            // merge the two collections
 
             $chats = $pendingChats->merge($activeChats);
-               return $this->getResponse(
+
+            return $this->getResponse(
                 status: true,
                 message: 'Chat session created successfully',
                 data: Chat::where('status', 'pending')->get(),
@@ -50,14 +51,14 @@ class AdminChatController extends BaseController
     // Admin sends a message
     public function sendAdminMessage(Request $request, $chatId)
     {
-        return $this->process(function () use ($request,$chatId) {
+        return $this->process(function () use ($request, $chatId) {
             $request->validate(['message' => 'required|string']);
 
             $message = Message::create([
                 'chat_id' => $chatId,
                 'sender_id' => Auth::id(),
                 'message' => $request->message,
-                'sent_from' => 'agent'
+                'sent_from' => 'agent',
             ]);
 
             return $this->getResponse(
@@ -93,4 +94,3 @@ class AdminChatController extends BaseController
 
     }
 }
-

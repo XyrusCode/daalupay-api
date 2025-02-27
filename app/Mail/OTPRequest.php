@@ -2,12 +2,12 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
 
 class OTPRequest extends Mailable
 {
@@ -16,8 +16,7 @@ class OTPRequest extends Mailable
     public function __construct(
         public User $user,
         public string $otp
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {
@@ -32,7 +31,7 @@ class OTPRequest extends Mailable
             view: 'emails.auth.otp_request',
             with: [
                 'user' => $this->user,
-                'otp'  => $this->otp,
+                'otp' => $this->otp,
             ],
         );
     }

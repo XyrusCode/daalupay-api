@@ -2,21 +2,20 @@
 
 namespace DaaluPay\Models;
 
-use OpenApi\Annotations as OA;
-
 class Country extends BaseModel
 {
     protected $table = 'countries';
+
     public $timestamps = false;
 
     protected $fillable = [
         'name',
-        'calling_code'
+        'calling_code',
     ];
 
     protected $hidden = [
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     /**
@@ -24,7 +23,7 @@ class Country extends BaseModel
      *
      * @return HasMany
      */
-    function states()
+    public function states()
     {
         return $this->hasMany(State::class);
     }

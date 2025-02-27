@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('deposits', function (Blueprint $table) {
-             $table->id()->primary();
+            $table->id()->primary();
             $table->uuid('uuid')->unique();
             $table->decimal('amount', 10, 2);
             $table->enum('status', ['pending', 'approved', 'rejected']);

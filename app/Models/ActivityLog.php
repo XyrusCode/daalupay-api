@@ -2,13 +2,11 @@
 
 namespace DaaluPay\Models;
 
-use DaaluPay\Models\BaseModel;
-
 class ActivityLog extends BaseModel
 {
     protected $table = 'activity_logs';
 
-      protected $fillable = [
+    protected $fillable = [
         'user_id',
         'action',
         'data',

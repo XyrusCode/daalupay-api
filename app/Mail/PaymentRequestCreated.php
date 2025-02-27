@@ -3,7 +3,6 @@
 namespace DaaluPay\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -14,12 +13,11 @@ class PaymentRequestCreated extends Mailable
     use Queueable, SerializesModels;
 
     public $admin;
+
     public $paymentRequest;
 
     /**
      * Create a new message instance.
-     *
-     * @param $paymentRequest
      */
     public function __construct($admin, $paymentRequest)
     {
@@ -46,7 +44,7 @@ class PaymentRequestCreated extends Mailable
             view: 'email.payment.new_request',
             with: [
                 'admin' => $this->admin,
-                'paymentRequest' => $this->paymentRequest
+                'paymentRequest' => $this->paymentRequest,
             ],
         );
     }

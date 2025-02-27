@@ -24,8 +24,6 @@ class AlipayPayment extends Model
 
     /**
      * Get the user that owns the AlipayPayment
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo
     {

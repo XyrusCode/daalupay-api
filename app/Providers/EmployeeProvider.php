@@ -2,10 +2,9 @@
 
 namespace DaaluPay\Providers;
 
-use Illuminate\Contracts\Auth\UserProvider;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Contracts\Auth\Authenticatable;
 use DaaluPay\Models\Employee;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Hash;
 
 class EmployeeProvider
 {

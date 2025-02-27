@@ -2,12 +2,12 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
 
 class KycDenied extends Mailable
 {
@@ -16,8 +16,7 @@ class KycDenied extends Mailable
     public function __construct(
         public User $user,
         public string $reason
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {
@@ -31,7 +30,7 @@ class KycDenied extends Mailable
         return new Content(
             view: 'emails.kyc.denied',
             with: [
-                'user'   => $this->user,
+                'user' => $this->user,
                 'reason' => $this->reason,
             ],
         );

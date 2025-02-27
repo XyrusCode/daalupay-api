@@ -2,12 +2,12 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
 
 class NewMessage extends Mailable
 {
@@ -17,8 +17,7 @@ class NewMessage extends Mailable
         public User $recipient,
         public string $senderName,
         public string $messageExcerpt
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {
@@ -32,8 +31,8 @@ class NewMessage extends Mailable
         return new Content(
             view: 'emails.messages.new_message',
             with: [
-                'recipient'      => $this->recipient,
-                'senderName'     => $this->senderName,
+                'recipient' => $this->recipient,
+                'senderName' => $this->senderName,
                 'messageExcerpt' => $this->messageExcerpt,
             ],
         );

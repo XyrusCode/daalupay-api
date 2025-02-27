@@ -2,14 +2,13 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\Deposit;
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Deposit;
 
 class NewDeposit extends Mailable
 {
@@ -21,8 +20,7 @@ class NewDeposit extends Mailable
     public function __construct(
         public User $user,
         public Deposit $deposit,
-    ) {
-    }
+    ) {}
 
     /**
      * Get the message envelope.

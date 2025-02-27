@@ -2,17 +2,16 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Faker\Factory as Faker;
-use Ramsey\Uuid\Uuid;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Admin;
 use DaaluPay\Models\Address;
+use DaaluPay\Models\Admin;
 use DaaluPay\Models\KYC;
+use DaaluPay\Models\User;
 use DaaluPay\Models\UserBankAccount;
 use Daalupay\Models\UserPreference;
+use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Ramsey\Uuid\Uuid;
 
 class UserSeeder extends Seeder
 {
@@ -89,7 +88,7 @@ class UserSeeder extends Seeder
         for ($i = 2; $i <= 6; $i++) {
             $firstName = Faker::create()->firstName;
             $lastName = Faker::create()->lastName;
-            $email = $firstName . '.' . $lastName . '@example.com';
+            $email = $firstName.'.'.$lastName.'@example.com';
             if (User::where('email', $email)->first() === null) {
                 User::create([
                     'id' => $i,
@@ -132,7 +131,7 @@ class UserSeeder extends Seeder
                 UserBankAccount::create([
                     'user_id' => $i,
                     'account_number' => Faker::create()->bankAccountNumber,
-                    'account_name' => $firstName . ' ' . $lastName,
+                    'account_name' => $firstName.' '.$lastName,
                     'name' => Faker::create()->company,
                     'created_at' => now(),
                     'updated_at' => now(),

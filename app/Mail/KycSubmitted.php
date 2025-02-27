@@ -2,13 +2,13 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\Kyc;
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Kyc;
 
 class KycSubmitted extends Mailable
 {
@@ -17,8 +17,7 @@ class KycSubmitted extends Mailable
     public function __construct(
         public User $user,
         public Kyc $kyc
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {
@@ -33,7 +32,7 @@ class KycSubmitted extends Mailable
             view: 'emails.kyc.submitted',
             with: [
                 'user' => $this->user,
-                'kyc'  => $this->kyc,
+                'kyc' => $this->kyc,
             ],
         );
     }

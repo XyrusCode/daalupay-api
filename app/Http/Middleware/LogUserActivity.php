@@ -3,10 +3,9 @@
 namespace DaaluPay\Http\Middleware;
 
 use Closure;
+use DaaluPay\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-
-use DaaluPay\Models\ActivityLog;
 
 class LogUserActivity
 {
@@ -17,7 +16,7 @@ class LogUserActivity
      */
     public function handle(Request $request, Closure $next): Response
     {
-              $response = $next($request);
+        $response = $next($request);
 
         // if (auth()->check()) {
         //     ActivityLog::create([

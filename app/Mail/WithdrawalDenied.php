@@ -3,7 +3,6 @@
 namespace DaaluPay\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -14,14 +13,13 @@ class WithdrawalDenied extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
+
     public $withdrawal;
+
     public $reason;
 
     /**
      * Create a new message instance.
-     *
-     * @param $user
-     * @param $withdrawal
      */
     public function __construct($user, $withdrawal, $reason)
     {
@@ -50,7 +48,7 @@ class WithdrawalDenied extends Mailable
             with: [
                 'user' => $this->user,
                 'withdrawal' => $this->withdrawal,
-                'reason' => $this->reason
+                'reason' => $this->reason,
             ],
         );
     }

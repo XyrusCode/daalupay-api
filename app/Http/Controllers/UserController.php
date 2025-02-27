@@ -2,17 +2,12 @@
 
 namespace DaaluPay\Http\Controllers;
 
-use DaaluPay\Models\Swap;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-// use DaaluPay\Http\Traits\AdminTrait;
 use DaaluPay\Models\User;
-use DaaluPay\Models\Wallet;
+// use DaaluPay\Http\Traits\AdminTrait;
+use Illuminate\Http\Request;
 
 class UserController extends BaseController
 {
-
     public function get(Request $request)
     {
         $this->process(function () use ($request) {
@@ -21,6 +16,7 @@ class UserController extends BaseController
                 ->with(['wallets:id,user_id,currency,balance'])
                 ->where('id', $user->id)
                 ->first();
+
             return $this->getResponse('success', $userData, 200);
         }, true);
     }
@@ -39,6 +35,7 @@ class UserController extends BaseController
                 'transactions' => $transactions,
                 'swaps' => $swaps,
             ];
+
             return $this->getResponse('success', $stats, 200);
         }, true);
     }
@@ -50,11 +47,8 @@ class UserController extends BaseController
 
             $user->save();
             $message = 'User updated successfully';
+
             return $this->getResponse('success', null, 200, $message);
         }, true);
     }
-
-
-
 }
-

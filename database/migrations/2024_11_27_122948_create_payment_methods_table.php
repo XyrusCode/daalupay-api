@@ -12,7 +12,7 @@ class CreatePaymentMethodsTable extends Migration
     public function up()
     {
         Schema::create('payment_methods', function (Blueprint $table) {
-             $table->id();
+            $table->id();
             $table->string('name')->unique();
             $table->text('description')->nullable();
             $table->enum('status', ['enabled', 'disabled'])->default('enabled');

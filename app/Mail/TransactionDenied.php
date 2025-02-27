@@ -2,14 +2,13 @@
 
 namespace DaaluPay\Mail;
 
-use DaaluPay\Models\Swap;
+use DaaluPay\Models\User;
+use DaaluPay\Models\Withdrawal;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Withdrawal;
 
 class TransactionDenied extends Mailable
 {
@@ -19,8 +18,7 @@ class TransactionDenied extends Mailable
         public User $user,
         public Withdrawal $TransactionDenied,
         public string $reason
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {
@@ -34,9 +32,9 @@ class TransactionDenied extends Mailable
         return new Content(
             view: 'emails.transaction.denied',
             with: [
-                'user'        => $this->user,
+                'user' => $this->user,
                 'TransactionDenied' => $this->TransactionDenied,
-                'reason'      => $this->reason,
+                'reason' => $this->reason,
             ],
         );
     }

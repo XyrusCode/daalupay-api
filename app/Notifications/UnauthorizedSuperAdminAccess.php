@@ -3,14 +3,15 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class UnauthorizedSuperAdminAccess extends Notification
 {
     use Queueable;
 
     private $attemptedRoute;
+
     private $adminUser;
 
     public function __construct($adminUser, $attemptedRoute)
@@ -31,7 +32,7 @@ class UnauthorizedSuperAdminAccess extends Notification
             ->line('An admin has attempted to access a super admin route.')
             ->line("Admin: {$this->adminUser->email}")
             ->line("Attempted Route: {$this->attemptedRoute}")
-            ->line('Time: ' . now()->format('Y-m-d H:i:s'));
+            ->line('Time: '.now()->format('Y-m-d H:i:s'));
     }
 
     public function toArray($notifiable): array

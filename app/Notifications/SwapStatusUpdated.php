@@ -3,7 +3,6 @@
 namespace DaaluPay\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -12,6 +11,7 @@ class SwapStatusUpdated extends Notification
     use Queueable;
 
     protected $status;
+
     protected $reason;
 
     /**
@@ -45,11 +45,11 @@ class SwapStatusUpdated extends Notification
         if ($this->status === 'approved') {
             $message->line('Your swap request has been approved!')
                 ->line('You can now proceed with the swap transaction.')
-                ->action('View Swap Details', config('app.url') . '/swaps');
+                ->action('View Swap Details', config('app.url').'/swaps');
         } else {
             $message->line('Your swap request has been denied.')
                 ->line("Reason: {$this->reason}")
-                ->action('Contact Support', config('app.url') . '/support');
+                ->action('Contact Support', config('app.url').'/support');
         }
 
         return $message->line('Thank you for using our service.');

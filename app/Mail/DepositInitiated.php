@@ -2,13 +2,13 @@
 
 namespace DaaluPay\Mail;
 
+use DaaluPay\Models\Deposit;
+use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use DaaluPay\Models\User;
-use DaaluPay\Models\Deposit;
 
 class DepositInitiated extends Mailable
 {
@@ -17,8 +17,7 @@ class DepositInitiated extends Mailable
     public function __construct(
         public User $user,
         public Deposit $deposit
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {
@@ -32,7 +31,7 @@ class DepositInitiated extends Mailable
         return new Content(
             view: 'emails.deposit.deposit_initiated',
             with: [
-                'user'    => $this->user,
+                'user' => $this->user,
                 'deposit' => $this->deposit,
             ],
         );
