@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->decimal('amount', 15, 2);
-            $table->string('status');
+            $table->enum('status', ['pending', 'approved', 'rejected']);
             $table->unsignedBigInteger('currency_id')->nullable();
             $table->unsignedBigInteger('wallet_id')->nullable();
             $table->string('transaction_id')->nullable();
