@@ -16,6 +16,7 @@ class CreateUserPreferencesTable extends Migration
             $table->unsignedBigInteger('user_id')->unique();
             $table->enum('notify_email', ['true', 'false'])->default('true');
             $table->enum('notify_sms', ['true', 'false'])->default('false');
+            $table->enum('notify_push', ['true', 'false'])->default('false')->nullable();
             $table->enum('theme', ['light', 'dark'])->default('light');
             $table->enum('daily_transaction_limit', ['500000', 'unlimited'])->default('500000');
             $table->decimal('transaction_total_today', 10, 2)->default(0.00);

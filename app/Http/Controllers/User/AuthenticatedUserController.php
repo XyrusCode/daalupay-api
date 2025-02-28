@@ -17,7 +17,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class AuthenticatedUserController extends BaseController
@@ -51,7 +53,7 @@ class AuthenticatedUserController extends BaseController
         return $this->process(function () use ($request) {
             $admin = auth('admin')->user() ?? auth('super_admin')->user();
 
-            $message = 'success for user'.$request->user();
+            $message = 'success for user' . $request->user();
 
             return $this->getResponse(status: $message, data: $admin, status_code: 200);
         }, true);
@@ -98,13 +100,22 @@ class AuthenticatedUserController extends BaseController
             $user = Auth::user();
 
             $request->validate([
-                'old_password' => ['required', 'string'],
-                'new_password' => ['required', 'string', 'min:8'], // TODO: Add more validation rules
+                'old_password' => ['required', 'current_password'],
+                'new_password' => ['required', 'string', 'min:8', 'different:old_password'],
             ]);
 
-            if (! Hash::check($request->old_password, $user->password)) {
+            if (empty($request->old_password)) {
+                return $this->getResponse('error', null, 400, 'Old password cannot be empty');
+            }
+
+            // Fetch the user's password from the database
+            $storedPasswordHash = $user->password;
+
+            // Compare the hashed old password with the stored password hash
+            if (!Hash::check($request->old_password, $storedPasswordHash)) {
                 return $this->getResponse('error', null, 400, 'Old password is incorrect');
             }
+
 
             // Update the user's password
             $user->password = Hash::make($request->new_password);
@@ -193,6 +204,13 @@ class AuthenticatedUserController extends BaseController
                 'status' => 'active',
             ]);
 
+            // turn on Notify_push in upser preferences
+            if (Schema::hasColumn('preferences', 'notify_push')) {
+                $user->preferences->update([
+                    'notify_push' => true
+                ]);
+            }
+
             return $this->getResponse('success', $token, 200);
         }, true);
     }
@@ -206,6 +224,13 @@ class AuthenticatedUserController extends BaseController
                 return $this->getResponse('error', null, 404, 'Token not found');
             }
             DB::table('device_token')->where('token', $id)->update(['status' => 'inactive']);
+
+            // turn off notify push
+            if (Schema::hasColumn('preferences', 'notify_push')) {
+                $user->preferences->update([
+                    'notify_push' => false
+                ]);
+            }
 
             return $this->getResponse(status_code: 200, data: $token, status: 'success');
         }, true);
@@ -283,7 +308,7 @@ class AuthenticatedUserController extends BaseController
                 'status' => 'pending',
                 'payment_method' => 'withdrawal',
                 'reference_number' => Str::uuid(),
-                'description' => 'Withdrawal for '.$validated['amount'].' '.$ngnCurrency->code,
+                'description' => 'Withdrawal for ' . $validated['amount'] . ' ' . $ngnCurrency->code,
             ]);
 
             $withdrawal = Withdrawal::create([
