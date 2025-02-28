@@ -38,7 +38,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('set null');
             $table->foreign('wallet_id')->references('id')->on('wallets')->onDelete('set null');
-            $table->foreign('bank_id')->references('id')->on('user_bank_accounts')->onDelete('set null');
+            $table->foreign('bank_account_id')->references('id')->on('user_bank_accounts')->onDelete('set null');
             $table->foreign('admin_id')->references('id')->on('admins')->onDelete('set null');
         });
     }

@@ -67,7 +67,7 @@ class UserSeeder extends Seeder
             'user_id' => 1,
             'account_number' => Faker::create()->bankAccountNumber,
             'account_name' => 'Prince Shammah',
-            'name' => 'Walexbizhost',
+            'bank_name' => 'Walexbizhost',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -132,7 +132,7 @@ class UserSeeder extends Seeder
                     'user_id' => $i,
                     'account_number' => Faker::create()->bankAccountNumber,
                     'account_name' => $firstName.' '.$lastName,
-                    'name' => Faker::create()->company,
+                    'bank_name' => Faker::create()->company,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
