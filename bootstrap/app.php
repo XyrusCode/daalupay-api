@@ -41,7 +41,7 @@ return Application::configure(basePath: dirname(__DIR__))
             '/super-admin/exchange-rates/*',
             '/super-admin/exchange-rates',
             '/super-admin/transfer-fees',
-            '/super-admin/receipts',
+            '/super-admin/transfers',
             '/super-admin/swaps',
         ]);
 

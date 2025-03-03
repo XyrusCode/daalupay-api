@@ -19,5 +19,21 @@ class BlogPostSeeder extends Seeder
             'isActive' => true,
             'author_id' => 1,
         ]);
+
+        BlogPost::create([
+            'title' => 'The Benefits of Using Alipay',
+            'content' => 'Alipay offers a wide range of benefits to its users. It is fast, secure, and convenient, allowing users to make payments quickly and easily. Alipay also offers a variety of features, such as bill payment, money transfer, and online shopping, making it a versatile payment platform.',
+            'featured_image' => '',
+            'isActive' => true,
+            'author_id' => 1,
+        ]);
+
+        BlogPost::create([
+            'title' => 'How to Use Alipay',
+            'content' => 'Using Alipay is simple and easy. Users can download the Alipay app on their mobile device and create an account. They can then link their bank account or credit card to their Alipay account and start making payments. Alipay also offers a variety of features, such as QR code payments, money transfer, and online shopping, making it a versatile payment platform.',
+            'featured_image' => '',
+            'isActive' => true,
+            'author_id' => 1,
+        ]);
     }
 }

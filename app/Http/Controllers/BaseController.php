@@ -4,7 +4,7 @@ namespace DaaluPay\Http\Controllers;
 
 use DaaluPay\Exceptions\CustomException;
 use DaaluPay\Helpers\StatusCodeHelper;
-use DaaluPay\Models\Receipt;
+use DaaluPay\Models\Transfer;
 use DaaluPay\Services\FCMService;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -59,7 +59,7 @@ class BaseController extends Controller
 
             return $result;
         } catch (\Throwable $e) {
-            Log::error('Transaction failed: '.$e->getMessage());
+            Log::error('Transaction failed: ' . $e->getMessage());
             // Rollback the transaction in case of any error
             DB::rollBack();
 
@@ -120,29 +120,29 @@ class BaseController extends Controller
         // capture exception to sentry
         captureException($e);
 
-        Log::error('Exception handled: '.$e->getMessage());
+        Log::error('Exception handled: ' . $e->getMessage());
 
         // Determine the type of throwable
         return match (true) {
             $e instanceof ValidationException => $this->getResponse(
                 status: 'error',
                 status_code: 422,
-                message: 'Incorrect Credentails: '.$e->getMessage()
+                message: 'Incorrect Credentails: ' . $e->getMessage()
             ),
             $e instanceof CustomException => $this->getResponse(
                 status: 'error',
                 status_code: 404,
-                message: 'Model not found: '.$e->getMessage()
+                message: 'Model not found: ' . $e->getMessage()
             ),
             $e instanceof QueryException => $this->getResponse(
                 status: 'error',
                 status_code: 400,
-                message: 'Database query error: '.$e->getMessage()
+                message: 'Database query error: ' . $e->getMessage()
             ),
             default => $this->getResponse(
                 status: 'error',
                 status_code: 500,
-                message: 'An error occurred: '.$e->getMessage()
+                message: 'An error occurred: ' . $e->getMessage()
             ),
         };
     }
@@ -208,8 +208,8 @@ class BaseController extends Controller
 
     public function getBlobFromDB(string $table, string $key)
     {
-        $receipt = DB::table($table)->where('id', $key)->first();
-        $file = $receipt->receipt;
+        $transfer = DB::table($table)->where('id', $key)->first();
+        $file = $transfer->transfer;
         // check if blob is null
         if (! $file) {
             $this->getResponse(status: 'error', status_code: 404, message: 'File not found');
@@ -220,27 +220,7 @@ class BaseController extends Controller
 
         return response($file)
             ->header('Content-Type', $mimeType)
-            ->header('Content-Disposition', 'inline; filename="'.$file->filename.'"');
-    }
-
-    public function serveReceipt($id)
-    {
-        $receipt = Receipt::findOrFail($id);
-        $file = $receipt->receipt;
-
-        if (! $file) {
-            $this->getResponse(status: 'error', status_code: 404, message: 'File not found');
-        }
-
-        if (! $receipt) {
-            $this->getResponse(status: 'error', status_code: 404, message: 'Receipt not found');
-        }
-
-        $mimeType = $file->mime_type ?? 'application/octet-stream';
-
-        return response($file)
-            ->header('Content-Type', $mimeType)
-            ->header('Content-Disposition', 'inline; filename="'.($receipt->filename ?? 'receipt').'"');
+            ->header('Content-Disposition', 'inline; filename="' . $file->filename . '"');
     }
 
     public function sendFCMNotification(Request $request, $messageTitle, $messageBody)
@@ -273,21 +253,21 @@ class BaseController extends Controller
             return $this->getResponse(
                 status: 'error',
                 status_code: 422,
-                message: 'Messaging error: '.$e->getMessage()
+                message: 'Messaging error: ' . $e->getMessage()
             );
         } catch (FirebaseException $e) {
             // Catches general Firebase exceptions
             return $this->getResponse(
                 status: 'error',
                 status_code: 500,
-                message: 'Firebase error: '.$e->getMessage()
+                message: 'Firebase error: ' . $e->getMessage()
             );
         } catch (\Exception $e) {
             // Catches any other exceptions
             return $this->getResponse(
                 status: 'error',
                 status_code: 500,
-                message: 'Unexpected error: '.$e->getMessage()
+                message: 'Unexpected error: ' . $e->getMessage()
             );
         }
     }

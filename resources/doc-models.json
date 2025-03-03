@@ -129,31 +129,81 @@
         ]
     },
     {
-        "name": "Swap",
-        "description": "A swap is a record of a swap transaction between two parties. It can be a swap from one currency to another.",
-        "fields": [
-            {
-                "name": "id",
-                "type": "integer",
-                "description": "The unique identifier for the swap."
-            },
-            {
-                "name": "amount",
-                "type": "number",
-                "description": "The amount of the swap."
-            },
-            {
-                "name": "from_wallet_id",
-                "type": "integer",
-                "description": "The wallet id of the user swapping from."
-            },
-            {
-                "name": "to_currency",
-                "type": "enum:NGN,USD,EUR",
-                "description": "The currency the user is swapping to."
-            }
-        ]
-    },
+    "name": "Swap",
+    "description": "A swap is a record of a swap transaction between two parties. It can be a swap from one currency to another.",
+    "fields": [
+        {
+            "name": "id",
+            "type": "integer",
+            "description": "The unique identifier for the swap."
+        },
+        {
+            "name": "uuid",
+            "type": "string",
+            "description": "The UUID of the swap."
+        },
+        {
+            "name": "user_id",
+            "type": "integer",
+            "description": "The user id of the swap."
+        },
+        {
+            "name": "from_currency",
+            "type": "string",
+            "description": "The currency the user is swapping from."
+        },
+        {
+            "name": "to_currency",
+            "type": "string",
+            "description": "The currency the user is swapping to."
+        },
+        {
+            "name": "from_amount",
+            "type": "number",
+            "description": "The amount of the currency the user is swapping from."
+        },
+        {
+            "name": "to_amount",
+            "type": "number",
+            "description": "The amount of the currency the user is swapping to."
+        },
+        {
+            "name": "rate",
+            "type": "number",
+            "description": "The exchange rate for the swap."
+        },
+        {
+            "name": "status",
+            "type": "string",
+            "description": "The status of the swap."
+        },
+        {
+            "name": "admin_id",
+            "type": "integer",
+            "description": "The admin id associated with the swap."
+        },
+        {
+            "name": "transaction_id",
+            "type": "integer",
+            "description": "The transaction id associated with the swap."
+        },
+        {
+            "name": "notes",
+            "type": "string",
+            "description": "Additional notes for the swap."
+        },
+        {
+            "name": "created_at",
+            "type": "string",
+            "description": "The date and time when the swap was created."
+        },
+        {
+            "name": "updated_at",
+            "type": "string",
+            "description": "The date and time when the swap was last updated."
+        }
+    ]
+},
     {
         "name": "Address",
         "description": "An address is a record of an address of a user. It can be an address for a user.",
@@ -211,63 +261,284 @@
             }
         ]
     },
+   {
+    "name": "Wallet",
+    "description": "A wallet is a record of a wallet of a user. It can be a wallet for a user.",
+    "fields": [
+        {
+            "name": "id",
+            "type": "integer",
+            "description": "The unique identifier for the wallet."
+        },
+        {
+            "name": "uuid",
+            "type": "string",
+            "description": "The UUID of the wallet."
+        },
+        {
+            "name": "balance",
+            "type": "number",
+            "description": "The balance of the wallet."
+        },
+        {
+            "name": "currency",
+            "type": "string",
+            "description": "The currency of the wallet."
+        },
+        {
+            "name": "user_id",
+            "type": "integer",
+            "description": "The user id of the wallet."
+        },
+        {
+            "name": "currency_id",
+            "type": "integer",
+            "description": "The currency id of the wallet."
+        },
+        {
+            "name": "created_at",
+            "type": "string",
+            "description": "The date and time when the wallet was created."
+        },
+        {
+            "name": "updated_at",
+            "type": "string",
+            "description": "The date and time when the wallet was last updated."
+        }
+    ]
+},
+ {
+    "name": "Deposit",
+    "description": "A deposit is a record of a deposit transaction on a wallet. It can be a deposit on a wallet.",
+    "fields": [
+        {
+            "name": "id",
+            "type": "integer",
+            "description": "The unique identifier for the deposit."
+        },
+        {
+            "name": "uuid",
+            "type": "string",
+            "description": "The UUID of the deposit."
+        },
+        {
+            "name": "amount",
+            "type": "number",
+            "description": "The amount of the deposit."
+        },
+        {
+            "name": "status",
+            "type": "string",
+            "description": "The status of the deposit."
+        },
+        {
+            "name": "user_id",
+            "type": "integer",
+            "description": "The user id of the deposit."
+        },
+        {
+            "name": "transaction_id",
+            "type": "integer",
+            "description": "The transaction id associated with the deposit."
+        },
+        {
+            "name": "channel",
+            "type": "string",
+            "description": "The channel through which the deposit was made."
+        },
+        {
+            "name": "wallet_id",
+            "type": "integer",
+            "description": "The wallet id of the deposit."
+        },
+        {
+            "name": "created_at",
+            "type": "string",
+            "description": "The date and time when the deposit was created."
+        },
+        {
+            "name": "updated_at",
+            "type": "string",
+            "description": "The date and time when the deposit was last updated."
+        }
+    ]
+},
+{
+    "name": "Withdrawal",
+    "description": "A withdrawal is a record of a withdrawal transaction on a wallet. It can be a withdrawal on a wallet.",
+    "fields": [
+        {
+            "name": "id",
+            "type": "integer",
+            "description": "The unique identifier for the withdrawal."
+        },
+        {
+            "name": "user_id",
+            "type": "integer",
+            "description": "The user id of the withdrawal."
+        },
+        {
+            "name": "amount",
+            "type": "number",
+            "description": "The amount of the withdrawal."
+        },
+        {
+            "name": "status",
+            "type": "string",
+            "description": "The status of the withdrawal."
+        },
+        {
+            "name": "currency_id",
+            "type": "integer",
+            "description": "The currency id of the withdrawal."
+        },
+        {
+            "name": "wallet_id",
+            "type": "integer",
+            "description": "The wallet id of the withdrawal."
+        },
+        {
+            "name": "transaction_id",
+            "type": "integer",
+            "description": "The transaction id associated with the withdrawal."
+        },
+        {
+            "name": "bank_account_id",
+            "type": "integer",
+            "description": "The bank account id associated with the withdrawal."
+        },
+        {
+            "name": "bank_name",
+            "type": "string",
+            "description": "The name of the bank associated with the withdrawal."
+        },
+        {
+            "name": "account_number",
+            "type": "string",
+            "description": "The account number associated with the withdrawal."
+        },
+        {
+            "name": "account_name",
+            "type": "string",
+            "description": "The account name associated with the withdrawal."
+        },
+        {
+            "name": "reference",
+            "type": "string",
+            "description": "The reference for the withdrawal."
+        },
+        {
+            "name": "proof_of_payment",
+            "type": "string",
+            "description": "The proof of payment for the withdrawal."
+        },
+        {
+            "name": "note",
+            "type": "string",
+            "description": "The note for the withdrawal."
+        },
+        {
+            "name": "admin_id",
+            "type": "integer",
+            "description": "The admin id associated with the withdrawal."
+        },
+        {
+            "name": "approved_at",
+            "type": "string",
+            "description": "The date and time when the withdrawal was approved."
+        },
+        {
+            "name": "declined_at",
+            "type": "string",
+            "description": "The date and time when the withdrawal was declined."
+        },
+        {
+            "name": "processed_at",
+            "type": "string",
+            "description": "The date and time when the withdrawal was processed."
+        },
+        {
+            "name": "cancelled_at",
+            "type": "string",
+            "description": "The date and time when the withdrawal was cancelled."
+        },
+        {
+            "name": "completed_at",
+            "type": "string",
+            "description": "The date and time when the withdrawal was completed."
+        },
+        {
+            "name": "created_at",
+            "type": "string",
+            "description": "The date and time when the withdrawal was created."
+        },
+        {
+            "name": "updated_at",
+            "type": "string",
+            "description": "The date and time when the withdrawal was last updated."
+        }
+    ]
+},
     {
-        "name": "Wallet",
-        "description": "A wallet is a record of a wallet of a user. It can be a wallet for a user.",
-        "fields": [
-            {
-                "name": "id",
-                "type": "integer",
-                "description": "The unique identifier for the wallet."
-            },
-            {
-                "name": "balance",
-                "type": "number",
-                "description": "The balance of the wallet."
-            },
-            {
-                "name": "currency",
-                "type": "enum:NGN,USD,EUR",
-                "description": "The currency of the wallet."
-            },
-            {
-                "name": "user_id",
-                "type": "integer",
-                "description": "The user id of the wallet."
-            }
-        ]
-    },
-    {
-        "name": "Deposit",
-        "description": "A deposit is a record of a deposit transaction on a wallet. It can be a deposit on a wallet.",
-        "fields": [
-            {
-                "name": "id",
-                "type": "integer",
-                "description": "The unique identifier for the deposit."
-            },
-            {
-                "name": "amount",
-                "type": "number",
-                "description": "The amount of the deposit."
-            }
-        ]
-    },
-    {
-        "name": "Withdrawal",
-        "description": "A withdrawal is a record of a withdrawal transaction on a wallet. It can be a withdrawal on a wallet.",
-        "fields": [
-            {
-                "name": "id",
-                "type": "integer",
-                "description": "The unique identifier for the withdrawal."
-            },
-            {
-                "name": "amount",
-                "type": "number",
-                "description": "The amount of the withdrawal."
-            }
-        ]
-    }
+    "name": "Transfer",
+    "description": "A transfer is a record of a transfer transaction between two parties.",
+    "fields": [
+        {
+            "name": "id",
+            "type": "integer",
+            "description": "The unique identifier for the transfer."
+        },
+        {
+            "name": "user_id",
+            "type": "integer",
+            "description": "The user id of the transfer."
+        },
+        {
+            "name": "amount",
+            "type": "number",
+            "description": "The amount of the transfer."
+        },
+        {
+            "name": "status",
+            "type": "string",
+            "description": "The status of the transfer."
+        },
+        {
+            "name": "payment_details",
+            "type": "string",
+            "description": "The payment details of the transfer."
+        },
+        {
+            "name": "recipient_name",
+            "type": "string",
+            "description": "The name of the recipient."
+        },
+        {
+            "name": "recipient_email",
+            "type": "string",
+            "description": "The email of the recipient."
+        },
+        {
+            "name": "description",
+            "type": "string",
+            "description": "The description of the transfer."
+        },
+        {
+            "name": "transaction_id",
+            "type": "integer",
+            "description": "The transaction id associated with the transfer."
+        },
+        {
+            "name": "document_type",
+            "type": "string",
+            "description": "The type of document associated with the transfer."
+        },
+        {
+            "name": "proof_of_payment",
+            "type": "string",
+            "description": "The proof of payment for the transfer."
+        }
+    ]
+}
 
 ]

@@ -9,6 +9,6 @@
     <p><strong>From:</strong> {{ $user->first_name ?? 'N/A' }}</p>
     <p><strong>Date:</strong> {{ $transaction->created_at->format('Y-m-d H:i') }}</p>
     <p>Here is the proof of payment</p>
-    <img src="https://res.cloudinary.com/walexbizimage/upload/f_auto,q_auto/{{ $transaction->proof_of_payment }}" alt="Receipt Image">
+    <img src="https://res.cloudinary.com/walexbizimage/upload/f_auto,q_auto/{{ $transaction->proof_of_payment }}" alt="Transfer Image">
     <p>Thank you for using DaaluPay.</p>
 @endsection

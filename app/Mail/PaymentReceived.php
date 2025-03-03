@@ -2,7 +2,7 @@
 
 namespace DaaluPay\Mail;
 
-use DaaluPay\Models\AlipayPayment;
+use DaaluPay\Models\Transfer;
 use DaaluPay\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -19,7 +19,7 @@ class PaymentReceived extends Mailable
      */
     public function __construct(
         public User $user,
-        public AlipayPayment $transaction
+        public Transfer $transaction
     ) {}
 
     /**

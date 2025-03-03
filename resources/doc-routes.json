@@ -346,13 +346,13 @@
                     }
                 },
                 {
-                    "route": "/user/wallets/send",
+                    "route": "/user/transfers/send",
                     "method": "POST",
-                    "description": "Send money to an Alipay Address",
+                    "description": "Send money out of the app either via alipay or bank transfer",
                     "middleware": "auth:sanctum",
                     "request_body": {
                         "amount": "string",
-                        "recipient_address": "string",
+                        "payment_details": "object",
                         "recipient_name": "string",
                         "recipient_email": "string",
                         "description": "string",
@@ -364,30 +364,16 @@
                     }
                 },
                 {
-                    "route": "/user/wallets/alipay/verify",
-                    "method": "POST",
-                    "description": "Verify alipay receipt",
-                    "middleware": "auth:sanctum",
-                    "request_body": {
-                        "amount": "string",
-                        "proof": "file",
-                        "reference": "string"
-                    },
-                    "response_body": {
-                        "message": "string"
-                    }
-                },
-                {
-                    "route": "/user/alipay",
+                    "route": "/user/transfers",
                     "method": "GET",
-                    "description": "Get user Alipay transfers",
+                    "description": "Get user transfers",
                     "middleware": "auth:sanctum",
                     "response_body": {
                         "data": [
                             {
                                 "user_id": "integer",
                                 "amount": "string",
-                                "recipient_address": "string",
+                                "payment_details": "string",
                                 "recipient_name": "string",
                                 "recipient_email": "string",
                                 "description": "string",
@@ -400,14 +386,14 @@
                     }
                 },
                 {
-                    "route": "/user/alipay/{id}",
+                    "route": "/user/transfers/{id}",
                     "method": "GET",
-                    "description": "Get user Alipay transfer by id",
+                    "description": "Get user transfer by id",
                     "middleware": "auth:sanctum",
                     "response_body": {
                         "data": {
                             "amount": "string",
-                            "recipient_address": "string",
+                            "payment_details": "string",
                             "currency": "string",
                             "document_type": "enum:barcode,alipay_id",
                             "status": "string",
@@ -465,7 +451,7 @@
                     "request_body": {
                         "amount": "decimal",
                         "currency": "string",
-                        "channel": "enum:alipay,flutterwave,paystack",
+                        "channel": "enum:transfers,flutterwave,paystack",
                         "wallet_id": "integer"
                     }
                 },
@@ -730,31 +716,31 @@
                 },
 
                 {
-                    "route": "/admin/receipts",
+                    "route": "/admin/transfers",
                     "method": "GET",
-                    "description": "Get all receipts",
+                    "description": "Get all transfers",
                     "middleware": ["auth:sanctum", "admin"],
                     "response_body": {
-                        "receipts": "array:object"
+                        "transfers": "array:object"
                     }
                 },
                 {
-                    "route": "/admin/receipts/{id}",
+                    "route": "/admin/transfers/{id}",
                     "method": "GET",
-                    "description": "Get receipt by id",
+                    "description": "Get transfer by id",
                     "middleware": ["auth:sanctum", "admin"],
                     "response_body": {
-                        "receipt": "object"
+                        "transfer": "object"
                     }
                 },
                 {
-                    "route": "/admin/receipts/{id}/approve",
+                    "route": "/admin/transfers/{id}/approve",
                     "method": "POST",
-                    "description": "Approve receipt",
+                    "description": "Approve transfer",
                     "middleware": ["auth:sanctum", "admin"],
                     "request_body": {
                         "amount": "string",
-                        "recipient_address": "string",
+                        "payment_details": "string",
                         "currency": "string",
                         "document_type": "enum:barcode,alipay_id",
                         "status": "approved",
@@ -764,9 +750,9 @@
                     }
                 },
                 {
-                    "route": "/admin/receipts/{id}/deny",
+                    "route": "/admin/transfers/{id}/deny",
                     "method": "POST",
-                    "description": "Deny receipt",
+                    "description": "Deny transfer",
                     "middleware": ["auth:sanctum", "admin"],
                     "request_body": {
                         "reason": "string"

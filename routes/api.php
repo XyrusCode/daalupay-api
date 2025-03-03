@@ -14,6 +14,7 @@ use DaaluPay\Http\Controllers\Payment\ExchangeController;
 use DaaluPay\Http\Controllers\Payment\SwapController;
 use DaaluPay\Http\Controllers\Payment\TransactionController;
 use DaaluPay\Http\Controllers\Payment\WalletController;
+use DaaluPay\Http\Controllers\Payment\TransferController;
 use DaaluPay\Http\Controllers\TestController;
 use DaaluPay\Http\Controllers\User\AuthenticatedUserController;
 use DaaluPay\Http\Controllers\User\UserPreferenceController;
@@ -32,11 +33,11 @@ use Illuminate\Support\Facades\Route;
 
 // Tests
 Route::prefix('/test')->group(function () {
-    Route::prefix('/receipts')->group(function () {
-        Route::get('/', [AdminController::class, 'getReceipts']);
-        Route::get('/{id}', [AdminController::class, 'getReceipt']);
-        Route::post('/{id}/approve', [AdminController::class, 'approveReceipt']);
-        Route::post('/{id}/deny', [AdminController::class, 'denyReceipt']);
+    Route::prefix('/transfers')->group(function () {
+        Route::get('/', [AdminController::class, 'getTransfers']);
+        Route::get('/{id}', [AdminController::class, 'getTransfer']);
+        Route::post('/{id}/approve', [AdminController::class, 'approveTransfer']);
+        Route::post('/{id}/deny', [AdminController::class, 'denyTransfer']);
     });
 });
 Route::get('/test-email', [TestController::class, 'sendEmail']);
@@ -49,7 +50,6 @@ Route::get('/docs', [MiscController::class, 'getAppDocs']);
 
 Route::get('/artisan/{command}', [MiscController::class, 'runArtisanCommand']);
 
-Route::get('/receipt/file/{id}', [BaseController::class, 'serveReceipt']);
 
 // Blog Routes
 Route::prefix('/blog')->group(function () {
@@ -116,15 +116,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::prefix('/wallets')->group(function () {
             Route::post('/', [WalletController::class, 'store']);
             Route::get('/', [WalletController::class, 'index']);
-            Route::delete('/{id}', [WalletController::class, 'deleteWallet']);
-            Route::get('/{uuid}', [WalletController::class, 'getWallet']);
-            Route::post('/send', [WalletController::class, 'sendMoney']);
+            Route::delete('/{id}', [WalletController::class, 'delete']);
+            Route::get('/{uuid}', [TransferController::class, 'show']);
         });
 
-        Route::prefix('/alipay')->group(function () {
-            Route::get('/', [WalletController::class, 'getAlipayTranfers']);
-            Route::get('/{id}', [WalletController::class, 'getAlipayTranfersById']);
-            Route::post('/verify', [WalletController::class, 'verifyAlipay']);
+        Route::prefix('/transfers')->group(function () {
+            Route::get('/', [TransferController::class, 'index']);
+            Route::get('/{id}', [TransferController::class, 'show']);
+            Route::post('/send', [TransferController::class, 'store']);
+            Route::post('/verify', [TransferController::class, 'verify']);
         });
 
         Route::prefix('/transactions')->group(function () {
@@ -203,11 +203,11 @@ Route::group(['middleware' => 'auth:sanctum,admin'], function () {
             Route::post('/{id}/deny', [AdminController::class, 'denyWithdrawal']);
         });
 
-        Route::prefix('/receipts')->group(function () {
-            Route::get('/', [AdminController::class, 'getReceipts']);
-            Route::get('/{id}', [AdminController::class, 'getReceipt']);
-            Route::post('/{id}/approve', [AdminController::class, 'approveReceipt']);
-            Route::post('/{id}/deny', [AdminController::class, 'denyReceipt']);
+        Route::prefix('/transfers')->group(function () {
+            Route::get('/', [AdminController::class, 'getTransfers']);
+            Route::get('/{id}', [AdminController::class, 'getTransfer']);
+            Route::post('/{id}/approve', [AdminController::class, 'approveTransfer']);
+            Route::post('/{id}/deny', [AdminController::class, 'denyTransfer']);
         });
 
         Route::prefix('/blog-posts')->group(function () {

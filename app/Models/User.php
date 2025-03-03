@@ -13,63 +13,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use OpenApi\Annotations as OA;
 
-/**
- * @OA\Schema(
- *  type="object",
- *
- *  @OA\Property(
- *    type="string",
- *    property="id",
- *  ),
- *  @OA\Property(
- *    type="string",
- *    property="first_name",
- *  ),
- *  @OA\Property(
- *    type="string",
- *    property="last_name",
- *  ),
- *  @OA\Property(
- *    type="string",
- *    property="email",
- *  ),
- *  @OA\Property(
- *    type="string",
- *    property="phone",
- *  ),
- *  @OA\Property(
- *    type="string",
- *    property="password",
- *  ),
- *  @OA\Property(
- *    type="string",
- *    property="status",
- *  ),
- *  @OA\Property(
- *    type="array",
- *    property="wallets",
- *
- *    @OA\Items(type="object", ref="#/components/schemas/Wallet")
- *  ),
- *
- *  @OA\Property(
- *    type="array",
- *    property="transactions",
- *
- *    @OA\Items(type="object", ref="#/components/schemas/Transaction")
- *  )
- * )
- *
- * @property string $id
- * @property string $first_name
- * @property string $last_name
- * @property string $email
- * @property string $phone
- * @property string $password
- * @property string $status
- * @property array $wallets
- * @property array $transactions
- */
+
 class User extends Authenticatable
 {
     use HasApiTokens;
@@ -166,6 +110,14 @@ class User extends Authenticatable
     public function withdrawals(): HasMany
     {
         return $this->hasMany(Withdrawal::class);
+    }
+
+    /**
+     * Get the transfers for the user.
+     */
+    public function transfers(): HasMany
+    {
+        return $this->hasMany(Transfer::class);
     }
 
     /**

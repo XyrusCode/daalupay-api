@@ -6,8 +6,8 @@ use DaaluPay\Http\Controllers\BaseController;
 use DaaluPay\Mail\KycApproved;
 use DaaluPay\Mail\KycDenied;
 use DaaluPay\Mail\PaymentReceived;
-use DaaluPay\Mail\ReceiptApproved;
-use DaaluPay\Mail\ReceiptDenied;
+use DaaluPay\Mail\TransferApproved;
+use DaaluPay\Mail\TransferDenied;
 use DaaluPay\Mail\UserDeleted;
 use DaaluPay\Mail\UserReactivated;
 use DaaluPay\Mail\UserSuspended;
@@ -15,7 +15,7 @@ use DaaluPay\Mail\UserUpdated;
 use DaaluPay\Mail\Withdrawal\WithdrawalCompleted;
 use DaaluPay\Mail\WithdrawalDenied;
 use DaaluPay\Models\Address;
-use DaaluPay\Models\AlipayPayment;
+use DaaluPay\Models\Transfer;
 use DaaluPay\Models\BlogPost;
 use DaaluPay\Models\Currency;
 use DaaluPay\Models\KYC;
@@ -48,7 +48,7 @@ class AdminController extends BaseController
                 })->map(function ($swap) {
                     $user = $swap->user;
                     $swap->user->fullName = $user->firstName && $user->lastName
-                        ? $user->firstName.' '.$user->lastName
+                        ? $user->firstName . ' ' . $user->lastName
                         : $user->email;
 
                     return $swap;
@@ -69,7 +69,7 @@ class AdminController extends BaseController
                 ];
             }
 
-            return $this->getResponse(status: true, message: 'Admin dashboard fetched where admin is '.$admin_id, data: $stats);
+            return $this->getResponse(status: true, message: 'Admin dashboard fetched where admin is ' . $admin_id, data: $stats);
         }, true);
     }
 
@@ -87,7 +87,7 @@ class AdminController extends BaseController
             })->map(function ($transaction) {
                 $user = $transaction->user;
                 $transaction->user->fullName = $user->firstName && $user->lastName
-                    ? $user->firstName.' '.$user->lastName
+                    ? $user->firstName . ' ' . $user->lastName
                     : $user->email;
 
                 return $transaction;
@@ -393,32 +393,32 @@ class AdminController extends BaseController
         }, true);
     }
 
-    public function getReceipts()
+    public function getTransfers()
     {
         return $this->process(function () {
-            $receipts = AlipayPayment::all();
+            $transfers = Transfer::all();
 
-            return $this->getResponse('success', $receipts, 200);
+            return $this->getResponse('success', $transfers, 200);
         }, true);
     }
 
-    public function getReceipt($id)
+    public function getTransfer($id)
     {
         return $this->process(function () use ($id) {
-            $receipt = AlipayPayment::findOrFail($id);
+            $transfer = Transfer::findOrFail($id);
 
-            return $this->getResponse('success', $receipt, 200);
+            return $this->getResponse('success', $transfer, 200);
         }, true);
     }
 
-    public function approveReceipt(Request $request, string $id)
+    public function approveTransfer(Request $request, string $id)
     {
         return $this->process(function () use ($request, $id) {
             $request->validate([
                 'proof_of_payment' => 'required',
             ]);
 
-            $alipayPayment = AlipayPayment::find($id);
+            $transfer = Transfer::find($id);
 
             // check if request has proof of payment
             if (! $request->has('proof_of_payment')) {
@@ -429,7 +429,7 @@ class AdminController extends BaseController
                 );
             }
 
-            if ($alipayPayment->status === 'approved') {
+            if ($transfer->status === 'approved') {
                 return $this->getResponse(
                     status: 'error',
                     message: 'Payment is already approved',
@@ -437,49 +437,49 @@ class AdminController extends BaseController
                 );
             }
 
-            $alipayPayment->update([
+            $transfer->update([
                 'proof_of_payment' => $request->proof_of_payment,
                 'status' => 'completed',
             ]);
-            $alipayPayment->save();
+            $transfer->save();
 
-            $user = User::find($alipayPayment->user_id);
+            $user = User::find($transfer->user_id);
 
-            // FInd User CNY Wallet
-            $yuanCurrency = Currency::where('code', 'CNY')->first();
-            $cnyWallet = Wallet::where('user_id', $user->id)->where('currency_id', $yuanCurrency->id)->first();
-
-            $cnyWallet->balance -= $alipayPayment->amount;
-            $cnyWallet->save();
-
-            $transaction = Transaction::where('id', $alipayPayment->transaction_id)->first();
+            $transaction = Transaction::where('id', $transfer->transaction_id)->first();
             $transaction->update([
                 'status' => 'completed',
             ]);
             $transaction->save();
 
-            Mail::to($user->email)->send(new ReceiptApproved($user, $alipayPayment));
-            Mail::to($user->email)->send(new PaymentReceived($user, $alipayPayment));
+            Mail::to($user->email)->send(new TransferApproved($user, $transfer));
+            Mail::to($user->email)->send(new PaymentReceived($user, $transfer));
 
-            return $this->getResponse('success', $alipayPayment, 200);
+            return $this->getResponse('success', $transfer, 200);
         }, true);
     }
 
-    public function denyReceipt(Request $request, string $id)
+    public function denyTransfer(Request $request, string $id)
     {
         return $this->process(function () use ($request, $id) {
             $request->validate([
                 'reason' => 'required',
             ]);
 
-            $receipt = AlipayPayment::find($id);
-            $receipt->update(['status' => 'rejected']);
+            $transfer = Transfer::find($id);
+            $transfer->update(['status' => 'rejected']);
 
-            $user = User::find($receipt->user_id);
+            $user = User::find($transfer->user_id);
 
-            Mail::to($user->email)->send(new ReceiptDenied($user, $receipt, $request->reason));
+            // FInd wallet of user for the currency and revert deduction amount
+            $currency = Currency::where('code', $transfer->currency)->first();
+            $wallet = Wallet::where('user_id', $user->id)->where('currency_id', $currency->id)->first();
 
-            return $this->getResponse('success', $receipt, 200);
+            $wallet->balance += $transfer->amount;
+            $wallet->save();
+
+            Mail::to($user->email)->send(new TransferDenied($user, $transfer, $request->reason));
+
+            return $this->getResponse('success', $transfer, 200);
         }, true);
     }
 

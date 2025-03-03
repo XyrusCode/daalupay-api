@@ -5,15 +5,17 @@ namespace DaaluPay\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class AlipayPayment extends Model
+class Transfer extends Model
 {
-    protected $table = 'alipay_payment';
+    protected $table = 'transfers';
 
     protected $fillable = [
         'user_id',
+        'admin_id',
         'amount',
+        'currency',
         'status',
-        'recipient_alipay_id',
+        'payment_details',
         'recipient_name',
         'recipient_email',
         'description',
@@ -23,7 +25,7 @@ class AlipayPayment extends Model
     ];
 
     /**
-     * Get the user that owns the AlipayPayment
+     * Get the user that owns the Transfer
      */
     public function user(): BelongsTo
     {

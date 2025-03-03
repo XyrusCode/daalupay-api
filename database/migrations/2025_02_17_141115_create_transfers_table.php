@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('alipay_payment', function (Blueprint $table) {
+        Schema::create('transfers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
+            $table->foreignId('admin_id')->constrained('admins', 'id')->onDelete('cascade');
             $table->decimal('amount', 10, 2);
+            $table->string('currency');
             $table->enum('status', ['pending', 'completed', 'rejected']);
-            $table->string('recipient_alipay_id');
+            $table->string('payment_details');
             $table->string('recipient_name');
             $table->string('recipient_email');
             $table->text('description');
@@ -24,6 +26,8 @@ return new class extends Migration
             $table->string('document_type');
             $table->string('proof_of_payment');
             $table->timestamps();
+
+
         });
     }
 
