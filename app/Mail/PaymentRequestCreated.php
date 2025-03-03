@@ -41,7 +41,7 @@ class PaymentRequestCreated extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'email.payment.new_request',
+            view: 'email.payment.request',
             with: [
                 'admin' => $this->admin,
                 'payment' => $this->payment,
