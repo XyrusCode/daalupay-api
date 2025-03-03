@@ -14,15 +14,15 @@ class PaymentRequestCreated extends Mailable
 
     public $admin;
 
-    public $paymentRequest;
+    public $payment;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($admin, $paymentRequest)
+    public function __construct($admin, $payment)
     {
         $this->admin = $admin;
-        $this->paymentRequest = $paymentRequest;
+        $this->payment = $payment;
     }
 
     /**
@@ -44,7 +44,7 @@ class PaymentRequestCreated extends Mailable
             view: 'email.payment.new_request',
             with: [
                 'admin' => $this->admin,
-                'paymentRequest' => $this->paymentRequest,
+                'payment' => $this->payment,
             ],
         );
     }

@@ -7,6 +7,7 @@ use DaaluPay\Mail\PaymentRequestCreated;
 use DaaluPay\Models\Admin;
 use DaaluPay\Models\Transfer;
 use DaaluPay\Models\Currency;
+use DaaluPay\Models\Wallet;
 use DaaluPay\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -79,6 +80,7 @@ class TransferController extends BaseController
             $payment = Transfer::create([
                 'user_id' => $user->id,
                 'amount' => $validated['amount'],
+                'currency' => $validated['currency'],
                 'status' => 'pending',
                 'admin_id' => $admin->id,
                 'payment_details' => $validated['payment_details'],
@@ -105,7 +107,7 @@ class TransferController extends BaseController
 
             
             // Notify the admin
-            Mail::to($admin->email)->send(new PaymentRequestCreated($admin, $paymentRequest));
+            Mail::to($admin->email)->send(new PaymentRequestCreated($admin, $payment));
 
             return $this->getResponse('success', $payment, 200);
         }, true);

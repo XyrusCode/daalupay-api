@@ -200,8 +200,7 @@ Below are the key endpoints provided by the Daalu Pay API, grouped by functional
 - **`POST /register`**: Register a new user (requires guest).  
 - **`POST /login`**: Log in a user.  
 - **`POST /forgot-password`**: Request a password reset link.  
-- **`POST /reset-password`**: Reset the user's password.  
-- **`GET /verify-email/{id}/{hash}`**: Verify a user's email.  
+- **`POST /reset-password`**: Reset the user's password.    
 - **`POST /email/verification-notification`**: Resend email verification notification.  
 - **`POST /logout`**: Log out the authenticated user.  
 

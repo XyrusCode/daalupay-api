@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
     {
         $kycStatus = ['pending', 'approved', 'rejected'];
 
-        $liveUsers = ['onebigjapan@gmail.com', 'Ehinmisan.olawale@gmail.com', 'uwahsheedo@gmail.com'];
+        $liveUsers = ['onebigjapan@gmail.com', 'Ehinmisan.olawale@gmail.com', 'uwahsheedo@gmail.com', 'odohchukwudi67@gmail.com'];
 
         $admin = Admin::where('email', 'admin@daalupay.com')->first();
 
@@ -135,7 +135,6 @@ class UserSeeder extends Seeder
         //     'daily_transaction_limit' => '500000',
         //     'transaction_total_today' => '20000',
         //     'last_transaction_date' => now(),
-        //     'kyc_status'              => 'pending',
         //     'two_fa_enabled'          => 'true',
         // ]);
         }

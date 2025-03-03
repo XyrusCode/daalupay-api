@@ -6,11 +6,11 @@
         A new payment request has been created.
     </div>
     <p>Dear {{ $admin->first_name }},</p>
-    <p>Your payment request of {{ $paymentRequest->amount }} has been successfully created. Please review the details below:</p>
+    <p>Your payment request of {{ $payment->amount }} has been successfully created. Please review the details below:</p>
     <ul>
-        <li>Request ID: {{ $paymentRequest->id }}</li>
-        <li>Amount: {{ $paymentRequest->amount }}</li>
-        <li>Date: {{ $paymentRequest->created_at->format('d-m-Y') }}</li>
+        <li>Request ID: {{ $payment->id }}</li>
+        <li>Amount: {{ $payment->amount }}</li>
+        <li>Date: {{ $payment->created_at->format('d-m-Y') }}</li>
     </ul>
     <p>Please login to your dashboard and review.</p>
 
